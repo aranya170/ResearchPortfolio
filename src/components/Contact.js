@@ -3,6 +3,8 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Icon from "./Icons";
 import "../styles/Contact.css";
+import { api } from "../services/api";
+import { usePortfolio } from "../context/PortfolioContext";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -14,7 +16,8 @@ export default function Contact() {
   const formRef = useRef(null);
   const successRef = useRef(null);
   const contactSectionRef = useRef(null);
-  const yourEmail = "aranya.akd@gmail.com";
+  const { portfolio } = usePortfolio();
+  const yourEmail = portfolio?.settings?.socials?.email || "aranya.akd@gmail.com";
 
   useEffect(() => {
     gsap.set(".contact-container", {
@@ -120,22 +123,13 @@ export default function Contact() {
     setStatus("sending");
 
     try {
-      // Replace 'YOUR_GOOGLE_SCRIPT_URL' with the URL you'll get in the next step
-      const response = await fetch("https://script.google.com/macros/s/AKfycbziN-8CZYf_SLoMykwZLQArQzT_vea5BHcKcxH_RQZ5whzCXoeaYuwZbXhw2ablsjhI/exec", {
-        method: "POST",
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: name,
-          email: email,
-          message: message,
-          date: new Date().toLocaleString(),
-        }),
+      // Primary: Save directly into PostgreSQL Backend
+      await api.sendContactMessage({
+        name,
+        email,
+        message,
       });
 
-      // With no-cors, we assume success as long as no exception happens
       setStatus("success");
       gsap.to(formRef.current, {
         opacity: 0,
@@ -154,10 +148,46 @@ export default function Contact() {
         },
       });
       setIsSubmitted(true);
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      setStatus("error");
-      alert("Oops! There was a problem saving your message.");
+    } catch (apiError) {
+      console.warn("Backend submit error, trying fallback:", apiError.message);
+      try {
+        await fetch("https://script.google.com/macros/s/AKfycbziN-8CZYf_SLoMykwZLQArQzT_vea5BHcKcxH_RQZ5whzCXoeaYuwZbXhw2ablsjhI/exec", {
+          method: "POST",
+          mode: "no-cors",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: name,
+            email: email,
+            message: message,
+            date: new Date().toLocaleString(),
+          }),
+        });
+
+        setStatus("success");
+        gsap.to(formRef.current, {
+          opacity: 0,
+          y: -20,
+          duration: 0.3,
+          ease: "power2.inOut",
+          onComplete: () => {
+            formRef.current.style.display = "none";
+            successRef.current.style.display = "flex";
+
+            gsap.fromTo(
+              successRef.current,
+              { opacity: 0, y: 20 },
+              { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }
+            );
+          },
+        });
+        setIsSubmitted(true);
+      } catch (fallbackError) {
+        console.error("Error submitting form:", fallbackError);
+        setStatus("error");
+        alert("Oops! There was a problem saving your message.");
+      }
     }
   };
 

@@ -3,8 +3,21 @@ import "../styles/Intro.css";
 import AnimatedRobot from "./AnimatedRobot";
 import Icon from "./Icons";
 import { gsap } from "gsap";
+import { usePortfolio } from "../context/PortfolioContext";
 
 const Intro = () => {
+  const { portfolio } = usePortfolio();
+  const siteProfile = portfolio?.siteProfile || {
+    greeting: "Hi there! I'm ",
+    name: "Aranya Kishor Das",
+    subtitle: "AI Researcher & Robotics Enthusiast",
+    subtitle_suffix: "dedicated to Intelligent Systems.",
+    description:
+      "From building RC cars in highschool to leading UIU Robotics and researching AI, I'm driven by a passion for creating smarter solutions through Deep Learning and Robotics.",
+    cv_url: "/assets/My_CV.pdf",
+    show_robot: true,
+  };
+
   const cursorRef = useRef(null);
   const subtitleRef = useRef(null);
   const descRef = useRef(null);
@@ -24,10 +37,12 @@ const Intro = () => {
       y: 20,
     });
 
-    gsap.set(animationRef.current, {
-      opacity: 0,
-      scale: 0.95,
-    });
+    if (animationRef.current) {
+      gsap.set(animationRef.current, {
+        opacity: 0,
+        scale: 0.95,
+      });
+    }
 
     gsap.to([subtitleRef.current, descRef.current, buttonsRef.current], {
       opacity: 1,
@@ -38,13 +53,15 @@ const Intro = () => {
       delay: 0.6,
     });
 
-    gsap.to(animationRef.current, {
-      opacity: 1,
-      scale: 1,
-      duration: 0.6,
-      ease: "power2.out",
-      delay: 0.6,
-    });
+    if (animationRef.current) {
+      gsap.to(animationRef.current, {
+        opacity: 1,
+        scale: 1,
+        duration: 0.6,
+        ease: "power2.out",
+        delay: 0.6,
+      });
+    }
 
     if (document.fonts) {
       document.fonts.ready.then(() => {
@@ -67,6 +84,7 @@ const Intro = () => {
     }
 
     function startTextAnimation() {
+      if (!textRef.current || !nameRef.current || !cursorRef.current) return;
       const introText = textRef.current.textContent;
       const nameText = nameRef.current.textContent;
 
@@ -102,17 +120,19 @@ const Intro = () => {
 
       const typingTl = gsap.timeline();
 
-      gsap.to(windmill, {
-        rotation: 360 * 7.5,
-        duration: 3,
-        ease: "linear",
-        repeat: -1,
-        transformOrigin: "center center",
-      });
+      if (windmill) {
+        gsap.to(windmill, {
+          rotation: 360 * 7.5,
+          duration: 3,
+          ease: "linear",
+          repeat: -1,
+          transformOrigin: "center center",
+        });
+      }
 
       document.body.offsetHeight;
 
-      allChars.forEach((char, index) => {
+      allChars.forEach((char) => {
         const charWidth = char.getBoundingClientRect().width || 10;
 
         typingTl.to(cursorRef.current, {
@@ -134,15 +154,17 @@ const Intro = () => {
         ease: "power1.out",
       });
 
-      typingTl.add(() => {
-        gsap.killTweensOf(windmill);
-        gsap.to(windmill, {
-          rotation: "+=385",
-          duration: 0.9,
-          ease: "power2.Out",
-          transformOrigin: "center center",
+      if (windmill) {
+        typingTl.add(() => {
+          gsap.killTweensOf(windmill);
+          gsap.to(windmill, {
+            rotation: "+=385",
+            duration: 0.9,
+            ease: "power2.Out",
+            transformOrigin: "center center",
+          });
         });
-      });
+      }
     }
 
     return () => {
@@ -159,16 +181,16 @@ const Intro = () => {
     <div className="intro-section">
       <div className="intro-content">
         <div className="typist-content">
-          <div
-            className="text-typing-container"
-            style={{ position: "relative" }}
-          >
-            <h1 className="intro-title-wrapper" style={{ display: "inline", fontSize: "inherit", fontWeight: "inherit" }}>
+          <div className="text-typing-container" style={{ position: "relative" }}>
+            <h1
+              className="intro-title-wrapper"
+              style={{ display: "inline", fontSize: "inherit", fontWeight: "inherit" }}
+            >
               <span className="intro-title" ref={textRef}>
-                Hi there! I'm{" "}
+                {siteProfile.greeting || "Hi there! I'm "}
               </span>
               <span className="intro-name" ref={nameRef}>
-                Aranya Kishor Das
+                {siteProfile.name || "Aranya Kishor Das"}
               </span>
             </h1>
 
@@ -209,20 +231,18 @@ const Intro = () => {
         <div className="intro-subtitle" ref={subtitleRef}>
           I'm a{" "}
           <span className="intro-subtitle-name">
-            AI Researcher & Robotics Enthusiast
+            {siteProfile.subtitle || "AI Researcher & Robotics Enthusiast"}
           </span>{" "}
-          dedicated to Intelligent Systems.
+          {siteProfile.subtitle_suffix || "dedicated to Intelligent Systems."}
         </div>
 
         <div className="intro-desc" ref={descRef}>
-          From building RC cars in highschool to leading UIU Robotics and
-          researching AI, I'm driven by a passion for creating smarter solutions
-          through Deep Learning and Robotics.
+          {siteProfile.description}
         </div>
 
         <div className="intro-buttons" ref={buttonsRef}>
           <a
-            href="/assets/My_CV.pdf"
+            href={siteProfile.cv_url || "/assets/My_CV.pdf"}
             className="outline-button btn-effect"
             target="_blank"
             rel="noopener noreferrer"
@@ -233,9 +253,11 @@ const Intro = () => {
         </div>
       </div>
 
-      <div className="intro-animation" ref={animationRef}>
-        <AnimatedRobot />
-      </div>
+      {siteProfile.show_robot !== false && (
+        <div className="intro-animation" ref={animationRef}>
+          <AnimatedRobot />
+        </div>
+      )}
     </div>
   );
 };

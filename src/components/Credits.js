@@ -1,38 +1,48 @@
 import React, { useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import "../styles/Credits.css";
 import SideNavBar from "./SideNavBar";
+import { usePortfolio } from "../context/PortfolioContext";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const Credits = () => {
   const creditsRef = useRef(null);
+  const { portfolio } = usePortfolio();
+
+  const socials = portfolio?.settings?.socials || {
+    github: "https://github.com/aranya170",
+    linkedin: "https://www.linkedin.com/in/aranya170",
+    email: "aranya.akd@gmail.com",
+  };
+
+  const copyrightText = (
+    portfolio?.settings?.footer?.copyrightText ||
+    "© {year} Aranya Kishor Das. All rights reserved."
+  ).replace("{year}", new Date().getFullYear());
 
   useEffect(() => {
-    gsap.fromTo(
-      creditsRef.current,
-      {
-        opacity: 0,
-        y: 20,
-      },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: "#credits",
-          start: "top 95%",
-          end: "bottom 90%",
-          toggleActions: "play none none reverse",
-        },
-      }
-    );
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        creditsRef.current,
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: "#credits",
+            start: "top 95%",
+            toggleActions: "play none none reverse",
+          },
+        }
+      );
+    }, creditsRef);
 
-    return () => {
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-    };
+    return () => ctx.revert();
   }, []);
 
   return (
@@ -41,7 +51,7 @@ const Credits = () => {
         <SideNavBar />
         <div className="social-links-footer">
           <a
-            href="https://github.com/aranya170"
+            href={socials.github || "https://github.com/aranya170"}
             target="_blank"
             rel="noopener noreferrer me"
             title="Aranya Kishor Das on GitHub"
@@ -50,17 +60,23 @@ const Credits = () => {
           </a>
           <span className="footer-separator"> | </span>
           <a
-            href="https://www.linkedin.com/in/aranya170"
+            href={socials.linkedin || "https://www.linkedin.com/in/aranya170"}
             target="_blank"
             rel="noopener noreferrer me"
             title="Aranya Kishor Das on LinkedIn"
           >
             LinkedIn
           </a>
+          <span className="footer-separator"> | </span>
+          <Link
+            to="/admin"
+            title="Admin Dashboard Portal"
+            style={{ color: "#64d98a", textDecoration: "none", opacity: 0.8 }}
+          >
+            Admin Panel
+          </Link>
         </div>
-        <div className="footer-copyright">
-          © {new Date().getFullYear()} Aranya Kishor Das. All rights reserved.
-        </div>
+        <div className="footer-copyright">{copyrightText}</div>
       </div>
     </div>
   );

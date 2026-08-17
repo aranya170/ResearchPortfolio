@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import "../styles/Experience.css";
+import { usePortfolio } from "../context/PortfolioContext";
 
-const experienceItems = {
+const defaultExperienceItems = {
   "UIU Robotics Club": {
     jobTitle: "President @",
     duration: "NOV 2025 - Present",
@@ -10,8 +11,7 @@ const experienceItems = {
       "Led the executive committee and core members, enforcing a structured organogram to improve club efficiency and resolving internal communication gaps to ensure smooth operations.",
       "Organized and executed events, workshops, and seminars, enhancing the club's visibility and engagement within the school community.",
       "Developed and implemented a new curriculum for the club, focusing on practical applications of robotics and programming, resulting in a 30% increase in member engagement.",
-      " Spearheaded the launch of Bangladesh's first public open-source repository for robotics and IoT learning, creating accessible educational resources for students.",
-      
+      "Spearheaded the launch of Bangladesh's first public open-source repository for robotics and IoT learning, creating accessible educational resources for students.",
     ],
   },
   "United International University": {
@@ -21,7 +21,7 @@ const experienceItems = {
       "Spearheaded RoboNeT, Bangladesh's first open-source robotics and IoT learning repository, acting as the lead contributor to provide accessible educational resources nationwide.",
       "Developed and implemented a practical robotics curriculum, resulting in a significant increase in member engagement through hands-on programming and deep learning modules.",
       "Collaborated with faculty to design and execute experiments in autonomous systems and machine learning, contributing to ongoing research projects and publications.",
-      "Mentored 50+ undergraduate students in robotics and deep learning, providing technical guidance on hardware integration and neural network optimization."
+      "Mentored 50+ undergraduate students in robotics and deep learning, providing technical guidance on hardware integration and neural network optimization.",
     ],
   },
   "CrossRoads Initiative": {
@@ -52,13 +52,44 @@ const experienceItems = {
 };
 
 const JobList = () => {
+  const { portfolio } = usePortfolio();
+
+  let experienceItems = defaultExperienceItems;
+  if (
+    portfolio &&
+    Array.isArray(portfolio.experiences) &&
+    portfolio.experiences.length > 0
+  ) {
+    experienceItems = {};
+    portfolio.experiences.forEach((exp) => {
+      let descs = exp.descriptions;
+      if (typeof descs === "string") {
+        try {
+          descs = JSON.parse(descs);
+        } catch (e) {
+          descs = [];
+        }
+      }
+      experienceItems[exp.company] = {
+        jobTitle: exp.job_title,
+        duration: exp.duration,
+        desc: Array.isArray(descs) ? descs : [String(descs)],
+      };
+    });
+  }
+
+  const keys = Object.keys(experienceItems);
   const [value, setValue] = useState(0);
   const [isHorizontal, setIsHorizontal] = useState(window.innerWidth < 600);
-  const keys = Object.keys(experienceItems);
-
   const contentRef = useRef(null);
-  const listsRef = useRef({});
-  const oldValueRef = useRef(value);
+
+  const safeIndex = value < keys.length && value >= 0 ? value : 0;
+  const currentKey = keys[safeIndex] || keys[0];
+  const currentItem = experienceItems[currentKey] || {
+    jobTitle: "",
+    duration: "",
+    desc: [],
+  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -70,71 +101,35 @@ const JobList = () => {
   }, []);
 
   const handleTabChange = (index) => {
-    const oldIndex = oldValueRef.current;
+    if (index === value) return;
 
-    if (oldIndex === index) return;
-
-    oldValueRef.current = index;
-
-    const currentPanel = document.querySelector(".joblist-panel");
-
-    if (currentPanel) {
-      gsap.to(currentPanel, {
+    if (contentRef.current) {
+      gsap.to(contentRef.current, {
         opacity: 0,
-        duration: 0.3,
+        y: -10,
+        duration: 0.2,
+        ease: "power2.in",
         onComplete: () => {
           setValue(index);
-          animateJobDetails();
-
-          const newPanel = contentRef.current.querySelector(
-            `.joblist-panel:nth-child(${index + 1})`
+          gsap.fromTo(
+            contentRef.current,
+            { opacity: 0, y: 15 },
+            { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }
           );
-          if (newPanel) {
-            gsap.fromTo(
-              newPanel,
-              { opacity: 0 },
-              { opacity: 1, duration: 0.3 }
-            );
-          }
         },
       });
     } else {
       setValue(index);
-      animateJobDetails();
     }
   };
-
-  const animateJobDetails = () => {
-    const listItems = contentRef.current?.querySelectorAll(
-      ".job-description li"
-    );
-
-    if (listItems?.length) {
-      gsap.set(listItems, { opacity: 0, x: 20 });
-
-      gsap.to(listItems, {
-        opacity: 1,
-        x: 0,
-        duration: 0.4,
-        stagger: 0.1,
-        ease: "power2.out",
-      });
-    }
-  };
-
-  useEffect(() => {
-    animateJobDetails();
-  }, []);
 
   return (
     <div className={`joblist-root ${isHorizontal ? "horizontal" : "vertical"}`}>
-      <div
-        className={`joblist-tabs ${isHorizontal ? "horizontal" : "vertical"}`}
-      >
+      <div className={`joblist-tabs ${isHorizontal ? "horizontal" : "vertical"}`}>
         {keys.map((key, i) => (
           <button
             key={key}
-            className={`joblist-tab${value === i ? " active" : ""}`}
+            className={`joblist-tab${safeIndex === i ? " active" : ""}`}
             onClick={() => handleTabChange(i)}
           >
             {isHorizontal ? `0${i + 1}.` : key}
@@ -143,24 +138,16 @@ const JobList = () => {
       </div>
 
       <div className="joblist-content" ref={contentRef}>
-        {keys.map((key, i) =>
-          value === i ? (
-            <div key={key} className="joblist-panel">
-              <span className="joblist-job-title">
-                {experienceItems[key]["jobTitle"] + " "}
-              </span>
-              <span className="joblist-job-company">{key}</span>
-              <div className="joblist-duration">
-                {experienceItems[key]["duration"]}
-              </div>
-              <ul className="job-description">
-                {experienceItems[key]["desc"].map((descItem, j) => (
-                  <li key={j}>{descItem}</li>
-                ))}
-              </ul>
-            </div>
-          ) : null
-        )}
+        <div className="joblist-panel">
+          <span className="joblist-job-title">{currentItem.jobTitle} </span>
+          <span className="joblist-job-company">{currentKey}</span>
+          <div className="joblist-duration">{currentItem.duration}</div>
+          <ul className="job-description">
+            {currentItem.desc.map((descItem, j) => (
+              <li key={j}>{descItem}</li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   );

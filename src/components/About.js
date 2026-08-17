@@ -3,58 +3,75 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Icon from "./Icons";
 import "../styles/About.css";
+import { usePortfolio } from "../context/PortfolioContext";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const About = () => {
+  const { portfolio } = usePortfolio();
+  const aboutData = portfolio?.about || {
+    title: "About Me",
+    profile_image: "/assets/Aranya Kishor Das.png",
+    paragraphs: [
+      `Hi, my name is Aranya and I enjoy solving puzzles, building things, and exploring technology. My journey began in 2015 when I became fascinated by <span class="highlight">remote-controlled cars</span> and microcontrollers like <span class="highlight">Arduino and ESP</span>. That childhood curiosity sparked a lifelong passion for electronics and robotics.`,
+      `From 2015 to 2019, I explored the vast fields of computer science, graphics design, and software engineering. During the pandemic, I deep-dived into <span class="highlight">Web Development and Figma Design</span>. My academic journey eventually led me to United International University, after receiving 19 admission offers from universities in the <span class="highlight">USA and Switzerland</span>.`,
+      `In 2024, I pivoted my focus toward <span class="highlight">Deep Learning and Artificial Intelligence</span>. Today, I serve as an Undergraduate Research Assistant at UIU, a Teaching Assistant for IoT and Robotics, and the <span class="highlight">President of the UIU Robotics Club</span>, where I continue to push the boundaries of intelligent systems.`,
+      `Outside of work, I love playing video games. I'm also into aesthetic interior designs and I love hoarding cool tech products.`
+    ],
+    timeline_link_text: "View my timeline to learn more about my unique journey",
+    contact_button_text: "Get in Touch"
+  };
+
   const aboutRef = useRef(null);
-  const textRefs = useRef([]);
 
   useEffect(() => {
-    gsap.fromTo(
-      ".about-title",
-      {
-        y: 30,
-        opacity: 0,
-      },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.6,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: "#about",
-          start: "top 80%",
-          toggleActions: "play none none reverse",
-        },
-      }
-    );
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        ".about-title",
+        { y: 30, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.6,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: "#about",
+            start: "top 85%",
+            toggleActions: "play none none reverse",
+          },
+        }
+      );
 
-    gsap.from(textRefs.current, {
-      y: 30,
-      opacity: 0,
-      duration: 0.8,
-      stagger: 0.2,
-      ease: "power2.out",
-      scrollTrigger: {
-        trigger: ".about-content",
-        start: "top 75%",
-        toggleActions: "play none none reverse",
-      },
-    });
+      gsap.fromTo(
+        ".about-flex-container > *",
+        { y: 30, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.15,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: ".about-content",
+            start: "top 80%",
+            toggleActions: "play none none reverse",
+          },
+        }
+      );
+    }, aboutRef);
 
-    return () => {
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-    };
-  }, []);
+    return () => ctx.revert();
+  }, [aboutData]);
+
+  const paragraphs = Array.isArray(aboutData.paragraphs) ? aboutData.paragraphs : [];
 
   return (
     <section id="about" ref={aboutRef}>
       <div className="about-content">
         <div className="about-flex-container">
-          <div className="about-image-container" ref={(el) => (textRefs.current[7] = el)}>
+          <div className="about-image-container">
             <img 
-              src="/assets/Aranya Kishor Das.png" 
+              src={aboutData.profile_image || "/assets/Aranya Kishor Das.png"} 
               alt="Aranya Kishor Das" 
               className="about-profile-image"
             />
@@ -62,60 +79,29 @@ const About = () => {
           
           <div className="about-text-content">
             <div className="section-header">
-              <span className="section-title about-title">About Me</span>
+              <span className="section-title about-title">{aboutData.title || "About Me"}</span>
             </div>
 
             <div className="about-description">
-              <p ref={(el) => (textRefs.current[0] = el)}>
-                Hi, my name is Aranya and I enjoy solving puzzles, building things,
-                and exploring technology. My journey began in 2015 when I became
-                fascinated by <span className="highlight">remote-controlled cars</span> and
-                microcontrollers like <span className="highlight">Arduino and ESP</span>. That
-                childhood curiosity sparked a lifelong passion for electronics and
-                robotics.
-              </p>
-
-              <p ref={(el) => (textRefs.current[1] = el)}>
-                From 2015 to 2019, I explored the vast fields of computer science,
-                graphics design, and software engineering. During the pandemic, I
-                deep-dived into{" "}
-                <span className="highlight">Web Development and Figma Design</span>.
-                My academic journey eventually led me to United International
-                University, after receiving 19 admission offers from universities in
-                the <span className="highlight">USA and Switzerland</span>.
-              </p>
-
-              <p ref={(el) => (textRefs.current[2] = el)}>
-                In 2024, I pivoted my focus toward{" "}
-                <span className="highlight">
-                  Deep Learning and Artificial Intelligence
-                </span>
-                . Today, I serve as an Undergraduate Research Assistant at UIU, a
-                Teaching Assistant for IoT and Robotics, and the{" "}
-                <span className="highlight">President of the UIU Robotics Club</span>,
-                where I continue to push the boundaries of intelligent systems.
-              </p>
-
-              <p ref={(el) => (textRefs.current[4] = el)}>
-                Outside of work, I love playing video games. I'm also into aesthetic
-                interior designs and I love hoarding cool tech products.
-              </p>
+              {paragraphs.map((para, idx) => (
+                <p
+                  key={idx}
+                  dangerouslySetInnerHTML={{ __html: para }}
+                />
+              ))}
             </div>
 
-            <p
-              className="about-timeline-link"
-              ref={(el) => (textRefs.current[5] = el)}
-            >
+            <p className="about-timeline-link">
               <a href="#timeline">
                 <span role="img" aria-label="timeline"></span>
-                View my timeline to learn more about my{" "}
+                {aboutData.timeline_link_text || "View my timeline to learn more about my unique journey"}{" "}
                 <span className="about-timeline-highlight">unique journey</span>{" "}
                 &rarr;
               </a>
             </p>
-            <div className="about-actions" ref={(el) => (textRefs.current[6] = el)}>
+            <div className="about-actions">
               <a href="#contact" className="resume-button btn-effect">
-                Get in Touch <Icon name="Mail" className="button-icon" />
+                {aboutData.contact_button_text || "Get in Touch"} <Icon name="Mail" className="button-icon" />
               </a>
             </div>
           </div>

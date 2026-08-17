@@ -2,67 +2,76 @@ import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
-  FcGraduationCap,
   FcIdea,
-  FcBriefcase,
-  FcGoogle,
-  FcAcceptDatabase,
-  FcStatistics,
+  FcCommandLine,
+  FcGlobe,
+  FcGraduationCap,
   FcReading,
 } from "react-icons/fc";
 import "../styles/Timeline.css";
+import { usePortfolio } from "../context/PortfolioContext";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const milestones = [
+const defaultMilestones = [
   {
     title: "Early Curiosity",
-    description: "Fascinated by computers and RC cars in Class 8, discovering microcontrollers like Arduino and ESP.",
+    description:
+      "Fascinated by computers and RC cars in Class 8, discovering microcontrollers like Arduino and ESP.",
     year: "2015",
-    type: "startup",
+    type: "idea",
   },
   {
-    title: "Exploring CS & Design",
-    description: "Explored programming, software engineering, and graphics design during high school.",
+    title: "Tech Exploration",
+    description:
+      "Explored competitive programming, web development, graphics design, and video editing.",
     year: "2015 - 2019",
-    type: "statistics",
+    type: "career",
   },
   {
-    title: "COVID & Web Dev",
-    description: "Deep dived into Web Development and UI/UX design via Figma during the pandemic.",
+    title: "Global Offers & Pivots",
+    description:
+      "Received 19 university admission offers across the USA and Switzerland; enrolled at UIU.",
     year: "2020 - 2021",
-    type: "startup",
-  },
-  {
-    title: "Undergrad Life at UIU",
-    description: "Started CS at United International University after receiving 19 admission offers from USA & Switzerland.",
-    year: "2022",
     type: "education",
   },
   {
-    title: "Pivot to AI & DL",
-    description: "Moved career focus to Deep Learning and AI, starting research and building several projects.",
-    year: "2024",
+    title: "Deep Dive in AI & Robotics",
+    description:
+      "Joined UIU Robotics, began publishing research, and focused on Deep Learning.",
+    year: "2022 - 2024",
     type: "research",
   },
   {
-    title: "Research & Leadership",
-    description: "Serving as Undergraduate Research Assistant, TA for IoT/Robotics, and President of UIU Robotics Club.",
+    title: "President & Lead Researcher",
+    description:
+      "Became President of UIU Robotics and Undergraduate Assistant under Dr. Mohammad Nurul Huda.",
+    year: "2024 - 2025",
+    type: "startup",
+  },
+  {
+    title: "Present & Future Horizons",
+    description:
+      "Pursuing higher research in AI, intelligent robotics, and scalable systems.",
     year: "2025 - Present",
-    type: "career",
+    type: "statistics",
   },
 ];
 
 export default function Timeline() {
+  const { portfolio } = usePortfolio();
+  const milestones =
+    portfolio && Array.isArray(portfolio.timeline) && portfolio.timeline.length > 0
+      ? portfolio.timeline
+      : defaultMilestones;
+
   const timelineWrapRef = useRef(null);
   const timelineItemsRef = useRef([]);
 
   useEffect(() => {
-    timelineItemsRef.current = timelineItemsRef.current.filter(Boolean);
-
     const ctx = gsap.context(() => {
       gsap.fromTo(
-        "#timeline .section-title",
+        ".timeline-title",
         { y: 30, opacity: 0 },
         {
           y: 0,
@@ -70,47 +79,48 @@ export default function Timeline() {
           duration: 0.6,
           ease: "power2.out",
           scrollTrigger: {
-            trigger: "#timeline .section-title",
-            start: "top 90%",
-            toggleActions: "restart none none reverse",
+            trigger: "#timeline",
+            start: "top 85%",
+            toggleActions: "play none none reverse",
           },
         }
       );
 
       gsap.fromTo(
-        "#timeline-progress-line",
-        { height: "0%" },
+        ".timeline-line",
+        { scaleY: 0 },
         {
-          height: "100%",
+          scaleY: 1,
+          duration: 1,
           ease: "none",
           scrollTrigger: {
             trigger: timelineWrapRef.current,
-            start: "top 70%",
-            end: "bottom 20%",
-            scrub: 1,
+            start: "top 75%",
+            end: "bottom 30%",
+            scrub: true,
           },
         }
       );
 
       timelineItemsRef.current.forEach((item, index) => {
+        if (!item) return;
         const direction = index % 2 === 0 ? -1 : 1;
         const content = item.querySelector(".timeline-content");
         const dot = item.querySelector(".timeline-dot");
         const date = item.querySelector(".timeline-date");
 
-        const itemTl = gsap.timeline({
+        const tl = gsap.timeline({
           scrollTrigger: {
             trigger: item,
-            start: "top 80%",
-            end: "bottom 20%",
-            toggleActions: "restart none none reverse",
+            start: "top 85%",
+            toggleActions: "play none none reverse",
           },
         });
 
-        itemTl
-          .fromTo(
+        if (content && dot && date) {
+          tl.fromTo(
             content,
-            { x: direction * 100, opacity: 0 },
+            { x: direction * 40, opacity: 0 },
             {
               x: 0,
               opacity: 1,
@@ -118,103 +128,77 @@ export default function Timeline() {
               ease: "power2.out",
             }
           )
-          .fromTo(
-            dot,
-            { scale: 0, opacity: 0 },
-            {
-              scale: 1,
-              opacity: 1,
-              duration: 0.3,
-              ease: "back.out(1.7)",
-            },
-            "-=0.3"
-          )
-          .fromTo(
-            date,
-            { opacity: 0, y: 10 },
-            {
-              opacity: 1,
-              y: 0,
-              duration: 0.3,
-              ease: "power2.out",
-            },
-            "-=0.2"
-          );
+            .fromTo(
+              dot,
+              { scale: 0, opacity: 0 },
+              {
+                scale: 1,
+                opacity: 1,
+                duration: 0.3,
+                ease: "back.out(1.7)",
+              },
+              "-=0.3"
+            )
+            .fromTo(
+              date,
+              { opacity: 0, y: 10 },
+              {
+                opacity: 1,
+                y: 0,
+                duration: 0.3,
+                ease: "power2.out",
+              },
+              "-=0.2"
+            );
+        }
       });
-    });
+    }, timelineWrapRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [milestones]);
 
   const renderIcon = (type) => {
     switch (type) {
+      case "idea":
+        return <FcIdea className="timeline-icon" />;
+      case "startup":
+        return <FcCommandLine className="timeline-icon" />;
+      case "statistics":
+        return <FcGlobe className="timeline-icon" />;
       case "education":
         return <FcGraduationCap className="timeline-icon" />;
-      case "startup":
-        return <FcIdea className="timeline-icon" />;
-      case "career":
-        return <FcBriefcase className="timeline-icon" />;
-      case "google":
-        return <FcGoogle className="timeline-icon" />;
-      case "project":
-        return <FcAcceptDatabase className="timeline-icon" />;
-      case "statistics":
-        return <FcStatistics className="timeline-icon" />;
       case "research":
         return <FcReading className="timeline-icon" />;
       default:
-        return null;
+        return <FcIdea className="timeline-icon" />;
     }
   };
 
   return (
-    <div id="timeline">
+    <section id="timeline">
       <div className="section-header">
-        <span className="section-title">My Journey</span>
+        <span className="section-title timeline-title">Timeline</span>
       </div>
 
       <div className="timeline-wrapper" ref={timelineWrapRef}>
-        <div className="timeline-progress">
-          <div id="timeline-progress-line"></div>
-        </div>
-
+        <div className="timeline-line"></div>
         <div className="timeline-items">
           {milestones.map((item, idx) => (
             <div
-              key={idx}
+              key={item.id || idx}
               className={`timeline-item ${idx % 2 === 0 ? "left" : "right"}`}
               ref={(el) => (timelineItemsRef.current[idx] = el)}
             >
               <div className="timeline-dot">{renderIcon(item.type)}</div>
-
+              <div className="timeline-date">{item.year || item.timeframe}</div>
               <div className="timeline-content">
-                <h2>{item.title}</h2>
+                <h3>{item.title}</h3>
                 <p>{item.description}</p>
-
-                <div className="timeline-actions">
-                  {item.certificateUrl && (
-                    <a
-                      href={item.certificateUrl}
-                      className="timeline-link"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      View Certificate
-                    </a>
-                  )}
-
-                  {item.learnMoreLink && (
-                    <a href={item.learnMoreLink} className="timeline-link">
-                      {item.learnMoreText}
-                    </a>
-                  )}
-                </div>
               </div>
-              <span className="timeline-date">{item.year}</span>
             </div>
           ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 }
