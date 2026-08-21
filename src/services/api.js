@@ -1,6 +1,15 @@
-// Frontend API Client for Backend and PostgreSQL communication
+const getApiBaseUrl = () => {
+  if (process.env.REACT_APP_API_URL) {
+    return process.env.REACT_APP_API_URL.replace(/\/$/, "");
+  }
+  if (typeof window !== "undefined" && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
+    // Relative API endpoint for same-domain deployments (Render/Vercel/Monolith)
+    return `${window.location.origin}/api`;
+  }
+  return "http://localhost:5000/api";
+};
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
+const API_BASE_URL = getApiBaseUrl();
 
 function getAuthHeader() {
   const token = localStorage.getItem("portfolio_admin_token");

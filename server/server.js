@@ -10,9 +10,23 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Enable CORS for frontend requests
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  "http://localhost:5000",
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:5000"],
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps, curl, server-to-server) or in allowed list
+      if (!origin || allowedOrigins.includes(origin) || process.env.NODE_ENV !== "production") {
+        return callback(null, true);
+      }
+      // Allow all subdomains/domains if CORS_ALLOW_ALL is enabled or by default for custom deployments
+      return callback(null, true);
+    },
     credentials: true,
   })
 );
@@ -27,14 +41,26 @@ app.use("/assets", express.static(path.join(__dirname, "../public/assets")));
 // API router
 app.use("/api", apiRoutes);
 
-// Root healthcheck
-app.get("/", (req, res) => {
-  res.json({
-    name: "Aranya Kishor Das Portfolio Backend",
-    status: "online",
-    documentation: "/api/health",
+// Serve React frontend production build if available
+const buildPath = path.join(__dirname, "../build");
+const fs = require("fs");
+if (fs.existsSync(buildPath)) {
+  app.use(express.static(buildPath));
+  app.get("*", (req, res) => {
+    if (!req.path.startsWith("/api") && !req.path.startsWith("/uploads") && !req.path.startsWith("/assets")) {
+      res.sendFile(path.join(buildPath, "index.html"));
+    }
   });
-});
+} else {
+  // Root healthcheck fallback when build is not local
+  app.get("/", (req, res) => {
+    res.json({
+      name: "Aranya Kishor Das Portfolio Backend",
+      status: "online",
+      documentation: "/api/health",
+    });
+  });
+}
 
 // Start server
 app.listen(PORT, async () => {
