@@ -41,23 +41,26 @@ app.use("/assets", express.static(path.join(__dirname, "../public/assets")));
 // API router
 app.use("/api", apiRoutes);
 
-// Serve React frontend production build if available
+// Serve React frontend production build if index.html exists
 const buildPath = path.join(__dirname, "../build");
+const indexPath = path.join(buildPath, "index.html");
 const fs = require("fs");
-if (fs.existsSync(buildPath)) {
+
+if (fs.existsSync(indexPath)) {
   app.use(express.static(buildPath));
   app.get("*", (req, res) => {
     if (!req.path.startsWith("/api") && !req.path.startsWith("/uploads") && !req.path.startsWith("/assets")) {
-      res.sendFile(path.join(buildPath, "index.html"));
+      res.sendFile(indexPath);
     }
   });
 } else {
-  // Root healthcheck fallback when build is not local
+  // Root healthcheck fallback when production build is not present (e.g. running React dev server on :3000)
   app.get("/", (req, res) => {
     res.json({
       name: "Aranya Kishor Das Portfolio Backend",
       status: "online",
       documentation: "/api/health",
+      message: "Backend API is active. React frontend is running on http://localhost:3000 in dev mode.",
     });
   });
 }

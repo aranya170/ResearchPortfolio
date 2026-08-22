@@ -1,73 +1,17 @@
-import React, { useEffect, useRef, useState } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import React from "react";
 import JobList from "./JobList";
 import "../styles/Experience.css";
 
-gsap.registerPlugin(ScrollTrigger);
-
-const Experience = () => {
-  const [activeKey, setActiveKey] = useState("1");
-  const experienceRef = useRef(null);
-  const contentRef = useRef(null);
-
-  const handleSelect = (eventKey) => {
-    setActiveKey(eventKey);
-  };
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        ".experience-title",
-        { y: 30, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.6,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: "#experience",
-            start: "top 85%",
-            toggleActions: "play none none reverse",
-          },
-        }
-      );
-
-      gsap.fromTo(
-        contentRef.current,
-        { y: 30, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.8,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: "#experience",
-            start: "top 80%",
-            toggleActions: "play none none reverse",
-          },
-        }
-      );
-    }, experienceRef);
-
-    return () => ctx.revert();
-  }, []);
-
-  return (
-    <section id="experience" ref={experienceRef}>
-      <div className="section-header">
-        <span className="section-title experience-title">Experience</span>
+const Experience = () => (
+  <section id="experience" className="portfolio-section">
+    <div className="section-head-bar">
+      <div className="section-head-left">
+        <span className="section-tagline">Leadership & Research Appointments</span>
+        <h2 className="section-heading">Experience & Roles</h2>
       </div>
-
-      <div className="experience-content" ref={contentRef}>
-        <div className="experience-bg-elements">
-          <div className="experience-circle"></div>
-          <div className="experience-square"></div>
-        </div>
-        <JobList activeKey={activeKey} handleSelect={handleSelect} />
-      </div>
-    </section>
-  );
-};
+    </div>
+    <JobList />
+  </section>
+);
 
 export default Experience;

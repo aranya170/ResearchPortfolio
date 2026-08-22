@@ -1,22 +1,25 @@
-const PROD_API_URL = "https://aranyaportfolio.onrender.com/api";
+const PROD_API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
 
-const getApiBaseUrl = () => {
+export const getApiBaseUrl = () => {
+  if (typeof window !== "undefined") {
+    const custom = localStorage.getItem("admin_custom_api_url");
+    if (custom) return custom.replace(/\/$/, "");
+
+    const isLocalhost =
+      window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1";
+
+    if (isLocalhost) {
+      return process.env.REACT_APP_LOCAL_API_URL || "http://localhost:5000/api";
+    }
+  }
+
   if (process.env.REACT_APP_API_URL) {
     return process.env.REACT_APP_API_URL.replace(/\/$/, "");
   }
-  if (
-    typeof window !== "undefined" &&
-    window.location.hostname !== "localhost" &&
-    window.location.hostname !== "127.0.0.1"
-  ) {
-    return PROD_API_URL;
-  }
-  return process.env.NODE_ENV === "production"
-    ? PROD_API_URL
-    : "http://localhost:5000/api";
-};
 
-const API_BASE_URL = getApiBaseUrl();
+  return PROD_API_URL;
+};
 
 function getAuthHeader() {
   const token = localStorage.getItem("portfolio_admin_token");
@@ -24,7 +27,8 @@ function getAuthHeader() {
 }
 
 async function request(endpoint, options = {}) {
-  const url = `${API_BASE_URL}${endpoint}`;
+  const baseUrl = getApiBaseUrl();
+  const url = `${baseUrl}${endpoint}`;
   const headers = {
     "Content-Type": "application/json",
     ...getAuthHeader(),

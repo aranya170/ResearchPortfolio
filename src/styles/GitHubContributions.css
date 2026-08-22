@@ -1,95 +1,78 @@
-.gh-contrib-container {
-  min-height: 50vh;
-  margin: 100px auto;
-  padding: 0 20px;
-  max-width: 900px;
+/* ── GitHub Contributions ── */
+.gh-header-profile-link {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--accent) !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.gh-widescreen-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  padding: 24px 28px;
+  box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
-  position: relative;
-  color: var(--lightest-slate);
-  font-family: 'NTR', sans-serif;
+  gap: 20px;
 }
 
-/* Override the default section-title underline to be shorter and centered under the text */
-.gh-contrib-container .section-title:after {
-  width: 10%;
-  left: 1%;
-}
-
-
-
-.gh-tag {
-  background: rgba(100, 217, 138, 0.1);
-  color: var(--green-bright);
-  border: 1px solid rgba(100, 217, 138, 0.3);
-  padding: 4px 14px;
-  border-radius: 100px;
-  font-size: 0.75rem;
-  margin-bottom: 12px;
-  display: inline-block;
-}
-
-/* .gh-subtitle {
-  color: var(--lightest-slate);
-  margin-top: 10px;
-  font-size: 1rem;
-  opacity: 0.7;
-} */
-
-.gh-content {
-  width: 100%;
-}
-
-.gh-stats-row {
+.gh-card-header {
   display: flex;
-  gap: 80px;
-  margin: 40px 0;
-  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
 }
 
-.stat-value {
+.gh-stats-items {
+  display: flex;
+  gap: 36px;
+}
+
+.gh-stat-block {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.gh-stat-icon {
+  font-size: 20px;
+  color: var(--accent);
+  background: var(--accent-pale);
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gh-stat-val {
   display: block;
-  font-size: 2.8rem;
-  font-weight: 800;
-  color: var(--green-bright);
-  text-shadow: 0 0 25px rgba(100, 217, 138, 0.3);
+  font-family: var(--font-serif);
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  line-height: 1.1;
 }
 
-.stat-label {
-  color: #8b949e;
-  text-transform: uppercase;
-  font-size: 0.7rem;
-  letter-spacing: 1.5px;
-  margin-top: 8px;
-  text-align: center;
+.gh-stat-label {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--text-muted);
 }
 
-.gh-graph-card {
-  background: var(--box-color);
-  border: 1px solid rgba(100, 217, 138, 0.2);
-  padding: 40px;
-  border-radius: 20px;
-  backdrop-filter: blur(10px);
-  box-shadow: var(--shadow-box);
+.gh-calendar-wrapper {
+  overflow-x: auto;
+  padding: 10px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.gh-calendar-wrapper svg {
   max-width: 100%;
-  width: 100%;
-}
-
-/* Ensure the calendar labels are visible against dark background */
-.gh-graph-card text {
-  fill: #8b949e !important;
-}
-
-.gh-footer-link {
-  margin-top: 30px;
-  color: var(--green-bright);
-  text-decoration: none;
-  font-size: 0.95rem;
-  transition: opacity 0.2s;
-  display: inline-block;
-}
-
-.gh-footer-link:hover {
-  opacity: 0.8;
-  text-decoration: underline;
 }

@@ -8,6 +8,10 @@ import {
   VscRefresh,
   VscAccount,
   VscCalendar,
+  VscSearch,
+  VscCopy,
+  VscReply,
+  VscInbox,
 } from "react-icons/vsc";
 
 export default function MessagesSector() {
@@ -15,13 +19,20 @@ export default function MessagesSector() {
   const [loading, setLoading] = useState(true);
   const [selectedMessage, setSelectedMessage] = useState(null);
   const [alert, setAlert] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterMode, setFilterMode] = useState("all"); // "all" or "unread"
+  const [copied, setCopied] = useState(false);
 
   const loadMessages = async () => {
     try {
       setLoading(true);
       const res = await api.getMessages();
       if (res && res.success) {
-        setMessages(res.data || []);
+        const msgs = res.data || [];
+        setMessages(msgs);
+        if (msgs.length > 0 && !selectedMessage) {
+          setSelectedMessage(msgs[0]);
+        }
       }
     } catch (err) {
       console.error("Failed to load messages:", err);
@@ -45,19 +56,20 @@ export default function MessagesSector() {
         setSelectedMessage((prev) => ({ ...prev, is_read: newStatus }));
       }
     } catch (err) {
-      alert("Failed to update status: " + err.message);
+      setAlert({ type: "error", text: "Failed to update status: " + err.message });
     }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Delete this message?")) return;
+    if (!window.confirm("Delete this inquiry from database?")) return;
     try {
       await api.deleteMessage(id);
-      setMessages((prev) => prev.filter((m) => m.id !== id));
+      const remaining = messages.filter((m) => m.id !== id);
+      setMessages(remaining);
       if (selectedMessage && selectedMessage.id === id) {
-        setSelectedMessage(null);
+        setSelectedMessage(remaining.length > 0 ? remaining[0] : null);
       }
-      setAlert({ type: "success", text: "Message deleted." });
+      setAlert({ type: "success", text: "Message permanently deleted." });
     } catch (err) {
       setAlert({ type: "error", text: "Failed to delete: " + err.message });
     }
@@ -70,177 +82,195 @@ export default function MessagesSector() {
     }
   };
 
+  const handleCopyEmail = (email) => {
+    navigator.clipboard.writeText(email);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   const unreadCount = messages.filter((m) => !m.is_read).length;
+
+  const filteredMessages = messages.filter((m) => {
+    const matchesSearch =
+      (m.name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (m.email || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (m.subject || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (m.message || "").toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter = filterMode === "all" || !m.is_read;
+    return matchesSearch && matchesFilter;
+  });
 
   return (
     <div className="admin-card">
       <div className="admin-card-header">
         <div>
           <h3 className="admin-card-title">
-            Inbound Messages & Contact Form Submissions
-            {unreadCount > 0 && <span className="admin-nav-badge" style={{ marginLeft: 10 }}>{unreadCount} new</span>}
+            <VscMail style={{ color: "#f43f5e" }} /> Inbound Inquiries & Contact Messages
+            {unreadCount > 0 && <span className="admin-nav-badge" style={{ marginLeft: 8 }}>{unreadCount} unread</span>}
           </h3>
           <div className="admin-card-subtitle">
-            Messages sent by recruiters, collaborators, and visitors through your portfolio contact form.
+            Prospective recruiters, partners, and viewers submitting from your portfolio contact form.
           </div>
         </div>
-        <button className="admin-btn admin-btn-secondary admin-btn-sm" onClick={loadMessages}>
-          <VscRefresh /> Refresh Inbox
+
+        <button className="admin-btn admin-btn-secondary admin-btn-sm" onClick={loadMessages} title="Refresh Inbox">
+          <VscRefresh /> Check New
         </button>
       </div>
 
       {alert && (
         <div className={`admin-alert admin-alert-${alert.type}`}>
           <span>{alert.text}</span>
-          <button onClick={() => setAlert(null)} style={{ background: "none", border: "none", color: "inherit" }}>
-            ✕
-          </button>
+          <button onClick={() => setAlert(null)} style={{ background: "none", border: "none", color: "inherit", cursor: "pointer" }}>✕</button>
         </div>
       )}
 
       {loading ? (
         <div style={{ padding: 20, color: "#8b949e" }}>Loading inbox messages...</div>
       ) : messages.length === 0 ? (
-        <div style={{ padding: 40, textAlign: "center", color: "#8b949e" }}>
-          <VscMail style={{ fontSize: 36, opacity: 0.5, marginBottom: 8 }} />
-          <div>No messages received yet. Messages sent from your contact form will appear here.</div>
+        <div style={{ textAlign: "center", padding: "60px 20px", color: "#94a3b8" }}>
+          <VscInbox style={{ fontSize: "3rem", color: "#64748b", marginBottom: 12 }} />
+          <h4 style={{ color: "#fff", margin: "0 0 6px" }}>Inbox is Empty</h4>
+          <p style={{ fontSize: "0.85rem", color: "#64748b", margin: 0 }}>
+            When someone submits a message on your site, it will arrive here in real-time.
+          </p>
         </div>
       ) : (
-        <div style={{ display: "grid", gridTemplateColumns: selectedMessage ? "1fr 1.2fr" : "1fr", gap: 20 }}>
-          {/* Message List */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 8, maxHeight: 600, overflowY: "auto" }}>
-            {messages.map((msg) => (
-              <div
-                key={msg.id}
-                onClick={() => handleSelectMessage(msg)}
-                style={{
-                  padding: 14,
-                  borderRadius: 8,
-                  background: selectedMessage?.id === msg.id
-                    ? "rgba(100, 217, 138, 0.12)"
-                    : !msg.is_read
-                    ? "rgba(255, 255, 255, 0.05)"
-                    : "rgba(255, 255, 255, 0.02)",
-                  border: "1px solid",
-                  borderColor: selectedMessage?.id === msg.id
-                    ? "var(--admin-accent)"
-                    : !msg.is_read
-                    ? "rgba(100, 217, 138, 0.3)"
-                    : "rgba(255, 255, 255, 0.06)",
-                  cursor: "pointer",
-                  transition: "all 0.15s ease",
-                }}
-              >
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    {!msg.is_read && (
-                      <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#64d98a" }} />
-                    )}
-                    <span style={{ fontWeight: msg.is_read ? 500 : 700, color: "#fff", fontSize: "0.92rem" }}>
-                      {msg.name}
-                    </span>
-                  </div>
-                  <span style={{ fontSize: "0.75rem", color: "#8b949e" }}>
-                    {msg.created_at ? new Date(msg.created_at).toLocaleDateString() : "Recent"}
-                  </span>
-                </div>
+        <div className="admin-inbox-grid">
+          {/* Left Column: Messages List */}
+          <div>
+            <div style={{ marginBottom: 12, display: "flex", gap: 8 }}>
+              <div style={{ position: "relative", flex: 1 }}>
+                <input
+                  type="text"
+                  className="admin-input"
+                  placeholder="Search sender, email, keywords..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  style={{ paddingLeft: 34, fontSize: "0.85rem", padding: "8px 12px 8px 34px" }}
+                />
+                <VscSearch style={{ position: "absolute", left: 10, top: 10, color: "#64748b" }} />
+              </div>
 
-                <div style={{ fontSize: "0.8rem", color: "#58a6ff", marginBottom: 6 }}>{msg.email}</div>
-
-                <div
-                  style={{
-                    fontSize: "0.82rem",
-                    color: "#8b949e",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                  }}
+              <div style={{ display: "flex", gap: 4 }}>
+                <button
+                  className={`admin-filter-pill ${filterMode === "all" ? "active" : ""}`}
+                  onClick={() => setFilterMode("all")}
+                  style={{ fontSize: "0.78rem", padding: "4px 10px" }}
                 >
-                  {msg.message}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Message Reader Panel */}
-          {selectedMessage && (
-            <div
-              style={{
-                background: "rgba(0, 0, 0, 0.3)",
-                border: "1px solid rgba(255, 255, 255, 0.08)",
-                borderRadius: 10,
-                padding: 20,
-                display: "flex",
-                flexDirection: "column",
-                gap: 16,
-              }}
-            >
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                <div>
-                  <h4 style={{ margin: "0 0 4px", fontSize: "1.1rem", color: "#fff" }}>
-                    {selectedMessage.name}
-                  </h4>
-                  <a
-                    href={`mailto:${selectedMessage.email}`}
-                    style={{ color: "#58a6ff", fontSize: "0.85rem", textDecoration: "none" }}
-                  >
-                    {selectedMessage.email}
-                  </a>
-                </div>
-
-                <div style={{ display: "flex", gap: 8 }}>
-                  <button
-                    className="admin-btn admin-btn-secondary admin-btn-sm"
-                    onClick={() => handleToggleRead(selectedMessage)}
-                    title={selectedMessage.is_read ? "Mark Unread" : "Mark Read"}
-                  >
-                    {selectedMessage.is_read ? <VscMail /> : <VscMailRead />}
-                    {selectedMessage.is_read ? "Mark Unread" : "Mark Read"}
-                  </button>
-                  <button
-                    className="admin-btn admin-btn-danger admin-btn-sm"
-                    onClick={() => handleDelete(selectedMessage.id)}
-                    title="Delete Message"
-                  >
-                    <VscTrash />
-                  </button>
-                </div>
-              </div>
-
-              <div style={{ fontSize: "0.78rem", color: "#8b949e", display: "flex", alignItems: "center", gap: 6 }}>
-                <VscCalendar /> Received:{" "}
-                {selectedMessage.created_at
-                  ? new Date(selectedMessage.created_at).toLocaleString()
-                  : "N/A"}
-              </div>
-
-              <div
-                style={{
-                  background: "rgba(255, 255, 255, 0.03)",
-                  padding: 16,
-                  borderRadius: 8,
-                  color: "#e6edf3",
-                  fontSize: "0.92rem",
-                  lineHeight: 1.6,
-                  whiteSpace: "pre-wrap",
-                  flexGrow: 1,
-                }}
-              >
-                {selectedMessage.message}
-              </div>
-
-              <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                <a
-                  href={`mailto:${selectedMessage.email}?subject=Re: Portfolio Inquiry`}
-                  className="admin-btn admin-btn-primary"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  All ({messages.length})
+                </button>
+                <button
+                  className={`admin-filter-pill ${filterMode === "unread" ? "active" : ""}`}
+                  onClick={() => setFilterMode("unread")}
+                  style={{ fontSize: "0.78rem", padding: "4px 10px" }}
                 >
-                  <VscMail /> Reply via Email
-                </a>
+                  Unread ({unreadCount})
+                </button>
               </div>
             </div>
-          )}
+
+            <div className="admin-inbox-list">
+              {filteredMessages.map((msg) => {
+                const initials = (msg.name || "U")
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")
+                  .substring(0, 2)
+                  .toUpperCase();
+                const isSelected = selectedMessage && selectedMessage.id === msg.id;
+
+                return (
+                  <div
+                    key={msg.id}
+                    className={`admin-inbox-item ${isSelected ? "active" : ""} ${!msg.is_read ? "unread" : ""}`}
+                    onClick={() => handleSelectMessage(msg)}
+                  >
+                    <div className="admin-inbox-avatar">{initials}</div>
+                    <div className="admin-inbox-preview">
+                      <div className="admin-inbox-sender">
+                        <span>{msg.name || "Anonymous"}</span>
+                        <span className="admin-inbox-date">
+                          {msg.created_at ? new Date(msg.created_at).toLocaleDateString() : "Recent"}
+                        </span>
+                      </div>
+                      <div style={{ fontSize: "0.82rem", color: isSelected ? "#38bdf8" : "#cbd5e1", fontWeight: 600, marginBottom: 2 }}>
+                        {msg.subject || "No Subject"}
+                      </div>
+                      <div className="admin-inbox-snippet">{msg.message || "..."}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Right Column: Message Detail Viewer */}
+          <div>
+            {selectedMessage ? (
+              <div className="admin-inbox-viewer">
+                {/* Header Actions */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20, paddingBottom: 16, borderBottom: "1px solid var(--admin-card-border)" }}>
+                  <div>
+                    <h3 style={{ margin: "0 0 8px", fontSize: "1.25rem", color: "#fff", fontWeight: 700 }}>
+                      {selectedMessage.subject || "(No Subject Provided)"}
+                    </h3>
+                    <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", fontSize: "0.85rem", color: "#94a3b8" }}>
+                      <span style={{ color: "#fff", fontWeight: 600 }}>{selectedMessage.name}</span>
+                      <span>&lt;{selectedMessage.email}&gt;</span>
+                      <span>•</span>
+                      <span>
+                        {selectedMessage.created_at ? new Date(selectedMessage.created_at).toLocaleString() : "Recently received"}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <button
+                      className="admin-btn admin-btn-secondary admin-btn-sm"
+                      onClick={() => handleToggleRead(selectedMessage)}
+                      title={selectedMessage.is_read ? "Mark as unread" : "Mark as read"}
+                    >
+                      {selectedMessage.is_read ? <VscMail /> : <VscMailRead />}
+                      {selectedMessage.is_read ? "Mark Unread" : "Mark Read"}
+                    </button>
+                    <button
+                      className="admin-btn admin-btn-danger admin-btn-sm"
+                      onClick={() => handleDelete(selectedMessage.id)}
+                      title="Permanently remove"
+                    >
+                      <VscTrash /> Delete
+                    </button>
+                  </div>
+                </div>
+
+                {/* Message Body */}
+                <div style={{ flexGrow: 1, whiteSpace: "pre-wrap", lineHeight: 1.6, fontSize: "0.95rem", color: "#e2e8f0", background: "rgba(0,0,0,0.2)", padding: 20, borderRadius: "var(--admin-radius-md)", border: "1px solid var(--admin-card-border)", minHeight: 220 }}>
+                  {selectedMessage.message}
+                </div>
+
+                {/* Reply Toolbar */}
+                <div style={{ marginTop: 20, display: "flex", gap: 10 }}>
+                  <a
+                    href={`mailto:${selectedMessage.email}?subject=Re: ${encodeURIComponent(selectedMessage.subject || "Portfolio Inquiry")}`}
+                    className="admin-btn admin-btn-primary admin-btn-sm"
+                  >
+                    <VscReply /> Reply via Email Client
+                  </a>
+                  <button
+                    className="admin-btn admin-btn-secondary admin-btn-sm"
+                    onClick={() => handleCopyEmail(selectedMessage.email)}
+                  >
+                    <VscCopy /> {copied ? "Email Copied!" : "Copy Email Address"}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div style={{ textAlign: "center", padding: 60, color: "#64748b" }}>
+                Select a message on the left to read details
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>

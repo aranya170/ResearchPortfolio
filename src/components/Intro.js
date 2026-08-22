@@ -1,264 +1,129 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import "../styles/Intro.css";
-import AnimatedRobot from "./AnimatedRobot";
-import Icon from "./Icons";
-import { gsap } from "gsap";
 import { usePortfolio } from "../context/PortfolioContext";
+import { FiArrowUpRight, FiGithub, FiLinkedin, FiMail, FiFileText, FiCpu, FiCode } from "react-icons/fi";
 
 const Intro = () => {
   const { portfolio } = usePortfolio();
-  const siteProfile = portfolio?.siteProfile || {
-    greeting: "Hi there! I'm ",
-    name: "Aranya Kishor Das",
-    subtitle: "AI Researcher & Robotics Enthusiast",
-    subtitle_suffix: "dedicated to Intelligent Systems.",
-    description:
-      "From building RC cars in highschool to leading UIU Robotics and researching AI, I'm driven by a passion for creating smarter solutions through Deep Learning and Robotics.",
-    cv_url: "/assets/My_CV.pdf",
-    show_robot: true,
-  };
+  const p = portfolio?.siteProfile || {};
+  const socials = portfolio?.settings?.socials || {};
 
-  const cursorRef = useRef(null);
-  const subtitleRef = useRef(null);
-  const descRef = useRef(null);
-  const buttonsRef = useRef(null);
-  const animationRef = useRef(null);
-  const textRef = useRef(null);
-  const nameRef = useRef(null);
-  const hasRunRef = useRef(false);
-  const animationStartedRef = useRef(false);
-
-  useEffect(() => {
-    if (hasRunRef.current) return;
-    hasRunRef.current = true;
-
-    gsap.set([subtitleRef.current, descRef.current, buttonsRef.current], {
-      opacity: 0,
-      y: 20,
-    });
-
-    if (animationRef.current) {
-      gsap.set(animationRef.current, {
-        opacity: 0,
-        scale: 0.95,
-      });
-    }
-
-    gsap.to([subtitleRef.current, descRef.current, buttonsRef.current], {
-      opacity: 1,
-      y: 0,
-      duration: 0.4,
-      stagger: 0.6,
-      ease: "power2.out",
-      delay: 0.6,
-    });
-
-    if (animationRef.current) {
-      gsap.to(animationRef.current, {
-        opacity: 1,
-        scale: 1,
-        duration: 0.6,
-        ease: "power2.out",
-        delay: 0.6,
-      });
-    }
-
-    if (document.fonts) {
-      document.fonts.ready.then(() => {
-        if (!animationStartedRef.current) {
-          animationStartedRef.current = true;
-          startTextAnimation();
-        }
-      });
-
-      setTimeout(() => {
-        if (!animationStartedRef.current) {
-          animationStartedRef.current = true;
-          startTextAnimation();
-        }
-      }, 1000);
-    } else {
-      setTimeout(() => {
-        startTextAnimation();
-      }, 500);
-    }
-
-    function startTextAnimation() {
-      if (!textRef.current || !nameRef.current || !cursorRef.current) return;
-      const introText = textRef.current.textContent;
-      const nameText = nameRef.current.textContent;
-
-      textRef.current.textContent = "";
-      nameRef.current.textContent = "";
-
-      const introChars = introText.split("").map((char) => {
-        const span = document.createElement("span");
-        span.textContent = char;
-        span.style.opacity = "0";
-        textRef.current.appendChild(span);
-        return span;
-      });
-
-      const nameChars = nameText.split("").map((char) => {
-        const span = document.createElement("span");
-        span.textContent = char;
-        span.style.opacity = "0";
-        nameRef.current.appendChild(span);
-        return span;
-      });
-
-      const allChars = [...introChars, ...nameChars];
-      const windmill = cursorRef.current.querySelector("svg");
-
-      gsap.set(cursorRef.current, {
-        opacity: 1,
-        left: -10,
-        top: "50%",
-        xPercent: 0,
-        yPercent: -50,
-      });
-
-      const typingTl = gsap.timeline();
-
-      if (windmill) {
-        gsap.to(windmill, {
-          rotation: 360 * 7.5,
-          duration: 3,
-          ease: "linear",
-          repeat: -1,
-          transformOrigin: "center center",
-        });
-      }
-
-      document.body.offsetHeight;
-
-      allChars.forEach((char) => {
-        const charWidth = char.getBoundingClientRect().width || 10;
-
-        typingTl.to(cursorRef.current, {
-          left: `+=${charWidth}`,
-          duration: 0.08,
-          ease: "none",
-          onStart: () => {
-            gsap.to(char, {
-              opacity: 1,
-              duration: 0.1,
-            });
-          },
-        });
-      });
-
-      typingTl.to(cursorRef.current, {
-        left: "+=20",
-        duration: 0.1,
-        ease: "power1.out",
-      });
-
-      if (windmill) {
-        typingTl.add(() => {
-          gsap.killTweensOf(windmill);
-          gsap.to(windmill, {
-            rotation: "+=385",
-            duration: 0.9,
-            ease: "power2.Out",
-            transformOrigin: "center center",
-          });
-        });
-      }
-    }
-
-    return () => {
-      gsap.killTweensOf([
-        subtitleRef.current,
-        descRef.current,
-        buttonsRef.current,
-        animationRef.current,
-      ]);
-    };
-  }, []);
+  const name = p.name || "Aranya Kishor Das";
+  const subtitle = p.subtitle || "AI Researcher & Robotics Lead";
+  const description =
+    p.description ||
+    "Undergraduate Research Assistant & President of UIU Robotics Club. Specializing in Deep Learning architectures, autonomous robotics, parallel kinematics, and full-stack systems.";
+  const cvUrl = p.cv_url || "/assets/My_CV.pdf";
+  const githubUrl = socials.github || "https://github.com/aranya170";
+  const linkedinUrl = socials.linkedin || "https://www.linkedin.com/in/aranya170";
+  const emailUrl = `mailto:${socials.email || "aranya.akd@gmail.com"}`;
 
   return (
-    <div className="intro-section">
-      <div className="intro-content">
-        <div className="typist-content">
-          <div className="text-typing-container" style={{ position: "relative" }}>
-            <h1
-              className="intro-title-wrapper"
-              style={{ display: "inline", fontSize: "inherit", fontWeight: "inherit" }}
-            >
-              <span className="intro-title" ref={textRef}>
-                {siteProfile.greeting || "Hi there! I'm "}
-              </span>
-              <span className="intro-name" ref={nameRef}>
-                {siteProfile.name || "Aranya Kishor Das"}
-              </span>
-            </h1>
+    <section id="intro" className="executive-hero">
+      <div className="hero-grid">
+        {/* Left Column: Core Identity & Bio */}
+        <div className="hero-left">
+          <div className="hero-status-pill">
+            <span className="status-dot"></span>
+            Available for Research Collaborations & Projects
+          </div>
 
-            <div
-              ref={cursorRef}
-              className="windmill-cursor"
-              style={{ position: "absolute", pointerEvents: "none" }}
+          <h1 className="hero-name">{name}</h1>
+          <p className="hero-role">{subtitle}</p>
+
+          <p className="hero-bio">{description}</p>
+
+          <div className="hero-tags">
+            <span className="hero-domain-tag">Autonomous Systems</span>
+            <span className="hero-domain-tag">Deep Learning</span>
+            <span className="hero-domain-tag">Parallel Robotics</span>
+            <span className="hero-domain-tag">IoT & Embedded</span>
+            <span className="hero-domain-tag">Full-Stack Engineering</span>
+          </div>
+
+          <div className="hero-actions">
+            <a href="#projects" className="hero-primary-btn">
+              Explore Featured Works <FiArrowUpRight />
+            </a>
+            <a
+              href={cvUrl}
+              className="hero-secondary-btn"
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                fill="none"
-                viewBox="0 0 248 248"
-              >
-                <path
-                  fill="url(#windmill-gradient-1)"
-                  d="M152.266 123.716h94.275c.802 0 1.459.656 1.459 1.459v121.067c0 .81-.664 1.474-1.474 1.466-67.274-.78-121.669-55.137-122.522-122.387v121.22c0 .803-.657 1.459-1.46 1.459H1.474c-.81 0-1.474-.664-1.467-1.474C.795 178.721 56 124.008 123.996 124H1.459C.657 124 0 123.344 0 122.541V1.474C0 .664.664 0 1.474.008c67.274.78 121.669 55.137 122.522 122.387V1.46c0-.803.657-1.46 1.46-1.46h121.07c.81 0 1.474.664 1.467 1.474-.679 58.224-41.486 106.801-96.055 119.367-1.686.386-1.401 2.875.336 2.875h-.008Z"
-                ></path>
-                <defs>
-                  <linearGradient
-                    id="windmill-gradient-1"
-                    x1="218"
-                    x2="-47.283"
-                    y1="258"
-                    y2="153.706"
-                    gradientUnits="userSpaceOnUse"
-                  >
-                    <stop offset=".27" stopColor="#64D98A"></stop>
-                    <stop offset=".838" stopColor="#e2e8fd"></stop>
-                  </linearGradient>
-                </defs>
-              </svg>
+              <FiFileText /> Curriculum Vitae
+            </a>
+            <div className="hero-social-links">
+              <a href={githubUrl} target="_blank" rel="noopener noreferrer" title="GitHub">
+                <FiGithub />
+              </a>
+              <a href={linkedinUrl} target="_blank" rel="noopener noreferrer" title="LinkedIn">
+                <FiLinkedin />
+              </a>
+              <a href={emailUrl} title="Email">
+                <FiMail />
+              </a>
             </div>
           </div>
         </div>
 
-        <div className="intro-subtitle" ref={subtitleRef}>
-          I'm a{" "}
-          <span className="intro-subtitle-name">
-            {siteProfile.subtitle || "AI Researcher & Robotics Enthusiast"}
-          </span>{" "}
-          {siteProfile.subtitle_suffix || "dedicated to Intelligent Systems."}
-        </div>
+        {/* Right Column: Project Showcase Index (No Emojis) */}
+        <div className="hero-right">
+          <div className="hero-index-card">
+            <div className="index-card-head">
+              <span className="index-kicker">ENGINEERING DOMAINS</span>
+              <span className="index-sub">Quick Navigation</span>
+            </div>
 
-        <div className="intro-desc" ref={descRef}>
-          {siteProfile.description}
-        </div>
+            <div className="index-jump-list">
+              <a href="#projects" className="jump-item">
+                <div className="jump-icon"><FiFileText /></div>
+                <div className="jump-details">
+                  <h4>Research & AI Models</h4>
+                  <p>Open-source repositories, psychometric classification & ensemble networks</p>
+                </div>
+                <span className="jump-arrow"><FiArrowUpRight /></span>
+              </a>
 
-        <div className="intro-buttons" ref={buttonsRef}>
-          <a
-            href={siteProfile.cv_url || "/assets/My_CV.pdf"}
-            className="outline-button btn-effect"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            View CV
-            <Icon name="Document" className="button-icon" />
-          </a>
+              <a href="#projects" className="jump-item">
+                <div className="jump-icon"><FiCpu /></div>
+                <div className="jump-details">
+                  <h4>Hardware & Kinematics</h4>
+                  <p>Delta parallel arms, 4-axis SCARA robots, quadcopters & IoT telemetry</p>
+                </div>
+                <span className="jump-arrow"><FiArrowUpRight /></span>
+              </a>
+
+              <a href="#projects" className="jump-item">
+                <div className="jump-icon"><FiCode /></div>
+                <div className="jump-details">
+                  <h4>Full-Stack & Distributed Systems</h4>
+                  <p>Production web portals, ERP supply chains, Laravel & React architectures</p>
+                </div>
+                <span className="jump-arrow"><FiArrowUpRight /></span>
+              </a>
+            </div>
+
+            <div className="index-stats-bar">
+              <div className="stat-unit">
+                <span className="stat-val">3+</span>
+                <span className="stat-name">Research Repos</span>
+              </div>
+              <div className="stat-separator"></div>
+              <div className="stat-unit">
+                <span className="stat-val">5+</span>
+                <span className="stat-name">Hardware Builds</span>
+              </div>
+              <div className="stat-separator"></div>
+              <div className="stat-unit">
+                <span className="stat-val">10+</span>
+                <span className="stat-name">Systems Built</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-
-      {siteProfile.show_robot !== false && (
-        <div className="intro-animation" ref={animationRef}>
-          <AnimatedRobot />
-        </div>
-      )}
-    </div>
+    </section>
   );
 };
 

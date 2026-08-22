@@ -1,108 +1,90 @@
-import React, { useEffect, useRef } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Icon from "./Icons";
+import React from "react";
 import "../styles/About.css";
 import { usePortfolio } from "../context/PortfolioContext";
-
-gsap.registerPlugin(ScrollTrigger);
+import { FiAward, FiBookOpen, FiCpu, FiTrendingUp } from "react-icons/fi";
 
 const About = () => {
   const { portfolio } = usePortfolio();
-  const aboutData = portfolio?.about || {
-    title: "About Me",
-    profile_image: "/assets/Aranya Kishor Das.png",
-    paragraphs: [
-      `Hi, my name is Aranya and I enjoy solving puzzles, building things, and exploring technology. My journey began in 2015 when I became fascinated by <span class="highlight">remote-controlled cars</span> and microcontrollers like <span class="highlight">Arduino and ESP</span>. That childhood curiosity sparked a lifelong passion for electronics and robotics.`,
-      `From 2015 to 2019, I explored the vast fields of computer science, graphics design, and software engineering. During the pandemic, I deep-dived into <span class="highlight">Web Development and Figma Design</span>. My academic journey eventually led me to United International University, after receiving 19 admission offers from universities in the <span class="highlight">USA and Switzerland</span>.`,
-      `In 2024, I pivoted my focus toward <span class="highlight">Deep Learning and Artificial Intelligence</span>. Today, I serve as an Undergraduate Research Assistant at UIU, a Teaching Assistant for IoT and Robotics, and the <span class="highlight">President of the UIU Robotics Club</span>, where I continue to push the boundaries of intelligent systems.`,
-      `Outside of work, I love playing video games. I'm also into aesthetic interior designs and I love hoarding cool tech products.`
-    ],
-    timeline_link_text: "View my timeline to learn more about my unique journey",
-    contact_button_text: "Get in Touch"
-  };
-
-  const aboutRef = useRef(null);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        ".about-title",
-        { y: 30, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.6,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: "#about",
-            start: "top 85%",
-            toggleActions: "play none none reverse",
-          },
-        }
-      );
-
-      gsap.fromTo(
-        ".about-flex-container > *",
-        { y: 30, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.8,
-          stagger: 0.15,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: ".about-content",
-            start: "top 80%",
-            toggleActions: "play none none reverse",
-          },
-        }
-      );
-    }, aboutRef);
-
-    return () => ctx.revert();
-  }, [aboutData]);
-
-  const paragraphs = Array.isArray(aboutData.paragraphs) ? aboutData.paragraphs : [];
+  const aboutData = portfolio?.about || {};
+  const profileImg = aboutData.profile_image || "/assets/Aranya Kishor Das.png";
 
   return (
-    <section id="about" ref={aboutRef}>
-      <div className="about-content">
-        <div className="about-flex-container">
-          <div className="about-image-container">
-            <img 
-              src={aboutData.profile_image || "/assets/Aranya Kishor Das.png"} 
-              alt="Aranya Kishor Das" 
-              className="about-profile-image"
-            />
+    <section id="about" className="portfolio-section">
+      <div className="section-head-bar">
+        <div className="section-head-left">
+          <div className="section-tagline">Background & Leadership</div>
+          <h2 className="section-heading">Academic Profile & Focus</h2>
+        </div>
+      </div>
+
+      <div className="about-grid">
+        {/* Left: Dossier Card */}
+        <div className="dossier-card">
+          <div className="dossier-photo">
+            <img src={profileImg} alt="Aranya Kishor Das" />
           </div>
-          
-          <div className="about-text-content">
-            <div className="section-header">
-              <span className="section-title about-title">{aboutData.title || "About Me"}</span>
+          <div className="dossier-details">
+            <h3 className="dossier-title">Aranya Kishor Das</h3>
+            <p className="dossier-subtitle">Undergraduate Researcher & Club President</p>
+            <div className="dossier-rows">
+              <div className="d-row">
+                <span className="d-label">Affiliation</span>
+                <span className="d-val">United International University</span>
+              </div>
+              <div className="d-row">
+                <span className="d-label">Core Focus</span>
+                <span className="d-val">Deep Learning, Autonomous Robotics, Kinematics</span>
+              </div>
+              <div className="d-row">
+                <span className="d-label">Location</span>
+                <span className="d-val">Dhaka, Bangladesh</span>
+              </div>
             </div>
+          </div>
+        </div>
 
-            <div className="about-description">
-              {paragraphs.map((para, idx) => (
-                <p
-                  key={idx}
-                  dangerouslySetInnerHTML={{ __html: para }}
-                />
-              ))}
-            </div>
-
-            <p className="about-timeline-link">
-              <a href="#timeline">
-                <span role="img" aria-label="timeline"></span>
-                {aboutData.timeline_link_text || "View my timeline to learn more about my unique journey"}{" "}
-                <span className="about-timeline-highlight">unique journey</span>{" "}
-                &rarr;
-              </a>
+        {/* Right: Narrative + 4 Core Pillars */}
+        <div className="about-right-pane">
+          <div className="about-bio-card">
+            <p>
+              I am an AI researcher and roboticist focused on bridging the gap between theoretical deep learning models and practical embedded hardware. My path began with microcontrollers and RC robotics in 2015, evolving into active research on deep neural architectures, adaptive ensemble modeling, and parallel robotic manipulation.
             </p>
-            <div className="about-actions">
-              <a href="#contact" className="resume-button btn-effect">
-                {aboutData.contact_button_text || "Get in Touch"} <Icon name="Mail" className="button-icon" />
-              </a>
+            <p>
+              Currently serving as <strong>Undergraduate Research Assistant</strong> under Dr. Mohammad Nurul Huda and <strong>President of UIU Robotics Club</strong>, I led national-level open-source initiatives like RoboNeT while mentoring 50+ undergraduate engineering students in neural network optimization and embedded systems design.
+            </p>
+          </div>
+
+          <div className="pillars-grid">
+            <div className="pillar-box">
+              <div className="pillar-ico"><FiCpu /></div>
+              <div className="pillar-info">
+                <h4>Robotics & Kinematics</h4>
+                <p>Parallel Delta geometry, 4-axis SCARA kinematics, trajectory planning, and motor synchronization.</p>
+              </div>
+            </div>
+
+            <div className="pillar-box">
+              <div className="pillar-ico"><FiTrendingUp /></div>
+              <div className="pillar-info">
+                <h4>Deep Learning & AI</h4>
+                <p>Adaptive ensemble learning, psychometric classification models, and computer vision pipelines.</p>
+              </div>
+            </div>
+
+            <div className="pillar-box">
+              <div className="pillar-ico"><FiBookOpen /></div>
+              <div className="pillar-info">
+                <h4>Open Research & Mentorship</h4>
+                <p>Creator of RoboNeT (open-source robotics learning repository); Teaching Assistant for IoT & Robotics.</p>
+              </div>
+            </div>
+
+            <div className="pillar-box">
+              <div className="pillar-ico"><FiAward /></div>
+              <div className="pillar-info">
+                <h4>Global Recognition</h4>
+                <p>19 university admission offers across USA & Switzerland; executive leadership across 100+ members.</p>
+              </div>
             </div>
           </div>
         </div>

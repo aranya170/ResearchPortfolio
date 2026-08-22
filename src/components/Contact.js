@@ -1,192 +1,46 @@
-import React, { useState, useRef, useEffect } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Icon from "./Icons";
+import React, { useState } from "react";
 import "../styles/Contact.css";
 import { api } from "../services/api";
 import { usePortfolio } from "../context/PortfolioContext";
-
-gsap.registerPlugin(ScrollTrigger);
+import { FiMail, FiMapPin, FiLinkedin, FiGithub, FiSend, FiCheck } from "react-icons/fi";
 
 export default function Contact() {
-  const [message, setMessage] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const formRef = useRef(null);
-  const successRef = useRef(null);
-  const contactSectionRef = useRef(null);
+  const [message, setMessage] = useState("");
+  const [status, setStatus] = useState("idle");
+
   const { portfolio } = usePortfolio();
-  const yourEmail = portfolio?.settings?.socials?.email || "aranya.akd@gmail.com";
-
-  useEffect(() => {
-    gsap.set(".contact-container", {
-      width: "100%",
-      maxWidth: "600px",
-      height: "auto",
-      margin: "0 auto",
-    });
-
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: "#contact",
-        start: "top 75%",
-        toggleActions: "play none none reverse",
-      },
-    });
-
-    tl.fromTo(
-      "#contact .section-title",
-      {
-        y: 30,
-        opacity: 0,
-      },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.6,
-        ease: "power2.out",
-      }
-    );
-
-    tl.fromTo(
-      ".contact-intro",
-      {
-        y: 30,
-        opacity: 0,
-      },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.6,
-        ease: "power2.out",
-      },
-      "-=0.3"
-    );
-
-    tl.fromTo(
-      ".contact-container",
-      {
-        y: 50,
-        opacity: 0,
-      },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.8,
-        ease: "power3.out",
-      },
-      "-=0.3"
-    );
-
-    tl.fromTo(
-      ".form-group",
-      {
-        y: 20,
-        opacity: 0,
-      },
-      {
-        y: 0,
-        opacity: 1,
-        stagger: 0.15,
-        duration: 0.5,
-        ease: "power2.out",
-      },
-      "-=0.4"
-    );
-
-    tl.fromTo(
-      [".contact-actions", ".contact-info"],
-      {
-        y: 15,
-        opacity: 0,
-      },
-      {
-        y: 0,
-        opacity: 1,
-        stagger: 0.1,
-        duration: 0.5,
-        ease: "power2.out",
-      },
-      "-=0.2"
-    );
-
-    return () => {
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-    };
-  }, []);
-
-  const [status, setStatus] = useState("idle"); // idle, sending, success, error
+  const socials = portfolio?.settings?.socials || {};
+  const yourEmail = socials.email || "aranya.akd@gmail.com";
 
   const handleSend = async (e) => {
     e.preventDefault();
     setStatus("sending");
 
-    try {
-      // Primary: Save directly into PostgreSQL Backend
-      await api.sendContactMessage({
-        name,
-        email,
-        message,
-      });
+    const payload = { name, email, message };
 
-      setStatus("success");
-      gsap.to(formRef.current, {
-        opacity: 0,
-        y: -20,
-        duration: 0.3,
-        ease: "power2.inOut",
-        onComplete: () => {
-          formRef.current.style.display = "none";
-          successRef.current.style.display = "flex";
-
-          gsap.fromTo(
-            successRef.current,
-            { opacity: 0, y: 20 },
-            { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }
-          );
-        },
-      });
-      setIsSubmitted(true);
-    } catch (apiError) {
-      console.warn("Backend submit error, trying fallback:", apiError.message);
-      try {
-        await fetch("https://script.google.com/macros/s/AKfycbziN-8CZYf_SLoMykwZLQArQzT_vea5BHcKcxH_RQZ5whzCXoeaYuwZbXhw2ablsjhI/exec", {
+    const tryFallback = async () => {
+      await fetch(
+        "https://script.google.com/macros/s/AKfycbziN-8CZYf_SLoMykwZLQArQzT_vea5BHcKcxH_RQZ5whzCXoeaYuwZbXhw2ablsjhI/exec",
+        {
           method: "POST",
           mode: "no-cors",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: name,
-            email: email,
-            message: message,
-            date: new Date().toLocaleString(),
-          }),
-        });
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...payload, date: new Date().toLocaleString() }),
+        }
+      );
+    };
 
+    try {
+      await api.sendContactMessage(payload);
+      setStatus("success");
+    } catch {
+      try {
+        await tryFallback();
         setStatus("success");
-        gsap.to(formRef.current, {
-          opacity: 0,
-          y: -20,
-          duration: 0.3,
-          ease: "power2.inOut",
-          onComplete: () => {
-            formRef.current.style.display = "none";
-            successRef.current.style.display = "flex";
-
-            gsap.fromTo(
-              successRef.current,
-              { opacity: 0, y: 20 },
-              { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }
-            );
-          },
-        });
-        setIsSubmitted(true);
-      } catch (fallbackError) {
-        console.error("Error submitting form:", fallbackError);
+      } catch {
         setStatus("error");
-        alert("Oops! There was a problem saving your message.");
       }
     }
   };
@@ -196,120 +50,135 @@ export default function Contact() {
     setEmail("");
     setMessage("");
     setStatus("idle");
-
-    gsap.to(successRef.current, {
-      opacity: 0,
-      y: -20,
-      duration: 0.3,
-      ease: "power2.inOut",
-      onComplete: () => {
-        successRef.current.style.display = "none";
-        formRef.current.style.display = "block";
-
-        gsap.fromTo(
-          formRef.current,
-          { opacity: 0, y: 20 },
-          { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }
-        );
-
-        setIsSubmitted(false);
-      },
-    });
   };
 
   return (
-    <section id="contact" ref={contactSectionRef}>
-      <div className="section-header">
-        <span className="section-title">Get In Touch</span>
-      </div>
-      <div className="contact-intro">
-        <p>
-          I’m currently exploring research and leadership opportunities in AI and
-          Robotics. I'm always open to connecting with like-minded
-          professionals, researchers, or collaborators. If you have a project or
-          role in mind, I’d love to hear from you!
-        </p>
-      </div>
-      <div className="contact-container">
-        <div className="contact-bg-elements">
-          <div className="contact-circle"></div>
-          <div className="contact-square"></div>
+    <section id="contact" className="portfolio-section">
+      <div className="section-head-bar">
+        <div className="section-head-left">
+          <div className="section-tagline">Direct Inquiries</div>
+          <h2 className="section-heading">Get In Touch</h2>
         </div>
+      </div>
 
-        <form className="contact-form" onSubmit={handleSend} ref={formRef}>
-          <div className="form-group">
-            <input
-              type="text"
-              className="contact-input"
-              placeholder="Your Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-            <Icon name="User" className="input-icon" />
-          </div>
+      <div className="contact-grid">
+        {/* Left: Contact Info */}
+        <div className="contact-card-info">
+          <h3 className="contact-card-title">Let’s discuss research, robotics, or engineering collaborations.</h3>
+          <p className="contact-card-desc">
+            Whether you have questions about my published repositories, hardware designs, or want to discuss prospective research roles, feel free to send a message.
+          </p>
 
-          <div className="form-group">
-            <input
-              type="email"
-              className="contact-input"
-              placeholder="Your Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <Icon name="Mail" className="input-icon" />
-          </div>
+          <div className="contact-items">
+            <div className="c-item">
+              <span className="c-icon"><FiMail /></span>
+              <div>
+                <span className="c-label">Email</span>
+                <a href={`mailto:${yourEmail}`} className="c-value">{yourEmail}</a>
+              </div>
+            </div>
 
-          <div className="form-group">
-            <textarea
-              className="contact-textarea"
-              placeholder="Your Message"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              rows={6}
-              required
-            />
-            <Icon name="MessageSquare" className="input-icon textarea-icon" />
-          </div>
+            <div className="c-item">
+              <span className="c-icon"><FiMapPin /></span>
+              <div>
+                <span className="c-label">Location</span>
+                <span className="c-value">Dhaka, Bangladesh (UIU Campus)</span>
+              </div>
+            </div>
 
-          <div className="contact-actions">
-            <button
-              className="contact-send-btn btn-effect"
-              type="submit"
-              disabled={status === "sending"}
-            >
-              {status === "sending" ? "Sending..." : "Send Message"}
-              <Icon name="Send" className="btn-icon" />
-            </button>
-          </div>
+            <div className="c-item">
+              <span className="c-icon"><FiLinkedin /></span>
+              <div>
+                <span className="c-label">LinkedIn</span>
+                <a
+                  href={socials.linkedin || "https://www.linkedin.com/in/aranya170"}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="c-value"
+                >
+                  linkedin.com/in/aranya170
+                </a>
+              </div>
+            </div>
 
-          <div className="contact-info">
-            <div className="contact-info-item">
-              <Icon name="Mail" className="contact-info-icon" />
-              <a
-                href={`mailto:${yourEmail}`}
-                className="contact-email"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {yourEmail}
-              </a>
+            <div className="c-item">
+              <span className="c-icon"><FiGithub /></span>
+              <div>
+                <span className="c-label">GitHub</span>
+                <a
+                  href={socials.github || "https://github.com/aranya170"}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="c-value"
+                >
+                  github.com/aranya170
+                </a>
+              </div>
             </div>
           </div>
-        </form>
+        </div>
 
-        <div
-          className="success-message"
-          ref={successRef}
-          style={{ display: "none" }}
-        >
-          <Icon name="CheckCircle" className="success-icon" />
-          <h3>Thank you for reaching out.</h3>
-          <p>I'll get back to you soon.</p>
-          <button className="reset-btn" onClick={handleReset}>
-            Send Another Message
-          </button>
+        {/* Right: Message Form */}
+        <div className="contact-card-form">
+          {status === "success" ? (
+            <div className="contact-success-box">
+              <div className="success-badge"><FiCheck /></div>
+              <h3>Message Delivered</h3>
+              <p>Thank you for reaching out. I will review your note and respond promptly.</p>
+              <button className="form-reset-btn" onClick={handleReset} type="button">
+                Send Another Message
+              </button>
+            </div>
+          ) : (
+            <form className="contact-input-form" onSubmit={handleSend}>
+              <div className="form-double-row">
+                <div className="input-field">
+                  <label htmlFor="c-name">Your Name</label>
+                  <input
+                    id="c-name"
+                    type="text"
+                    placeholder="Jane Doe"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="input-field">
+                  <label htmlFor="c-email">Your Email</label>
+                  <input
+                    id="c-email"
+                    type="email"
+                    placeholder="jane@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="input-field">
+                <label htmlFor="c-msg">Project Details / Message</label>
+                <textarea
+                  id="c-msg"
+                  rows={5}
+                  placeholder="Tell me about your research inquiry or proposal..."
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  required
+                />
+              </div>
+
+              {status === "error" && (
+                <p className="error-notice">
+                  Submission encountered an issue. Please email directly at {yourEmail}.
+                </p>
+              )}
+
+              <button className="submit-btn" type="submit" disabled={status === "sending"}>
+                {status === "sending" ? "Sending..." : "Send Message"} <FiSend />
+              </button>
+            </form>
+          )}
         </div>
       </div>
     </section>

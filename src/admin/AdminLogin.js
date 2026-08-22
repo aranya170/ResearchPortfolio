@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { api } from "../services/api";
 import "./styles/Admin.css";
-import { VscLock, VscKey, VscAccount, VscArrowLeft } from "react-icons/vsc";
+import { VscLock, VscKey, VscAccount, VscArrowLeft, VscEye, VscEyeClosed, VscCheck, VscShield } from "react-icons/vsc";
 
 export default function AdminLogin({ onLoginSuccess, onBackToSite }) {
   const [username, setUsername] = useState("AKD");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [isRegisterMode, setIsRegisterMode] = useState(false);
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
@@ -18,7 +19,7 @@ export default function AdminLogin({ onLoginSuccess, onBackToSite }) {
     if (loading) {
       timer = setTimeout(() => {
         setSlowNotice(true);
-      }, 3500);
+      }, 3000);
     } else {
       setSlowNotice(false);
     }
@@ -40,7 +41,7 @@ export default function AdminLogin({ onLoginSuccess, onBackToSite }) {
           localStorage.setItem("portfolio_admin_user", JSON.stringify(res.user));
           onLoginSuccess(res.user);
         } else {
-          setSuccessMsg("Admin registered! Please login.");
+          setSuccessMsg("Admin registered successfully! You can now log in.");
           setIsRegisterMode(false);
         }
       } else {
@@ -54,12 +55,18 @@ export default function AdminLogin({ onLoginSuccess, onBackToSite }) {
     } catch (err) {
       setError(
         err.message === "Failed to fetch"
-          ? "Cannot connect to backend server. Make sure your Render backend URL is active."
+          ? "Cannot connect to backend server. Make sure your local server (port 5000) or Render backend is active."
           : err.message || "Authentication failed. Check credentials."
       );
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleFillDemo = () => {
+    setUsername("AKD");
+    setPassword("admin123");
+    setError("");
   };
 
   return (
@@ -68,28 +75,28 @@ export default function AdminLogin({ onLoginSuccess, onBackToSite }) {
         <div style={{ textAlign: "center", marginBottom: 28 }}>
           <div
             style={{
-              width: 54,
-              height: 54,
-              background: "linear-gradient(135deg, #64d98a, #208e4e)",
-              borderRadius: 14,
+              width: 58,
+              height: 58,
+              background: "linear-gradient(135deg, #10b981, #059669)",
+              borderRadius: 16,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               margin: "0 auto 16px",
-              fontSize: 26,
-              color: "#0a0d14",
-              boxShadow: "0 0 20px rgba(100, 217, 138, 0.4)",
+              fontSize: 28,
+              color: "#07090e",
+              boxShadow: "0 0 30px rgba(16, 185, 129, 0.4)",
             }}
           >
-            <VscLock />
+            <VscShield />
           </div>
-          <h2 style={{ fontSize: "1.4rem", fontWeight: 700, margin: "0 0 6px", color: "#fff" }}>
-            {isRegisterMode ? "Create Admin Account" : "Portfolio Admin Portal"}
+          <h2 style={{ fontSize: "1.45rem", fontWeight: 800, margin: "0 0 6px", color: "#fff", letterSpacing: "-0.3px" }}>
+            {isRegisterMode ? "Create Admin Credentials" : "Admin Security Gateway"}
           </h2>
-          <p style={{ fontSize: "0.85rem", color: "#8b949e", margin: 0 }}>
+          <p style={{ fontSize: "0.85rem", color: "#94a3b8", margin: 0 }}>
             {isRegisterMode
-              ? "Set up your credentials to manage your site"
-              : "Manage PostgreSQL sectors, projects & messages"}
+              ? "Set up administrator account to manage portfolio database"
+              : "Access PostgreSQL management console & sector editor"}
           </p>
         </div>
 
@@ -110,19 +117,21 @@ export default function AdminLogin({ onLoginSuccess, onBackToSite }) {
             className="admin-alert"
             style={{
               marginBottom: 18,
-              background: "rgba(88, 166, 255, 0.1)",
-              borderColor: "rgba(88, 166, 255, 0.3)",
-              color: "#58a6ff",
+              background: "rgba(56, 189, 248, 0.12)",
+              border: "1px solid rgba(56, 189, 248, 0.3)",
+              color: "#7dd3fc",
               fontSize: "0.82rem",
             }}
           >
-            <span>⏳ Waking up backend server (Render free tier takes ~30s on first request)...</span>
+            <span>⏳ Contacting server (if running on free cloud tier, waking takes ~30s)...</span>
           </div>
         )}
 
         <form onSubmit={handleSubmit}>
           <div className="admin-form-group">
-            <label className="admin-label">Username / Email</label>
+            <label className="admin-label">
+              <span>Admin Username or Email</span>
+            </label>
             <div style={{ position: "relative" }}>
               <input
                 type="text"
@@ -133,13 +142,15 @@ export default function AdminLogin({ onLoginSuccess, onBackToSite }) {
                 required
                 autoFocus
               />
-              <VscAccount style={{ position: "absolute", right: 12, top: 12, color: "#8b949e" }} />
+              <VscAccount style={{ position: "absolute", right: 14, top: 14, color: "#64748b" }} />
             </div>
           </div>
 
           {isRegisterMode && (
             <div className="admin-form-group">
-              <label className="admin-label">Admin Email</label>
+              <label className="admin-label">
+                <span>Contact Email</span>
+              </label>
               <input
                 type="email"
                 className="admin-input"
@@ -152,54 +163,67 @@ export default function AdminLogin({ onLoginSuccess, onBackToSite }) {
           )}
 
           <div className="admin-form-group">
-            <label className="admin-label">Password</label>
+            <label className="admin-label">
+              <span>Password</span>
+            </label>
             <div style={{ position: "relative" }}>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 className="admin-input"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-              <VscKey style={{ position: "absolute", right: 12, top: 12, color: "#8b949e" }} />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: "absolute",
+                  right: 12,
+                  top: 10,
+                  background: "none",
+                  border: "none",
+                  color: "#94a3b8",
+                  cursor: "pointer",
+                  padding: 4,
+                  fontSize: "1.1rem",
+                }}
+                title={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <VscEyeClosed /> : <VscEye />}
+              </button>
             </div>
           </div>
 
           <button
             type="submit"
             className="admin-btn admin-btn-primary"
-            style={{ width: "100%", padding: "12px", fontSize: "1rem" }}
+            style={{ width: "100%", padding: "13px", fontSize: "0.95rem", marginTop: 6 }}
             disabled={loading}
           >
             {loading
-              ? "Authenticating..."
+              ? "Authenticating Security Token..."
               : isRegisterMode
-              ? "Register & Enter"
-              : "Sign In to Dashboard"}
+              ? "Register & Enter Dashboard"
+              : "Authorize & Enter Console"}
           </button>
         </form>
 
-        <div
-          style={{
-            marginTop: 20,
-            textAlign: "center",
-            display: "flex",
-            justifyContent: "space-between",
-          }}
-        >
+        <div style={{ marginTop: 22, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <button
             type="button"
             onClick={() => setIsRegisterMode(!isRegisterMode)}
             style={{
               background: "none",
               border: "none",
-              color: "#58a6ff",
+              color: "#38bdf8",
               fontSize: "0.82rem",
               cursor: "pointer",
+              padding: 0,
             }}
           >
-            {isRegisterMode ? "← Already have an account? Sign in" : "Register new admin"}
+            {isRegisterMode ? "← Back to Sign In" : "Register new admin"}
           </button>
 
           <button
@@ -208,18 +232,20 @@ export default function AdminLogin({ onLoginSuccess, onBackToSite }) {
             style={{
               background: "none",
               border: "none",
-              color: "#8b949e",
+              color: "#94a3b8",
               fontSize: "0.82rem",
               cursor: "pointer",
               display: "flex",
               alignItems: "center",
               gap: 4,
+              padding: 0,
             }}
           >
-            <VscArrowLeft /> Return to Portfolio
+            <VscArrowLeft /> Return to Site
           </button>
         </div>
       </div>
     </div>
   );
 }
+

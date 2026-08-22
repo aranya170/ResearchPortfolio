@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { GitHubCalendar } from 'react-github-calendar'; 
+import { GitHubCalendar } from 'react-github-calendar';
 import '../styles/GitHubContributions.css';
+import { FiGithub, FiGitCommit, FiUsers } from 'react-icons/fi';
 
 const GitHubContributions = () => {
   const [stats, setStats] = useState({ repos: 0, followers: 0 });
@@ -8,56 +9,69 @@ const GitHubContributions = () => {
 
   useEffect(() => {
     fetch(`https://api.github.com/users/${username}`)
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         setStats({
           repos: data.public_repos || 0,
-          followers: data.followers || 0
+          followers: data.followers || 0,
         });
       })
-      .catch(err => console.error("Error fetching stats:", err));
+      .catch((err) => console.error("Error fetching stats:", err));
   }, []);
 
-  // Updated theme to match the vibrant green in your screenshot
+  // Light sage green theme for the calendar
   const theme = {
-    dark: ['#161b22', '#0e4429', '#006d32', '#26a641', '#4ade80'],
+    light: ['#E6E1D6', '#B7D5C4', '#70B090', '#3D8B66', '#1E533B'],
   };
 
   return (
-    <section id="github" className="gh-contrib-container">
-      <div className="section-header">
-        <span className="section-title">GitHub</span>
+    <section id="github" className="portfolio-section">
+      <div className="section-head-bar">
+        <div className="section-head-left">
+          <span className="section-tagline">Open Source & Code Activity</span>
+          <h2 className="section-heading">GitHub Contributions</h2>
+        </div>
+        <a
+          href={`https://github.com/${username}`}
+          target="_blank"
+          rel="noreferrer"
+          className="gh-header-profile-link"
+        >
+          <FiGithub /> @{username} ↗
+        </a>
       </div>
 
-      <div className="gh-content">
-        <span className="gh-tag">Open Source</span>
-        <p className="gh-subtitle">My journey in the open-source galaxy</p>
-
-        <div className="gh-stats-row">
-          <div className="stat-item">
-            <span className="stat-value">{stats.repos}</span>
-            <span className="stat-label">Repositories</span>
-          </div>
-          <div className="stat-item">
-            <span className="stat-value">{stats.followers}</span>
-            <span className="stat-label">Followers</span>
+      <div className="gh-widescreen-card">
+        <div className="gh-card-header">
+          <div className="gh-stats-items">
+            <div className="gh-stat-block">
+              <span className="gh-stat-icon"><FiGitCommit /></span>
+              <div>
+                <span className="gh-stat-val">{stats.repos}</span>
+                <span className="gh-stat-label">Public Repositories</span>
+              </div>
+            </div>
+            <div className="gh-stat-block">
+              <span className="gh-stat-icon"><FiUsers /></span>
+              <div>
+                <span className="gh-stat-val">{stats.followers}</span>
+                <span className="gh-stat-label">Followers</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="gh-graph-card">
-          <GitHubCalendar 
+        <div className="gh-calendar-wrapper">
+          <GitHubCalendar
             username={username}
             theme={theme}
             fontSize={12}
-            blockSize={12}
+            blockSize={13}
             blockMargin={4}
+            colorScheme="light"
             showWeekdayLabels
           />
         </div>
-
-        <a href={`https://github.com/${username}`} target="_blank" rel="noreferrer" className="gh-footer-link">
-           Follow @{username} on GitHub →
-        </a>
       </div>
     </section>
   );

@@ -1,60 +1,37 @@
-import React, { useEffect, useRef } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import {
-  FcIdea,
-  FcCommandLine,
-  FcGlobe,
-  FcGraduationCap,
-  FcReading,
-} from "react-icons/fc";
+import React from "react";
 import "../styles/Timeline.css";
 import { usePortfolio } from "../context/PortfolioContext";
 
-gsap.registerPlugin(ScrollTrigger);
-
 const defaultMilestones = [
   {
-    title: "Early Curiosity",
-    description:
-      "Fascinated by computers and RC cars in Class 8, discovering microcontrollers like Arduino and ESP.",
+    title: "Early Hardware & Robotics",
+    description: "Built autonomous robots and RC systems, mastering microcontrollers including Arduino and ESP32.",
     year: "2015",
-    type: "idea",
   },
   {
-    title: "Tech Exploration",
-    description:
-      "Explored competitive programming, web development, graphics design, and video editing.",
-    year: "2015 - 2019",
-    type: "career",
+    title: "Competitive Programming & Full-Stack",
+    description: "Competed in algorithmic contests, designed UI/UX systems in Figma, and built full-stack web applications.",
+    year: "2015 – 2019",
   },
   {
-    title: "Global Offers & Pivots",
-    description:
-      "Received 19 university admission offers across the USA and Switzerland; enrolled at UIU.",
-    year: "2020 - 2021",
-    type: "education",
+    title: "Global Admission Offers & UIU",
+    description: "Awarded 19 university admission offers across the USA & Switzerland; matriculated at United International University.",
+    year: "2020 – 2021",
   },
   {
-    title: "Deep Dive in AI & Robotics",
-    description:
-      "Joined UIU Robotics, began publishing research, and focused on Deep Learning.",
-    year: "2022 - 2024",
-    type: "research",
+    title: "Robotics Club & Deep Learning Focus",
+    description: "Joined UIU Robotics, initiated research publications, and specialized in neural architectures and vision pipelines.",
+    year: "2022 – 2024",
   },
   {
-    title: "President & Lead Researcher",
-    description:
-      "Became President of UIU Robotics and Undergraduate Assistant under Dr. Mohammad Nurul Huda.",
-    year: "2024 - 2025",
-    type: "startup",
+    title: "Club President & RoboNeT Initiative",
+    description: "Elected President of UIU Robotics Club; founded Bangladesh's first open-source robotics learning repository.",
+    year: "2024 – 2025",
   },
   {
-    title: "Present & Future Horizons",
-    description:
-      "Pursuing higher research in AI, intelligent robotics, and scalable systems.",
-    year: "2025 - Present",
-    type: "statistics",
+    title: "Advanced Autonomous Systems",
+    description: "Conducting research in scalable intelligent robotics, adaptive ensemble models, and parallel kinematics.",
+    year: "2025 – Present",
   },
 ];
 
@@ -65,140 +42,26 @@ export default function Timeline() {
       ? portfolio.timeline
       : defaultMilestones;
 
-  const timelineWrapRef = useRef(null);
-  const timelineItemsRef = useRef([]);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        ".timeline-title",
-        { y: 30, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.6,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: "#timeline",
-            start: "top 85%",
-            toggleActions: "play none none reverse",
-          },
-        }
-      );
-
-      gsap.fromTo(
-        ".timeline-line",
-        { scaleY: 0 },
-        {
-          scaleY: 1,
-          duration: 1,
-          ease: "none",
-          scrollTrigger: {
-            trigger: timelineWrapRef.current,
-            start: "top 75%",
-            end: "bottom 30%",
-            scrub: true,
-          },
-        }
-      );
-
-      timelineItemsRef.current.forEach((item, index) => {
-        if (!item) return;
-        const direction = index % 2 === 0 ? -1 : 1;
-        const content = item.querySelector(".timeline-content");
-        const dot = item.querySelector(".timeline-dot");
-        const date = item.querySelector(".timeline-date");
-
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: item,
-            start: "top 85%",
-            toggleActions: "play none none reverse",
-          },
-        });
-
-        if (content && dot && date) {
-          tl.fromTo(
-            content,
-            { x: direction * 40, opacity: 0 },
-            {
-              x: 0,
-              opacity: 1,
-              duration: 0.5,
-              ease: "power2.out",
-            }
-          )
-            .fromTo(
-              dot,
-              { scale: 0, opacity: 0 },
-              {
-                scale: 1,
-                opacity: 1,
-                duration: 0.3,
-                ease: "back.out(1.7)",
-              },
-              "-=0.3"
-            )
-            .fromTo(
-              date,
-              { opacity: 0, y: 10 },
-              {
-                opacity: 1,
-                y: 0,
-                duration: 0.3,
-                ease: "power2.out",
-              },
-              "-=0.2"
-            );
-        }
-      });
-    }, timelineWrapRef);
-
-    return () => ctx.revert();
-  }, [milestones]);
-
-  const renderIcon = (type) => {
-    switch (type) {
-      case "idea":
-        return <FcIdea className="timeline-icon" />;
-      case "startup":
-        return <FcCommandLine className="timeline-icon" />;
-      case "statistics":
-        return <FcGlobe className="timeline-icon" />;
-      case "education":
-        return <FcGraduationCap className="timeline-icon" />;
-      case "research":
-        return <FcReading className="timeline-icon" />;
-      default:
-        return <FcIdea className="timeline-icon" />;
-    }
-  };
-
   return (
-    <section id="timeline">
-      <div className="section-header">
-        <span className="section-title timeline-title">Timeline</span>
+    <section id="timeline" className="portfolio-section">
+      <div className="section-head-bar">
+        <div className="section-head-left">
+          <div className="section-tagline">Progression & Career Path</div>
+          <h2 className="section-heading">Milestones & Trajectory</h2>
+        </div>
       </div>
 
-      <div className="timeline-wrapper" ref={timelineWrapRef}>
-        <div className="timeline-track"></div>
-        <div className="timeline-line"></div>
-        <div className="timeline-items">
-          {milestones.map((item, idx) => (
-            <div
-              key={item.id || idx}
-              className={`timeline-item ${idx % 2 === 0 ? "left" : "right"}`}
-              ref={(el) => (timelineItemsRef.current[idx] = el)}
-            >
-              <div className="timeline-dot">{renderIcon(item.type)}</div>
-              <div className="timeline-date">{item.year || item.timeframe}</div>
-              <div className="timeline-content">
-                <h3>{item.title}</h3>
-                <p>{item.description}</p>
-              </div>
+      <div className="timeline-grid">
+        {milestones.map((item, idx) => (
+          <div key={item.id || idx} className="milestone-box">
+            <div className="milestone-header">
+              <span className="milestone-year-tag">{item.year || item.timeframe}</span>
+              <span className="milestone-index">0{idx + 1}</span>
             </div>
-          ))}
-        </div>
+            <h3 className="milestone-heading">{item.title}</h3>
+            <p className="milestone-body">{item.description}</p>
+          </div>
+        ))}
       </div>
     </section>
   );

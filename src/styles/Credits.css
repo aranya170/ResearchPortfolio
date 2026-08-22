@@ -1,43 +1,47 @@
-#credits {
-  padding-top: 40px;
+/* ── Footer ── */
+.portfolio-footer {
+  margin-top: 80px;
+  border-top: 1px solid var(--border);
+  padding: 30px 0;
+}
+
+.footer-inner {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
-.ending-credits {
-  font-family: "NTR", sans-serif;
-  color: var(--green-bright);
-  text-align: center;
-  width: 100%;
-  font-size: 16px;
+.footer-copy {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0;
 }
 
-.ending-credits a {
-  color: var(--green-bright) !important;
-  text-decoration: underline;
-  font-family: inherit;
+.footer-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.ending-credits .side-navbar {
-  display: none;
+.footer-link {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--text-muted) !important;
+  font-weight: 500;
+}
+.footer-link:hover {
+  color: var(--accent) !important;
 }
 
-@media (max-width: 600px) {
-  .ending-credits .side-navbar {
-    display: flex;
-    position: inherit;
-    flex-direction: row;
-    justify-content: center;
-    width: 100%;
-    padding: 12px 0;
-  }
-
-  .ending-credits .side-navbar .side-navbar-divider {
-    display: none;
-  }
-
-  .ending-credits .side-navbar button.star-btn {
-    display: none;
-  }
-
+.footer-dot {
+  color: var(--border-strong);
+  font-size: 12px;
 }
 
+.admin-portal-link {
+  color: var(--accent) !important;
+  font-weight: 600;
+}
