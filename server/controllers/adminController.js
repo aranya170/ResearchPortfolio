@@ -170,16 +170,27 @@ exports.getProjects = async (req, res) => {
 };
 
 exports.createProject = async (req, res) => {
-  const { category, name, image, github, website, tags, sort_order, files } = req.body;
+  const { category, name, image, github, website, medium, tableau, dataset, tags, sort_order, files } = req.body;
   try {
     const tagsJson = JSON.stringify(tags || []);
     let newProject = null;
 
     if (pool && (await testConnection())) {
       const projRes = await pool.query(
-        `INSERT INTO projects (category, name, image, github, website, tags, sort_order)
-         VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
-        [category || "Software", name, image || "", github || "", website || "", tagsJson, sort_order || 0]
+        `INSERT INTO projects (category, name, image, github, website, medium, tableau, dataset, tags, sort_order)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *`,
+        [
+          category || "Software",
+          name,
+          image || "",
+          github || "",
+          website || "",
+          medium || "",
+          tableau || "",
+          dataset || "",
+          tagsJson,
+          sort_order || 0,
+        ]
       );
       newProject = projRes.rows[0];
 
@@ -188,7 +199,14 @@ exports.createProject = async (req, res) => {
           await pool.query(
             `INSERT INTO project_files (project_id, name, type, content, language, sort_order)
              VALUES ($1, $2, $3, $4, $5, $6)`,
-            [newProject.id, file.name, file.type || "info", file.content || "", file.language || "markdown", file.sort_order || 0]
+            [
+              newProject.id,
+              file.name,
+              file.type || "info",
+              file.content || "",
+              file.language || "markdown",
+              file.sort_order || 0,
+            ]
           );
         }
       }
@@ -206,6 +224,9 @@ exports.createProject = async (req, res) => {
       image,
       github,
       website,
+      medium,
+      tableau,
+      dataset,
       tags: tags || [],
       sort_order: sort_order || store.projects.length + 1,
       files: files || [{ name: "README.md", type: "info", content: "Project description" }],
@@ -222,7 +243,7 @@ exports.createProject = async (req, res) => {
 
 exports.updateProject = async (req, res) => {
   const { id } = req.params;
-  const { category, name, image, github, website, tags, sort_order, files } = req.body;
+  const { category, name, image, github, website, medium, tableau, dataset, tags, sort_order, files } = req.body;
 
   try {
     const tagsJson = JSON.stringify(tags || []);
@@ -230,9 +251,9 @@ exports.updateProject = async (req, res) => {
     if (pool && (await testConnection())) {
       await pool.query(
         `UPDATE projects 
-         SET category = $1, name = $2, image = $3, github = $4, website = $5, tags = $6, sort_order = $7, updated_at = NOW() 
-         WHERE id = $8`,
-        [category, name, image, github, website, tagsJson, sort_order || 0, id]
+         SET category = $1, name = $2, image = $3, github = $4, website = $5, medium = $6, tableau = $7, dataset = $8, tags = $9, sort_order = $10, updated_at = NOW() 
+         WHERE id = $11`,
+        [category, name, image, github, website, medium || "", tableau || "", dataset || "", tagsJson, sort_order || 0, id]
       );
 
       // Re-sync files if provided
@@ -252,7 +273,7 @@ exports.updateProject = async (req, res) => {
     let projs = Array.isArray(store.projects) ? store.projects : Object.values(store.projects || {}).flat();
     const idx = projs.findIndex((p) => String(p.id) === String(id));
     if (idx !== -1) {
-      projs[idx] = { ...projs[idx], category, name, image, github, website, tags, sort_order, files };
+      projs[idx] = { ...projs[idx], category, name, image, github, website, medium, tableau, dataset, tags, sort_order, files };
       store.projects = projs;
       saveFallbackStore(store);
     }

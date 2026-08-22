@@ -470,25 +470,37 @@
   border: 1px solid rgba(100, 217, 138, 0.2);
   border-radius: 14px;
   width: 100%;
-  max-width: 650px;
-  max-height: 90vh;
+  max-width: 780px;
+  max-height: 88vh;
   display: flex;
   flex-direction: column;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+}
+
+.admin-modal form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .admin-modal-header {
-  padding: 20px 24px;
+  padding: 18px 24px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  background: #151b2a;
+  flex-shrink: 0;
 }
 
 .admin-modal-body {
   padding: 24px;
   overflow-y: auto;
-  flex-grow: 1;
+  flex: 1;
+  min-height: 0;
 }
 
 .admin-modal-footer {
@@ -498,6 +510,8 @@
   align-items: center;
   justify-content: flex-end;
   gap: 12px;
+  background: #151b2a;
+  flex-shrink: 0;
 }
 
 /* Switch toggle */

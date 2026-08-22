@@ -181,6 +181,7 @@ export default function Timeline() {
       </div>
 
       <div className="timeline-wrapper" ref={timelineWrapRef}>
+        <div className="timeline-track"></div>
         <div className="timeline-line"></div>
         <div className="timeline-items">
           {milestones.map((item, idx) => (
