@@ -1,12 +1,19 @@
+const PROD_API_URL = "https://aranyaportfolio.onrender.com/api";
+
 const getApiBaseUrl = () => {
   if (process.env.REACT_APP_API_URL) {
     return process.env.REACT_APP_API_URL.replace(/\/$/, "");
   }
-  if (typeof window !== "undefined" && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
-    // Relative API endpoint for same-domain deployments (Render/Vercel/Monolith)
-    return `${window.location.origin}/api`;
+  if (
+    typeof window !== "undefined" &&
+    window.location.hostname !== "localhost" &&
+    window.location.hostname !== "127.0.0.1"
+  ) {
+    return PROD_API_URL;
   }
-  return "http://localhost:5000/api";
+  return process.env.NODE_ENV === "production"
+    ? PROD_API_URL
+    : "http://localhost:5000/api";
 };
 
 const API_BASE_URL = getApiBaseUrl();
