@@ -154,7 +154,7 @@ export default function AdminApp() {
       {/* Responsive Sidebar */}
       <aside className={`admin-sidebar ${mobileMenuOpen ? "open" : ""}`}>
         <div className="admin-sidebar-header">
-          <div className="admin-brand-icon">A</div>
+          <img src="/icon.png" alt="Admin Logo" style={{ width: 28, height: 28, borderRadius: 6 }} />
           <div>
             <div className="admin-brand-title">Aranya Portfolio</div>
             <div className="admin-brand-sub">Management Engine</div>

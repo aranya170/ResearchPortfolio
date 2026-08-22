@@ -17,11 +17,40 @@ const initialDefaultData = {
   about: {
     title: "About Me",
     profile_image: "/assets/Aranya Kishor Das.png",
+    name: "Aranya Kishor Das",
+    role: "Undergraduate Researcher & Club President",
+    affiliation: "United International University",
+    core_focus: "Deep Learning, Autonomous Robotics, Kinematics",
+    location: "Dhaka, Bangladesh",
     paragraphs: [
-      `Hi, my name is Aranya and I enjoy solving puzzles, building things, and exploring technology. My journey began in 2015 when I became fascinated by <span class="highlight">remote-controlled cars</span> and microcontrollers like <span class="highlight">Arduino and ESP</span>. That childhood curiosity sparked a lifelong passion for electronics and robotics.`,
-      `From 2015 to 2019, I explored the vast fields of computer science, graphics design, and software engineering. During the pandemic, I deep-dived into <span class="highlight">Web Development and Figma Design</span>. My academic journey eventually led me to United International University, after receiving 19 admission offers from universities in the <span class="highlight">USA and Switzerland</span>.`,
-      `In 2024, I pivoted my focus toward <span class="highlight">Deep Learning and Artificial Intelligence</span>. Today, I serve as an Undergraduate Research Assistant at UIU, a Teaching Assistant for IoT and Robotics, and the <span class="highlight">President of the UIU Robotics Club</span>, where I continue to push the boundaries of intelligent systems.`,
-      `Outside of work, I love playing video games. I'm also into aesthetic interior designs and I love hoarding cool tech products.`,
+      "I am an AI researcher and roboticist focused on bridging the gap between theoretical deep learning models and practical embedded hardware. My path began with microcontrollers and RC robotics in 2015, evolving into active research on deep neural architectures, adaptive ensemble modeling, and parallel robotic manipulation.",
+      "Currently serving as Undergraduate Research Assistant under Dr. Mohammad Nurul Huda and President of UIU Robotics Club, I led national-level open-source initiatives like RoboNeT while mentoring 50+ undergraduate engineering students in neural network optimization and embedded systems design."
+    ],
+    pillars: [
+      {
+        id: 1,
+        title: "Robotics & Kinematics",
+        description: "Parallel Delta geometry, 4-axis SCARA kinematics, trajectory planning, and motor synchronization.",
+        icon: "cpu"
+      },
+      {
+        id: 2,
+        title: "Deep Learning & AI",
+        description: "Adaptive ensemble learning, psychometric classification models, and computer vision pipelines.",
+        icon: "ai"
+      },
+      {
+        id: 3,
+        title: "Open Research & Mentorship",
+        description: "Creator of RoboNeT (open-source robotics learning repository); Teaching Assistant for IoT & Robotics.",
+        icon: "book"
+      },
+      {
+        id: 4,
+        title: "Global Recognition",
+        description: "19 university admission offers across USA & Switzerland; executive leadership across 100+ members.",
+        icon: "award"
+      }
     ],
     timeline_link_text: "View my timeline to learn more about my unique journey",
     contact_button_text: "Get in Touch",

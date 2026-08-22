@@ -29,7 +29,13 @@ CREATE TABLE IF NOT EXISTS about_section (
     id SERIAL PRIMARY KEY,
     title VARCHAR(100) DEFAULT 'About Me',
     profile_image VARCHAR(500) DEFAULT '/assets/Aranya Kishor Das.png',
+    name VARCHAR(150) DEFAULT 'Aranya Kishor Das',
+    role VARCHAR(255) DEFAULT 'Undergraduate Researcher & Club President',
+    affiliation VARCHAR(255) DEFAULT 'United International University',
+    core_focus VARCHAR(255) DEFAULT 'Deep Learning, Autonomous Robotics, Kinematics',
+    location VARCHAR(255) DEFAULT 'Dhaka, Bangladesh',
     paragraphs JSONB DEFAULT '[]'::jsonb,
+    pillars JSONB DEFAULT '[]'::jsonb,
     timeline_link_text VARCHAR(255) DEFAULT 'View my timeline to learn more about my unique journey',
     contact_button_text VARCHAR(100) DEFAULT 'Get in Touch',
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP

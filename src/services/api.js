@@ -21,6 +21,26 @@ export const getApiBaseUrl = () => {
   return PROD_API_URL;
 };
 
+export const getAssetUrl = (url) => {
+  if (!url) return "/assets/My_CV.pdf";
+  if (
+    url.startsWith("http://") ||
+    url.startsWith("https://") ||
+    url.startsWith("blob:") ||
+    url.startsWith("data:")
+  ) {
+    return url;
+  }
+
+  // If it's an uploaded asset from backend and we are running separately
+  if (url.startsWith("/uploads/")) {
+    const apiBase = getApiBaseUrl().replace(/\/api\/?$/, "");
+    return `${apiBase}${url}`;
+  }
+
+  return url;
+};
+
 function getAuthHeader() {
   const token = localStorage.getItem("portfolio_admin_token");
   return token ? { Authorization: `Bearer ${token}` } : {};

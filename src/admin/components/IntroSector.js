@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { api } from "../../services/api";
+import { api, getAssetUrl } from "../../services/api";
 import { usePortfolio } from "../../context/PortfolioContext";
 import { VscSave, VscCloudUpload, VscCheck, VscFilePdf } from "react-icons/vsc";
 
@@ -185,8 +185,11 @@ export default function IntroSector() {
               <input type="file" accept=".pdf" onChange={handleCvUpload} style={{ display: "none" }} />
             </label>
           </div>
-          <div className="admin-helper">
-            Currently linked: <a href={formData.cv_url} target="_blank" rel="noopener noreferrer" style={{ color: "#58a6ff" }}>{formData.cv_url}</a>
+          <div className="admin-helper" style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 6 }}>
+            <span>Linked CV:</span>
+            <a href={getAssetUrl(formData.cv_url)} target="_blank" rel="noopener noreferrer" style={{ color: "#2D6A4F", fontWeight: 600, textDecoration: "underline" }}>
+              Preview / Test CV Document ↗
+            </a>
           </div>
         </div>
 

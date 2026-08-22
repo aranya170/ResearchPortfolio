@@ -1,6 +1,7 @@
 import React from "react";
 import "../styles/Intro.css";
 import { usePortfolio } from "../context/PortfolioContext";
+import { getAssetUrl } from "../services/api";
 import { FiArrowUpRight, FiGithub, FiLinkedin, FiMail, FiFileText, FiCpu, FiCode } from "react-icons/fi";
 
 const Intro = () => {
@@ -13,7 +14,7 @@ const Intro = () => {
   const description =
     p.description ||
     "Undergraduate Research Assistant & President of UIU Robotics Club. Specializing in Deep Learning architectures, autonomous robotics, parallel kinematics, and full-stack systems.";
-  const cvUrl = p.cv_url || "/assets/My_CV.pdf";
+  const cvUrl = getAssetUrl(p.cv_url || "/assets/My_CV.pdf");
   const githubUrl = socials.github || "https://github.com/aranya170";
   const linkedinUrl = socials.linkedin || "https://www.linkedin.com/in/aranya170";
   const emailUrl = `mailto:${socials.email || "aranya.akd@gmail.com"}`;

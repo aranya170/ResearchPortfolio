@@ -22,7 +22,7 @@ class NavBar extends Component {
   }
 
   handleScroll() {
-    this.setState({ scrolled: window.scrollY > 24 });
+    this.setState({ scrolled: window.scrollY > 20 });
   }
 
   toggleMobile() {
@@ -35,11 +35,12 @@ class NavBar extends Component {
 
   render() {
     const { scrolled, mobileOpen } = this.state;
-    const links = [
-      { href: "#about",      label: "About"      },
+    const navItems = [
       { href: "#projects",   label: "Projects"   },
+      { href: "#about",      label: "About"      },
       { href: "#experience", label: "Experience" },
       { href: "#timeline",   label: "Timeline"   },
+      { href: "#tech-stack", label: "Tech Stack" },
       { href: "#contact",    label: "Contact"    },
     ];
 
@@ -47,26 +48,28 @@ class NavBar extends Component {
       <>
         <nav className={`site-nav${scrolled ? " scrolled" : ""}`}>
           <div className="nav-inner">
-            {/* Logo */}
+            {/* Brand Logo & Name */}
             <a href="#" className="nav-logo" onClick={this.closeMenu}>
               <img
-                src="/assets/aranya-kishor-das-logo.png"
+                src="/icon.png"
                 alt="Aranya Kishor Das"
-                width="32"
-                height="32"
+                className="nav-logo-img"
               />
+              <span className="nav-logo-text">Aranya Kishor Das</span>
             </a>
 
-            {/* Desktop links */}
+            {/* Desktop Navigation Links */}
             <ul className="nav-links">
-              {links.map((l) => (
-                <li key={l.href}>
-                  <a href={l.href} className="nav-link">{l.label}</a>
+              {navItems.map((item) => (
+                <li key={item.href} className="nav-item">
+                  <a href={item.href} className="nav-link">
+                    {item.label}
+                  </a>
                 </li>
               ))}
             </ul>
 
-            {/* Hamburger */}
+            {/* Mobile Hamburger */}
             <button
               className={`nav-hamburger${mobileOpen ? " open" : ""}`}
               onClick={this.toggleMobile}
@@ -80,14 +83,14 @@ class NavBar extends Component {
           </div>
         </nav>
 
-        {/* Mobile overlay */}
+        {/* Mobile Menu Overlay */}
         {mobileOpen && (
           <div className="mobile-overlay" onClick={this.closeMenu}>
             <ul className="mobile-links" onClick={(e) => e.stopPropagation()}>
-              {links.map((l) => (
-                <li key={l.href}>
-                  <a href={l.href} className="mobile-link" onClick={this.closeMenu}>
-                    {l.label}
+              {navItems.map((item) => (
+                <li key={item.href}>
+                  <a href={item.href} className="mobile-link" onClick={this.closeMenu}>
+                    {item.label}
                   </a>
                 </li>
               ))}

@@ -14,10 +14,17 @@ exports.getPortfolioData = async (req, res) => {
       // 2. About section
       const aboutRes = await pool.query("SELECT * FROM about_section LIMIT 1");
       let about = aboutRes.rows[0] || seedData.about;
-      if (about && typeof about.paragraphs === "string") {
-        try {
-          about.paragraphs = JSON.parse(about.paragraphs);
-        } catch (e) {}
+      if (about) {
+        if (typeof about.paragraphs === "string") {
+          try {
+            about.paragraphs = JSON.parse(about.paragraphs);
+          } catch (e) {}
+        }
+        if (typeof about.pillars === "string") {
+          try {
+            about.pillars = JSON.parse(about.pillars);
+          } catch (e) {}
+        }
       }
 
       // 3. Projects with associated files

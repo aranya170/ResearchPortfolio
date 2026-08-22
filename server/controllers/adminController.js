@@ -95,29 +95,92 @@ exports.updateSiteProfile = async (req, res) => {
 
 // ==================== 2. ABOUT SECTOR ====================
 exports.updateAbout = async (req, res) => {
-  const { title, profile_image, paragraphs, timeline_link_text, contact_button_text } = req.body;
+  const {
+    title,
+    profile_image,
+    name,
+    role,
+    affiliation,
+    core_focus,
+    location,
+    paragraphs,
+    pillars,
+    timeline_link_text,
+    contact_button_text,
+  } = req.body;
+
   try {
     const parasJson = JSON.stringify(paragraphs || []);
+    const pillarsJson = JSON.stringify(pillars || []);
+
     if (pool && (await testConnection())) {
+      // Ensure columns exist
+      await pool.query(`
+        ALTER TABLE about_section 
+        ADD COLUMN IF NOT EXISTS name VARCHAR(150) DEFAULT 'Aranya Kishor Das',
+        ADD COLUMN IF NOT EXISTS role VARCHAR(255) DEFAULT 'Undergraduate Researcher & Club President',
+        ADD COLUMN IF NOT EXISTS affiliation VARCHAR(255) DEFAULT 'United International University',
+        ADD COLUMN IF NOT EXISTS core_focus VARCHAR(255) DEFAULT 'Deep Learning, Autonomous Robotics, Kinematics',
+        ADD COLUMN IF NOT EXISTS location VARCHAR(255) DEFAULT 'Dhaka, Bangladesh',
+        ADD COLUMN IF NOT EXISTS pillars JSONB DEFAULT '[]'::jsonb;
+      `).catch(() => {});
+
       const check = await pool.query("SELECT id FROM about_section LIMIT 1");
       if (check.rows.length > 0) {
         await pool.query(
           `UPDATE about_section 
-           SET title = $1, profile_image = $2, paragraphs = $3, timeline_link_text = $4, contact_button_text = $5, updated_at = NOW() 
-           WHERE id = $6`,
-          [title, profile_image, parasJson, timeline_link_text, contact_button_text, check.rows[0].id]
+           SET title = $1, profile_image = $2, name = $3, role = $4, affiliation = $5, core_focus = $6, location = $7, paragraphs = $8::jsonb, pillars = $9::jsonb, timeline_link_text = $10, contact_button_text = $11, updated_at = NOW() 
+           WHERE id = $12`,
+          [
+            title || "Academic Profile & Focus",
+            profile_image || "/assets/Aranya Kishor Das.png",
+            name || "Aranya Kishor Das",
+            role || "Undergraduate Researcher & Club President",
+            affiliation || "United International University",
+            core_focus || "Deep Learning, Autonomous Robotics, Kinematics",
+            location || "Dhaka, Bangladesh",
+            parasJson,
+            pillarsJson,
+            timeline_link_text || "View my timeline",
+            contact_button_text || "Get in Touch",
+            check.rows[0].id,
+          ]
         );
       } else {
         await pool.query(
-          `INSERT INTO about_section (title, profile_image, paragraphs, timeline_link_text, contact_button_text)
-           VALUES ($1, $2, $3, $4, $5)`,
-          [title, profile_image, parasJson, timeline_link_text, contact_button_text]
+          `INSERT INTO about_section (title, profile_image, name, role, affiliation, core_focus, location, paragraphs, pillars, timeline_link_text, contact_button_text)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8::jsonb, $9::jsonb, $10, $11)`,
+          [
+            title || "Academic Profile & Focus",
+            profile_image || "/assets/Aranya Kishor Das.png",
+            name || "Aranya Kishor Das",
+            role || "Undergraduate Researcher & Club President",
+            affiliation || "United International University",
+            core_focus || "Deep Learning, Autonomous Robotics, Kinematics",
+            location || "Dhaka, Bangladesh",
+            parasJson,
+            pillarsJson,
+            timeline_link_text || "View my timeline",
+            contact_button_text || "Get in Touch",
+          ]
         );
       }
     }
 
     const store = getFallbackStore();
-    store.about = { title, profile_image, paragraphs: paragraphs || [], timeline_link_text, contact_button_text };
+    store.about = {
+      title,
+      profile_image,
+      name,
+      role,
+      affiliation,
+      core_focus,
+      location,
+      paragraphs: paragraphs || [],
+      pillars: pillars || [],
+      timeline_link_text,
+      contact_button_text,
+    };
     saveFallbackStore(store);
 
     return res.json({ success: true, message: "About section updated successfully", data: store.about });
