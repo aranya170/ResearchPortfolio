@@ -1,22 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { api } from "../services/api";
 import "./styles/Admin.css";
 import { VscLock, VscKey, VscAccount, VscArrowLeft } from "react-icons/vsc";
 
 export default function AdminLogin({ onLoginSuccess, onBackToSite }) {
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState("AKD");
   const [password, setPassword] = useState("");
   const [isRegisterMode, setIsRegisterMode] = useState(false);
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const [slowNotice, setSlowNotice] = useState(false);
   const [error, setError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+
+  useEffect(() => {
+    let timer;
+    if (loading) {
+      timer = setTimeout(() => {
+        setSlowNotice(true);
+      }, 3500);
+    } else {
+      setSlowNotice(false);
+    }
+    return () => clearTimeout(timer);
+  }, [loading]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSuccessMsg("");
     setLoading(true);
+    setSlowNotice(false);
 
     try {
       if (isRegisterMode) {
@@ -38,7 +52,11 @@ export default function AdminLogin({ onLoginSuccess, onBackToSite }) {
         }
       }
     } catch (err) {
-      setError(err.message || "Authentication failed. Check credentials.");
+      setError(
+        err.message === "Failed to fetch"
+          ? "Cannot connect to backend server. Make sure your Render backend URL is active."
+          : err.message || "Authentication failed. Check credentials."
+      );
     } finally {
       setLoading(false);
     }
@@ -69,7 +87,9 @@ export default function AdminLogin({ onLoginSuccess, onBackToSite }) {
             {isRegisterMode ? "Create Admin Account" : "Portfolio Admin Portal"}
           </h2>
           <p style={{ fontSize: "0.85rem", color: "#8b949e", margin: 0 }}>
-            {isRegisterMode ? "Set up your credentials to manage your site" : "Manage PostgreSQL sectors, projects & messages"}
+            {isRegisterMode
+              ? "Set up your credentials to manage your site"
+              : "Manage PostgreSQL sectors, projects & messages"}
           </p>
         </div>
 
@@ -82,6 +102,21 @@ export default function AdminLogin({ onLoginSuccess, onBackToSite }) {
         {successMsg && (
           <div className="admin-alert admin-alert-success" style={{ marginBottom: 18 }}>
             <span>{successMsg}</span>
+          </div>
+        )}
+
+        {slowNotice && (
+          <div
+            className="admin-alert"
+            style={{
+              marginBottom: 18,
+              background: "rgba(88, 166, 255, 0.1)",
+              borderColor: "rgba(88, 166, 255, 0.3)",
+              color: "#58a6ff",
+              fontSize: "0.82rem",
+            }}
+          >
+            <span>⏳ Waking up backend server (Render free tier takes ~30s on first request)...</span>
           </div>
         )}
 
@@ -104,7 +139,7 @@ export default function AdminLogin({ onLoginSuccess, onBackToSite }) {
 
           {isRegisterMode && (
             <div className="admin-form-group">
-              <label className="admin-label">Email Address</label>
+              <label className="admin-label">Admin Email</label>
               <input
                 type="email"
                 className="admin-input"
@@ -116,7 +151,7 @@ export default function AdminLogin({ onLoginSuccess, onBackToSite }) {
             </div>
           )}
 
-          <div className="admin-form-group" style={{ marginBottom: 24 }}>
+          <div className="admin-form-group">
             <label className="admin-label">Password</label>
             <div style={{ position: "relative" }}>
               <input
@@ -129,11 +164,6 @@ export default function AdminLogin({ onLoginSuccess, onBackToSite }) {
               />
               <VscKey style={{ position: "absolute", right: 12, top: 12, color: "#8b949e" }} />
             </div>
-            {!isRegisterMode && (
-              <div style={{ marginTop: 6, fontSize: "0.75rem", color: "#8b949e" }}>
-                Default initial credentials: <code style={{ color: "#64d98a" }}>admin / admin</code>
-              </div>
-            )}
           </div>
 
           <button
@@ -142,15 +172,32 @@ export default function AdminLogin({ onLoginSuccess, onBackToSite }) {
             style={{ width: "100%", padding: "12px", fontSize: "1rem" }}
             disabled={loading}
           >
-            {loading ? "Authenticating..." : isRegisterMode ? "Register & Enter" : "Sign In to Dashboard"}
+            {loading
+              ? "Authenticating..."
+              : isRegisterMode
+              ? "Register & Enter"
+              : "Sign In to Dashboard"}
           </button>
         </form>
 
-        <div style={{ marginTop: 20, textAlign: "center", display: "flex", justifyContent: "space-between" }}>
+        <div
+          style={{
+            marginTop: 20,
+            textAlign: "center",
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
           <button
             type="button"
             onClick={() => setIsRegisterMode(!isRegisterMode)}
-            style={{ background: "none", border: "none", color: "#58a6ff", fontSize: "0.82rem", cursor: "pointer" }}
+            style={{
+              background: "none",
+              border: "none",
+              color: "#58a6ff",
+              fontSize: "0.82rem",
+              cursor: "pointer",
+            }}
           >
             {isRegisterMode ? "← Already have an account? Sign in" : "Register new admin"}
           </button>
