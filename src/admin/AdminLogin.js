@@ -90,25 +90,28 @@ export default function AdminLogin({ onLoginSuccess, onBackToSite }) {
     setTestingConnection(true);
     setTestResult(null);
 
-    const targetUrl = (apiUrlInput || "").trim().replace(/\/$/, "");
+    let targetUrl = (apiUrlInput || "").trim().replace(/\/+$/, "");
+    if (targetUrl && !targetUrl.endsWith("/api")) {
+      targetUrl = `${targetUrl}/api`;
+    }
     try {
       const res = await fetch(`${targetUrl}/health`);
       const data = await res.json().catch(() => null);
       if (res.ok && data) {
         setTestResult({
           success: true,
-          message: `Backend is Online! PostgreSQL status: ${data.postgres?.connected ? "Connected" : "Local fallback"}`,
+          message: `Backend is Online! Database status: ${data.postgres?.connected ? "Connected to PostgreSQL" : "Local fallback"}`,
         });
       } else {
         setTestResult({
           success: false,
-          message: `Server returned HTTP ${res.status}.`,
+          message: `Server returned HTTP ${res.status}. Make sure the URL includes /api.`,
         });
       }
     } catch (err) {
       setTestResult({
         success: false,
-        message: `Connection failed: ${err.message}. Ensure backend is deployed online (e.g. Render, Railway) and accessible via HTTPS.`,
+        message: `Connection failed: ${err.message}. If using Render free tier, server may be waking up (~30s).`,
       });
     } finally {
       setTestingConnection(false);
@@ -116,9 +119,13 @@ export default function AdminLogin({ onLoginSuccess, onBackToSite }) {
   };
 
   const handleSaveApiUrl = () => {
-    const targetUrl = (apiUrlInput || "").trim().replace(/\/$/, "");
+    let targetUrl = (apiUrlInput || "").trim().replace(/\/+$/, "");
     if (targetUrl) {
+      if (!targetUrl.endsWith("/api")) {
+        targetUrl = `${targetUrl}/api`;
+      }
       localStorage.setItem("admin_custom_api_url", targetUrl);
+      setApiUrlInput(targetUrl);
       setSuccessMsg(`Backend URL set to: ${targetUrl}`);
       setError("");
     } else {

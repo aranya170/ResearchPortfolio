@@ -1,10 +1,19 @@
 const PROD_API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
 
+const normalizeApiUrl = (rawUrl) => {
+  if (!rawUrl || typeof rawUrl !== "string") return "http://localhost:5000/api";
+  let clean = rawUrl.trim().replace(/\/+$/, "");
+  if (!clean.endsWith("/api")) {
+    clean = `${clean}/api`;
+  }
+  return clean;
+};
+
 export const getApiBaseUrl = () => {
   if (typeof window !== "undefined") {
     const custom = localStorage.getItem("admin_custom_api_url");
     if (custom && custom.trim()) {
-      return custom.trim().replace(/\/$/, "");
+      return normalizeApiUrl(custom);
     }
 
     const isLocalhost =
@@ -12,11 +21,11 @@ export const getApiBaseUrl = () => {
       window.location.hostname === "127.0.0.1";
 
     if (isLocalhost) {
-      return process.env.REACT_APP_LOCAL_API_URL || "http://localhost:5000/api";
+      return normalizeApiUrl(process.env.REACT_APP_LOCAL_API_URL || "http://localhost:5000/api");
     }
 
     if (process.env.REACT_APP_API_URL) {
-      return process.env.REACT_APP_API_URL.replace(/\/$/, "");
+      return normalizeApiUrl(process.env.REACT_APP_API_URL);
     }
 
     // On hosted domains (e.g. Vercel / Firebase), default to same origin "/api"
@@ -24,10 +33,10 @@ export const getApiBaseUrl = () => {
   }
 
   if (process.env.REACT_APP_API_URL) {
-    return process.env.REACT_APP_API_URL.replace(/\/$/, "");
+    return normalizeApiUrl(process.env.REACT_APP_API_URL);
   }
 
-  return PROD_API_URL;
+  return normalizeApiUrl(PROD_API_URL);
 };
 
 export const getAssetUrl = (url) => {
