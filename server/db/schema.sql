@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS projects (
     category VARCHAR(50) NOT NULL, -- 'Software', 'Research', etc.
     name VARCHAR(255) NOT NULL,
     image VARCHAR(500),
+    video VARCHAR(500),
     github VARCHAR(500),
     website VARCHAR(500),
     medium VARCHAR(500),

@@ -89,7 +89,7 @@ export default function TimelineSector() {
       loadTimeline();
       refreshPortfolio();
     } catch (err) {
-      alert("Failed to save: " + err.message);
+      setAlert({ type: "error", text: "Failed to save: " + err.message });
     } finally {
       setSaving(false);
     }

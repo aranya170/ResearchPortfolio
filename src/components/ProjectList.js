@@ -151,6 +151,7 @@ const ProjectList = {
     {
       name: "Delta Arm",
       image: "/assets/Hardware5.jpg",
+      video: "/assets/hardware_videos/Delta Arm.mp4",
       tags: ["Arduino", "Inverse Kinematics", "Parallel Robotics", "3D Printing"],
       files: [
         {
@@ -164,6 +165,7 @@ const ProjectList = {
     {
       name: "Scara Arm",
       image: "/assets/Hardware4.jpeg",
+      video: "/assets/hardware_videos/Scara.mp4",
       tags: ["Arduino Nano", "3D Design", "Kinematics"],
       files: [
         {
@@ -189,6 +191,7 @@ const ProjectList = {
     {
       name: "IOT Based Smart Bus Tracking System",
       image: "/assets/Hardware1.png",
+      video: "/assets/hardware_videos/Field Bot.mp4",
       github: "https://github.com/aranya170/Shuttle-Bus-Tracking-System",
       tags: ["Arduino", "ESP 32", "LDR", "GPS Module"],
       files: [

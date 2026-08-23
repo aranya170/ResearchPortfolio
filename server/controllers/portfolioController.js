@@ -69,6 +69,7 @@ exports.getPortfolioData = async (req, res) => {
           name: proj.name,
           category: proj.category,
           image: proj.image,
+          video: proj.video || proj.video_url || null,
           github: proj.github,
           website: proj.website,
           medium: proj.medium,

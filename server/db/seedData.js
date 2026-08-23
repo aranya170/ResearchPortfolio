@@ -231,6 +231,7 @@ const seedData = {
       category: "Hardware",
       name: "Delta Arm",
       image: "/assets/Hardware5.jpg",
+      video: "/assets/hardware_videos/Delta Arm.mp4",
       tags: ["Arduino", "Inverse Kinematics", "Parallel Robotics", "3D Printing"],
       sort_order: 1,
       files: [
@@ -247,6 +248,7 @@ const seedData = {
       category: "Hardware",
       name: "Scara Arm",
       image: "/assets/Hardware4.jpeg",
+      video: "/assets/hardware_videos/Scara.mp4",
       tags: ["Arduino Nano", "3D Design", "Kinematics"],
       sort_order: 2,
       files: [
@@ -263,6 +265,7 @@ const seedData = {
       category: "Hardware",
       name: "4 Wings Drone",
       image: "/assets/Hardware3.jpg",
+      video: "",
       tags: ["Arduino Nano", "3D Design", "Brushless Motor"],
       sort_order: 3,
       files: [
@@ -279,6 +282,7 @@ const seedData = {
       category: "Hardware",
       name: "IOT Based Smart Bus Tracking System",
       image: "/assets/Hardware1.png",
+      video: "/assets/hardware_videos/Field Bot.mp4",
       github: "https://github.com/aranya170/Shuttle-Bus-Tracking-System",
       tags: ["Arduino", "ESP 32", "LDR", "GPS Module"],
       sort_order: 4,

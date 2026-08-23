@@ -2,7 +2,22 @@ import React, { useState } from "react";
 import ProjectList from "./ProjectList";
 import "../styles/Projects.css";
 import { usePortfolio } from "../context/PortfolioContext";
-import { FiGithub, FiExternalLink, FiFileText, FiDatabase, FiX, FiLayers, FiCpu, FiCode, FiBarChart2, FiArrowUpRight } from "react-icons/fi";
+import { getAssetUrl } from "../services/api";
+import {
+  FiGithub,
+  FiExternalLink,
+  FiFileText,
+  FiDatabase,
+  FiX,
+  FiLayers,
+  FiCpu,
+  FiCode,
+  FiBarChart2,
+  FiArrowUpRight,
+  FiPlay,
+  FiImage,
+  FiVideo,
+} from "react-icons/fi";
 
 const CATEGORIES = [
   { id: "All", label: "All Projects", icon: <FiLayers /> },
@@ -11,6 +26,27 @@ const CATEGORIES = [
   { id: "Software", label: "Software & Systems", icon: <FiCode /> },
   { id: "SQL", label: "Data & SQL", icon: <FiBarChart2 /> },
 ];
+
+const isEmbedVideo = (url) => {
+  if (!url) return false;
+  return url.includes("youtube.com") || url.includes("youtu.be") || url.includes("vimeo.com");
+};
+
+const getEmbedUrl = (url) => {
+  if (!url) return "";
+  if (url.includes("youtube.com/watch?v=")) {
+    return url.replace("watch?v=", "embed/");
+  }
+  if (url.includes("youtu.be/")) {
+    const id = url.split("youtu.be/")[1]?.split("?")[0];
+    return `https://www.youtube.com/embed/${id}`;
+  }
+  if (url.includes("vimeo.com/")) {
+    const id = url.split("vimeo.com/")[1]?.split("?")[0];
+    return `https://player.vimeo.com/video/${id}`;
+  }
+  return url;
+};
 
 export default function Projects() {
   const { portfolio } = usePortfolio();
@@ -21,17 +57,37 @@ export default function Projects() {
 
   const [activeCategory, setActiveCategory] = useState("All");
   const [selectedProject, setSelectedProject] = useState(null);
+  const [modalMediaTab, setModalMediaTab] = useState("video");
+
+  // Read video URL directly from database / project data
+  const getVideoUrl = (proj) => {
+    if (!proj) return null;
+    const v = proj.video || proj.video_url;
+    if (v && typeof v === "string" && v.trim()) {
+      return v.trim();
+    }
+    return null;
+  };
 
   // Flatten all projects into categorized list
   const allProjects = [];
-  Object.keys(rawProjects).forEach((cat) => {
-    (rawProjects[cat] || []).forEach((proj) => {
+  if (Array.isArray(rawProjects)) {
+    rawProjects.forEach((proj) => {
       allProjects.push({
         ...proj,
-        category: cat,
+        category: proj.category || "Software",
       });
     });
-  });
+  } else if (rawProjects && typeof rawProjects === "object") {
+    Object.keys(rawProjects).forEach((cat) => {
+      (rawProjects[cat] || []).forEach((proj) => {
+        allProjects.push({
+          ...proj,
+          category: proj.category || cat,
+        });
+      });
+    });
+  }
 
   const filteredProjects =
     activeCategory === "All"
@@ -49,6 +105,19 @@ export default function Projects() {
     const nb = proj.files.find((f) => f && f.type === "notebook");
     return nb ? nb.content : null;
   };
+
+  const handleOpenProject = (proj) => {
+    setSelectedProject(proj);
+    const videoUrl = getVideoUrl(proj);
+    if (videoUrl) {
+      setModalMediaTab("video");
+    } else {
+      setModalMediaTab("image");
+    }
+  };
+
+  const currentVideoUrl = selectedProject ? getVideoUrl(selectedProject) : null;
+  const hasCurrentVideo = Boolean(currentVideoUrl);
 
   return (
     <section id="projects" className="portfolio-section">
@@ -92,40 +161,64 @@ export default function Projects() {
         {filteredProjects.map((proj, idx) => {
           const info = getInfoContent(proj);
           const notebook = getNotebookUrl(proj);
+          const projectVideo = getVideoUrl(proj);
+          const hasVideo = Boolean(projectVideo);
 
           return (
             <article key={proj.id || `${proj.name}-${idx}`} className="p-card">
               {/* Media Thumbnail */}
-              {proj.image && (
+              {proj.image ? (
                 <div
                   className="p-media"
-                  onClick={() => setSelectedProject(proj)}
+                  onClick={() => handleOpenProject(proj)}
                   role="button"
                   tabIndex={0}
                 >
                   <img
-                    src={proj.image}
+                    src={getAssetUrl(proj.image)}
                     alt={proj.name}
                     loading="lazy"
                     onError={(e) => {
                       e.target.parentElement.style.display = "none";
                     }}
                   />
-                  <span className={`p-badge p-badge-${proj.category.toLowerCase()}`}>
+                  <span className={`p-badge p-badge-${(proj.category || "software").toLowerCase()}`}>
                     {proj.category}
                   </span>
+
+                  {hasVideo && (
+                    <span className="p-video-pill">
+                      <FiPlay /> Video Demo
+                    </span>
+                  )}
                 </div>
+              ) : (
+                hasVideo && (
+                  <div
+                    className="p-media p-media-placeholder"
+                    onClick={() => handleOpenProject(proj)}
+                    role="button"
+                    tabIndex={0}
+                  >
+                    <span className={`p-badge p-badge-${(proj.category || "software").toLowerCase()}`}>
+                      {proj.category}
+                    </span>
+                    <span className="p-video-pill">
+                      <FiPlay /> Video Demo
+                    </span>
+                  </div>
+                )
               )}
 
               {/* Card Main Info */}
               <div className="p-content">
                 {!proj.image && (
-                  <span className={`p-badge p-badge-${proj.category.toLowerCase()}`}>
+                  <span className={`p-badge p-badge-${(proj.category || "software").toLowerCase()}`}>
                     {proj.category}
                   </span>
                 )}
 
-                <h3 className="p-title" onClick={() => setSelectedProject(proj)}>
+                <h3 className="p-title" onClick={() => handleOpenProject(proj)}>
                   {proj.name}
                 </h3>
 
@@ -152,10 +245,10 @@ export default function Projects() {
               <div className="p-actions">
                 <button
                   className="p-btn-details"
-                  onClick={() => setSelectedProject(proj)}
+                  onClick={() => handleOpenProject(proj)}
                   type="button"
                 >
-                  Overview <FiArrowUpRight />
+                  Overview {hasVideo ? <FiVideo /> : <FiArrowUpRight />}
                 </button>
 
                 <div className="p-links-row">
@@ -221,13 +314,13 @@ export default function Projects() {
         })}
       </div>
 
-      {/* Clean Technical Specs Modal */}
+      {/* Clean Technical Specs & Video Player Modal */}
       {selectedProject && (
         <div className="modal-backdrop" onClick={() => setSelectedProject(null)}>
           <div className="modal-container" onClick={(e) => e.stopPropagation()}>
             <div className="modal-head">
               <div>
-                <span className={`modal-badge p-badge-${selectedProject.category.toLowerCase()}`}>
+                <span className={`modal-badge p-badge-${(selectedProject.category || "software").toLowerCase()}`}>
                   {selectedProject.category}
                 </span>
                 <h3 className="modal-heading">{selectedProject.name}</h3>
@@ -243,14 +336,71 @@ export default function Projects() {
             </div>
 
             <div className="modal-content">
-              {selectedProject.image && (
-                <div className="modal-banner">
-                  <img src={selectedProject.image} alt={selectedProject.name} />
+              {/* Media Display Area (Video or Photo) */}
+              {(hasCurrentVideo || selectedProject.image) && (
+                <div className="modal-media-showcase">
+                  {/* Media Switcher Tabs if both video and image exist */}
+                  {hasCurrentVideo && selectedProject.image && (
+                    <div className="modal-media-switcher">
+                      <button
+                        type="button"
+                        className={`modal-media-tab ${modalMediaTab === "video" ? "active" : ""}`}
+                        onClick={() => setModalMediaTab("video")}
+                      >
+                        <FiPlay /> Watch Project Video
+                      </button>
+                      <button
+                        type="button"
+                        className={`modal-media-tab ${modalMediaTab === "image" ? "active" : ""}`}
+                        onClick={() => setModalMediaTab("image")}
+                      >
+                        <FiImage /> Photo Showcase
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Video View */}
+                  {modalMediaTab === "video" && hasCurrentVideo ? (
+                    <div className="modal-video-container">
+                      {isEmbedVideo(currentVideoUrl) ? (
+                        <iframe
+                          src={getEmbedUrl(currentVideoUrl)}
+                          title={selectedProject.name}
+                          frameBorder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                          className="modal-video-iframe"
+                        />
+                      ) : (
+                        <video
+                          key={currentVideoUrl}
+                          className="modal-video-player"
+                          src={getAssetUrl(currentVideoUrl)}
+                          controls
+                          autoPlay
+                          playsInline
+                          preload="auto"
+                          poster={selectedProject.image ? getAssetUrl(selectedProject.image) : undefined}
+                        >
+                          <source src={getAssetUrl(currentVideoUrl)} type="video/mp4" />
+                          <source src={getAssetUrl(currentVideoUrl)} type="video/webm" />
+                          Your browser does not support HTML5 video playback.
+                        </video>
+                      )}
+                    </div>
+                  ) : (
+                    /* Image View */
+                    selectedProject.image && (
+                      <div className="modal-banner">
+                        <img src={getAssetUrl(selectedProject.image)} alt={selectedProject.name} />
+                      </div>
+                    )
+                  )}
                 </div>
               )}
 
               <div className="modal-block">
-                <div className="modal-block-label">Project Description</div>
+                <div className="modal-block-label">Project Description & Overview</div>
                 <p className="modal-text">{getInfoContent(selectedProject)}</p>
               </div>
 

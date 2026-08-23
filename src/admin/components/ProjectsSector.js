@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { api } from "../../services/api";
+import { api, getAssetUrl } from "../../services/api";
 import { usePortfolio } from "../../context/PortfolioContext";
 import {
   VscAdd,
@@ -9,6 +9,7 @@ import {
   VscSave,
   VscClose,
   VscFileCode,
+  VscDeviceCameraVideo,
 } from "react-icons/vsc";
 
 export default function ProjectsSector() {
@@ -21,12 +22,15 @@ export default function ProjectsSector() {
   const [alert, setAlert] = useState(null);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [uploadingVideo, setUploadingVideo] = useState(false);
+  const [availableVideos, setAvailableVideos] = useState([]);
 
   // Form State for Create/Edit Modal
   const [formState, setFormState] = useState({
     category: "Software",
     name: "",
     image: "",
+    video: "",
     github: "",
     website: "",
     medium: "",
@@ -51,8 +55,20 @@ export default function ProjectsSector() {
     }
   };
 
+  const loadAvailableVideos = async () => {
+    try {
+      const res = await api.getMediaVideos();
+      if (res && res.success && Array.isArray(res.data)) {
+        setAvailableVideos(res.data);
+      }
+    } catch (err) {
+      console.warn("Could not load media videos list:", err);
+    }
+  };
+
   useEffect(() => {
     loadProjects();
+    loadAvailableVideos();
   }, []);
 
   const openCreateModal = () => {
@@ -61,6 +77,7 @@ export default function ProjectsSector() {
       category: activeCategory === "All" ? "Software" : activeCategory,
       name: "",
       image: "",
+      video: "",
       github: "",
       website: "",
       medium: "",
@@ -78,6 +95,7 @@ export default function ProjectsSector() {
         },
       ],
     });
+    loadAvailableVideos();
     setIsModalOpen(true);
   };
 
@@ -95,6 +113,7 @@ export default function ProjectsSector() {
       category: project.category || "Software",
       name: project.name || "",
       image: project.image || "",
+      video: project.video || project.video_url || "",
       github: project.github || "",
       website: project.website || "",
       medium: project.medium || "",
@@ -107,6 +126,7 @@ export default function ProjectsSector() {
           ? project.files
           : [{ name: "README.md", type: "info", content: "", language: "markdown", sort_order: 1 }],
     });
+    loadAvailableVideos();
     setIsModalOpen(true);
   };
 
@@ -118,7 +138,7 @@ export default function ProjectsSector() {
       loadProjects();
       refreshPortfolio();
     } catch (err) {
-      alert("Failed to delete project: " + err.message);
+      setAlert({ type: "error", text: "Failed to delete project: " + err.message });
     }
   };
 
@@ -133,9 +153,27 @@ export default function ProjectsSector() {
         setAlert({ type: "success", text: "Thumbnail uploaded successfully!" });
       }
     } catch (err) {
-      alert("Upload failed: " + err.message);
+      setAlert({ type: "error", text: "Upload failed: " + err.message });
     } finally {
       setUploading(false);
+    }
+  };
+
+  const handleVideoUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    try {
+      setUploadingVideo(true);
+      const res = await api.uploadFile(file);
+      if (res && res.success) {
+        setFormState((prev) => ({ ...prev, video: res.url }));
+        setAlert({ type: "success", text: `Video "${file.name}" uploaded successfully!` });
+        loadAvailableVideos();
+      }
+    } catch (err) {
+      setAlert({ type: "error", text: "Video upload failed: " + err.message });
+    } finally {
+      setUploadingVideo(false);
     }
   };
 
@@ -201,7 +239,7 @@ export default function ProjectsSector() {
       loadProjects();
       refreshPortfolio();
     } catch (err) {
-      alert("Failed to save project: " + err.message);
+      setAlert({ type: "error", text: "Failed to save project: " + err.message });
     } finally {
       setSaving(false);
     }
@@ -316,8 +354,24 @@ export default function ProjectsSector() {
                   </td>
                   <td>
                     <div style={{ fontWeight: 600, color: "#fff" }}>{p.name}</div>
-                    <div style={{ fontSize: "0.78rem", color: "#8b949e" }}>
-                      Order: #{p.sort_order}
+                    <div style={{ fontSize: "0.78rem", color: "#8b949e", display: "flex", gap: 6, alignItems: "center", marginTop: 2 }}>
+                      <span>Order: #{p.sort_order}</span>
+                      {p.video && (
+                        <span
+                          style={{
+                            background: "rgba(227, 179, 65, 0.2)",
+                            color: "#e3b341",
+                            padding: "1px 6px",
+                            borderRadius: 3,
+                            fontSize: "0.72rem",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: 3,
+                          }}
+                        >
+                          <VscDeviceCameraVideo /> Video
+                        </span>
+                      )}
                     </div>
                   </td>
                   <td>
@@ -443,6 +497,19 @@ export default function ProjectsSector() {
 
             <form onSubmit={handleSaveModal}>
               <div className="admin-modal-body">
+                {alert && (
+                  <div className={`admin-alert admin-alert-${alert.type}`} style={{ marginBottom: 16 }}>
+                    <span>{alert.text}</span>
+                    <button
+                      type="button"
+                      onClick={() => setAlert(null)}
+                      style={{ background: "none", border: "none", color: "inherit", cursor: "pointer" }}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                )}
+
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                   <div className="admin-form-group">
                     <label className="admin-label">Category</label>
@@ -510,6 +577,79 @@ export default function ProjectsSector() {
                       />
                     </label>
                   </div>
+                </div>
+
+                {/* Project Demo Video (Hardware & Screencasts) */}
+                <div className="admin-form-group" style={{ background: "rgba(255, 255, 255, 0.02)", padding: 14, borderRadius: 8, border: "1px solid #30363d" }}>
+                  <label className="admin-label" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                    <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <VscDeviceCameraVideo style={{ color: "#e3b341" }} /> Project Demo Video (Hardware & Screencasts)
+                    </span>
+                    {formState.video && (
+                      <button
+                        type="button"
+                        onClick={() => setFormState({ ...formState, video: "" })}
+                        style={{ background: "none", border: "none", color: "#f85149", cursor: "pointer", fontSize: "0.78rem" }}
+                      >
+                        ✕ Remove Video
+                      </button>
+                    )}
+                  </label>
+
+                  <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 10 }}>
+                    <input
+                      type="text"
+                      className="admin-input"
+                      value={formState.video}
+                      onChange={(e) => setFormState({ ...formState, video: e.target.value })}
+                      placeholder="/assets/hardware_videos/Delta Arm.mp4, /uploads/..., or https://..."
+                    />
+                    <label
+                      className="admin-btn admin-btn-secondary admin-btn-sm"
+                      style={{ cursor: "pointer", whiteSpace: "nowrap" }}
+                    >
+                      <VscCloudUpload /> {uploadingVideo ? "Uploading..." : "Upload Video"}
+                      <input
+                        type="file"
+                        accept="video/*,.mp4,.webm,.ogg,.mov,.mkv"
+                        onChange={handleVideoUpload}
+                        style={{ display: "none" }}
+                      />
+                    </label>
+                  </div>
+
+                  {/* Dropdown for quick selection from existing hardware videos & uploaded videos */}
+                  {availableVideos.length > 0 && (
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                      <span style={{ fontSize: "0.78rem", color: "#8b949e", whiteSpace: "nowrap" }}>Choose Existing:</span>
+                      <select
+                        className="admin-input"
+                        style={{ fontSize: "0.82rem", padding: "5px 8px", background: "#161b22" }}
+                        value={formState.video || ""}
+                        onChange={(e) => setFormState({ ...formState, video: e.target.value })}
+                      >
+                        <option value="">-- Select from {availableVideos.length} found video assets --</option>
+                        {availableVideos.map((v, vIdx) => (
+                          <option key={vIdx} value={v.url}>
+                            {v.label} ({(v.size / (1024 * 1024)).toFixed(1)} MB)
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+
+                  {/* Inline Video Preview */}
+                  {formState.video && (
+                    <div style={{ marginTop: 10, borderRadius: 6, overflow: "hidden", background: "#0d1117", border: "1px solid #30363d", maxHeight: 180, display: "flex", justifyContent: "center" }}>
+                      <video
+                        src={getAssetUrl(formState.video)}
+                        controls
+                        playsInline
+                        preload="metadata"
+                        style={{ maxHeight: 180, width: "100%", objectFit: "contain" }}
+                      />
+                    </div>
+                  )}
                 </div>
 
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>

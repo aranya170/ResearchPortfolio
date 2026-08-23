@@ -54,19 +54,7 @@ async function initDatabase(force = false) {
       console.log(`✅ Default admin created: username='${seedData.admin.username}', password='${seedData.admin.password}'`);
     }
 
-    // Check if site_profile exists
-    const profileCheck = await pool.query("SELECT COUNT(*) FROM site_profile");
-    if (parseInt(profileCheck.rows[0].count, 10) === 0) {
-      console.log("Seeding site profile...");
-      const p = seedData.siteProfile;
-      await pool.query(
-        `INSERT INTO site_profile (greeting, name, subtitle, subtitle_suffix, description, cv_url, show_robot, show_stars)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-        [p.greeting, p.name, p.subtitle, p.subtitle_suffix, p.description, p.cv_url, p.show_robot, p.show_stars]
-      );
-    }
-
-    // Run column migrations for about_section if table already existed
+    // Run column migrations if tables already exist
     await pool.query(`
       ALTER TABLE about_section 
       ADD COLUMN IF NOT EXISTS name VARCHAR(150) DEFAULT 'Aranya Kishor Das',
@@ -75,11 +63,21 @@ async function initDatabase(force = false) {
       ADD COLUMN IF NOT EXISTS core_focus VARCHAR(255) DEFAULT 'Deep Learning, Autonomous Robotics, Kinematics',
       ADD COLUMN IF NOT EXISTS location VARCHAR(255) DEFAULT 'Dhaka, Bangladesh',
       ADD COLUMN IF NOT EXISTS pillars JSONB DEFAULT '[]'::jsonb;
+
+      ALTER TABLE projects
+      ADD COLUMN IF NOT EXISTS video VARCHAR(500);
     `).catch(() => {});
 
-    // Check if about_section exists
-    const aboutCheck = await pool.query("SELECT COUNT(*) FROM about_section");
-    if (parseInt(aboutCheck.rows[0].count, 10) === 0) {
+    // Only seed data if explicitly requested with force === true
+    if (force) {
+      console.log("Seeding site profile...");
+      const p = seedData.siteProfile;
+      await pool.query(
+        `INSERT INTO site_profile (greeting, name, subtitle, subtitle_suffix, description, cv_url, show_robot, show_stars)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+        [p.greeting, p.name, p.subtitle, p.subtitle_suffix, p.description, p.cv_url, p.show_robot, p.show_stars]
+      );
+
       console.log("Seeding about section...");
       const a = seedData.about;
       await pool.query(
@@ -99,20 +97,17 @@ async function initDatabase(force = false) {
           a.contact_button_text,
         ]
       );
-    }
 
-    // Check if projects exist
-    const projectsCheck = await pool.query("SELECT COUNT(*) FROM projects");
-    if (parseInt(projectsCheck.rows[0].count, 10) === 0) {
       console.log("Seeding projects and project files...");
       for (const proj of seedData.projects) {
         const projRes = await pool.query(
-          `INSERT INTO projects (category, name, image, github, website, medium, tableau, dataset, tags, sort_order)
-           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id`,
+          `INSERT INTO projects (category, name, image, video, github, website, medium, tableau, dataset, tags, sort_order)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id`,
           [
             proj.category || "Software",
             proj.name,
             proj.image || null,
+            proj.video || null,
             proj.github || null,
             proj.website || null,
             proj.medium || null,
@@ -141,11 +136,7 @@ async function initDatabase(force = false) {
           }
         }
       }
-    }
 
-    // Check if experiences exist
-    const expCheck = await pool.query("SELECT COUNT(*) FROM experiences");
-    if (parseInt(expCheck.rows[0].count, 10) === 0) {
       console.log("Seeding experience items...");
       for (const exp of seedData.experiences) {
         const title = exp.job_title || exp.role || "Role";
@@ -156,11 +147,7 @@ async function initDatabase(force = false) {
           [exp.company, title, exp.duration || "Present", JSON.stringify(descs), exp.sort_order || 1]
         );
       }
-    }
 
-    // Check if timeline exists
-    const timelineCheck = await pool.query("SELECT COUNT(*) FROM timeline_events");
-    if (parseInt(timelineCheck.rows[0].count, 10) === 0) {
       console.log("Seeding timeline milestones...");
       for (const t of seedData.timeline) {
         await pool.query(
@@ -169,11 +156,7 @@ async function initDatabase(force = false) {
           [t.title, t.description, t.year || t.timeframe || "", t.type || "idea", t.sort_order || 1]
         );
       }
-    }
 
-    // Check if tech_stack exists
-    const techCheck = await pool.query("SELECT COUNT(*) FROM tech_stack");
-    if (parseInt(techCheck.rows[0].count, 10) === 0) {
       console.log("Seeding tech stack tools...");
       for (const tech of seedData.techStack) {
         await pool.query(
@@ -182,11 +165,7 @@ async function initDatabase(force = false) {
           [tech.name, tech.category || "General", tech.icon_name, tech.color, tech.sort_order || 1]
         );
       }
-    }
 
-    // Check if site_settings exist
-    const settingsCheck = await pool.query("SELECT COUNT(*) FROM site_settings");
-    if (parseInt(settingsCheck.rows[0].count, 10) === 0) {
       console.log("Seeding site settings...");
       for (const [key, value] of Object.entries(seedData.settings)) {
         await pool.query(

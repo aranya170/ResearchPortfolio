@@ -233,19 +233,23 @@ exports.getProjects = async (req, res) => {
 };
 
 exports.createProject = async (req, res) => {
-  const { category, name, image, github, website, medium, tableau, dataset, tags, sort_order, files } = req.body;
+  const { category, name, image, video, video_url, github, website, medium, tableau, dataset, tags, sort_order, files } = req.body;
+  const projectVideo = video || video_url || "";
   try {
     const tagsJson = JSON.stringify(tags || []);
     let newProject = null;
 
     if (pool && (await testConnection())) {
+      await pool.query("ALTER TABLE projects ADD COLUMN IF NOT EXISTS video VARCHAR(500)").catch(() => {});
+
       const projRes = await pool.query(
-        `INSERT INTO projects (category, name, image, github, website, medium, tableau, dataset, tags, sort_order)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *`,
+        `INSERT INTO projects (category, name, image, video, github, website, medium, tableau, dataset, tags, sort_order)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *`,
         [
           category || "Software",
           name,
           image || "",
+          projectVideo,
           github || "",
           website || "",
           medium || "",
@@ -285,6 +289,7 @@ exports.createProject = async (req, res) => {
       category: category || "Software",
       name,
       image,
+      video: projectVideo,
       github,
       website,
       medium,
@@ -306,17 +311,20 @@ exports.createProject = async (req, res) => {
 
 exports.updateProject = async (req, res) => {
   const { id } = req.params;
-  const { category, name, image, github, website, medium, tableau, dataset, tags, sort_order, files } = req.body;
+  const { category, name, image, video, video_url, github, website, medium, tableau, dataset, tags, sort_order, files } = req.body;
+  const projectVideo = video !== undefined ? video : (video_url !== undefined ? video_url : "");
 
   try {
     const tagsJson = JSON.stringify(tags || []);
 
     if (pool && (await testConnection())) {
+      await pool.query("ALTER TABLE projects ADD COLUMN IF NOT EXISTS video VARCHAR(500)").catch(() => {});
+
       await pool.query(
         `UPDATE projects 
-         SET category = $1, name = $2, image = $3, github = $4, website = $5, medium = $6, tableau = $7, dataset = $8, tags = $9, sort_order = $10, updated_at = NOW() 
-         WHERE id = $11`,
-        [category, name, image, github, website, medium || "", tableau || "", dataset || "", tagsJson, sort_order || 0, id]
+         SET category = $1, name = $2, image = $3, video = $4, github = $5, website = $6, medium = $7, tableau = $8, dataset = $9, tags = $10, sort_order = $11, updated_at = NOW() 
+         WHERE id = $12`,
+        [category, name, image, projectVideo, github, website, medium || "", tableau || "", dataset || "", tagsJson, sort_order || 0, id]
       );
 
       // Re-sync files if provided
@@ -336,7 +344,7 @@ exports.updateProject = async (req, res) => {
     let projs = Array.isArray(store.projects) ? store.projects : Object.values(store.projects || {}).flat();
     const idx = projs.findIndex((p) => String(p.id) === String(id));
     if (idx !== -1) {
-      projs[idx] = { ...projs[idx], category, name, image, github, website, medium, tableau, dataset, tags, sort_order, files };
+      projs[idx] = { ...projs[idx], category, name, image, video: projectVideo, github, website, medium, tableau, dataset, tags, sort_order, files };
       store.projects = projs;
       saveFallbackStore(store);
     }

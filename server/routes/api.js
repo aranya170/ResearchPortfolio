@@ -75,7 +75,8 @@ router.delete("/admin/messages/:id", authenticateToken, adminController.deleteMe
 router.get("/admin/settings", authenticateToken, adminController.getSettings);
 router.put("/admin/settings", authenticateToken, adminController.updateSettings);
 
-// File / Asset Upload
+// File / Asset Upload & Media Discovery
 router.post("/admin/upload", authenticateToken, uploadController.uploadMiddleware, uploadController.handleUpload);
+router.get("/admin/media/videos", authenticateToken, uploadController.getAvailableVideos);
 
 module.exports = router;

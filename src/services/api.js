@@ -22,23 +22,29 @@ export const getApiBaseUrl = () => {
 };
 
 export const getAssetUrl = (url) => {
-  if (!url) return "/assets/My_CV.pdf";
+  if (!url || typeof url !== "string") return "";
+  const trimmed = url.trim();
   if (
-    url.startsWith("http://") ||
-    url.startsWith("https://") ||
-    url.startsWith("blob:") ||
-    url.startsWith("data:")
+    trimmed.startsWith("http://") ||
+    trimmed.startsWith("https://") ||
+    trimmed.startsWith("blob:") ||
+    trimmed.startsWith("data:")
   ) {
-    return url;
+    return trimmed;
+  }
+
+  let formatted = trimmed;
+  if (!formatted.startsWith("/") && !formatted.startsWith(".")) {
+    formatted = `/${formatted}`;
   }
 
   // If it's an uploaded asset from backend and we are running separately
-  if (url.startsWith("/uploads/")) {
+  if (formatted.startsWith("/uploads/")) {
     const apiBase = getApiBaseUrl().replace(/\/api\/?$/, "");
-    return `${apiBase}${url}`;
+    return `${apiBase}${encodeURI(formatted)}`;
   }
 
-  return url;
+  return encodeURI(formatted);
 };
 
 function getAuthHeader() {
@@ -220,7 +226,10 @@ export const api = {
       body: JSON.stringify({ settings }),
     }),
 
-  // Upload Asset (Image or PDF)
+  // Media & Video discovery
+  getMediaVideos: () => request("/admin/media/videos"),
+
+  // Upload Asset (Image, PDF, or Video)
   uploadFile: (file) => {
     const formData = new FormData();
     formData.append("file", file);

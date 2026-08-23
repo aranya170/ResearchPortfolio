@@ -97,7 +97,7 @@ export default function TechStackSector() {
       loadTechStack();
       refreshPortfolio();
     } catch (err) {
-      alert("Failed to save tool: " + err.message);
+      setAlert({ type: "error", text: "Failed to save tool: " + err.message });
     } finally {
       setSaving(false);
     }

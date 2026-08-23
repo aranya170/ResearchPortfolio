@@ -113,7 +113,7 @@ export default function ExperienceSector() {
       loadExperiences();
       refreshPortfolio();
     } catch (err) {
-      alert("Failed to save: " + err.message);
+      setAlert({ type: "error", text: "Failed to save: " + err.message });
     } finally {
       setSaving(false);
     }

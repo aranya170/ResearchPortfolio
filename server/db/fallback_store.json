@@ -23,8 +23,7 @@
     "core_focus": "Deep Learning, Autonomous Robotics, Kinematics",
     "location": "Dhaka, Bangladesh",
     "paragraphs": [
-      "I am an AI researcher and roboticist focused on bridging the gap between theoretical deep learning models and practical embedded hardware. My path began with microcontrollers and RC robotics in 2015, evolving into active research on deep neural architectures, adaptive ensemble modeling, and parallel robotic manipulation.",
-      "Currently serving as Undergraduate Research Assistant under Dr. Mohammad Nurul Huda and President of UIU Robotics Club, I led national-level open-source initiatives like RoboNeT while mentoring 50+ undergraduate engineering students in neural network optimization and embedded systems design."
+      "I am an undergraduate research assistant and the President of the UIU Robotics Club at United International University, following a childhood spark for electronics that expanded into web development, deep learning, and artificial intelligence. Driven by a passion for solving puzzles and building things, my background spans computer science, design, and multiple academic offers abroad. Outside of my technical work and leadership roles, I enjoy playing video games, exploring aesthetic interior designs, and collecting cool tech products."
     ],
     "pillars": [
       {
@@ -280,6 +279,7 @@
       "category": "Hardware",
       "name": "Delta Arm",
       "image": "/assets/Hardware5.jpg",
+      "video": "/assets/hardware_videos/Delta Arm.mp4",
       "tags": [
         "Arduino",
         "Inverse Kinematics",
@@ -303,6 +303,7 @@
       "category": "Hardware",
       "name": "Scara Arm",
       "image": "/assets/Hardware4.jpeg",
+      "video": "/assets/hardware_videos/Scara.mp4",
       "tags": [
         "Arduino Nano",
         "3D Design",
@@ -325,6 +326,7 @@
       "category": "Hardware",
       "name": "IOT Based Smart Bus Tracking System",
       "image": "/assets/Hardware1.png",
+      "video": "/assets/hardware_videos/Field Bot.mp4",
       "github": "https://github.com/aranya170/Shuttle-Bus-Tracking-System",
       "tags": [
         "Arduino",
@@ -342,7 +344,11 @@
           "language": "markdown",
           "sort_order": 1
         }
-      ]
+      ],
+      "website": "",
+      "medium": "",
+      "tableau": "",
+      "dataset": ""
     },
     {
       "id": 13,
@@ -386,7 +392,7 @@
       "id": 2,
       "company": "UIU Robotics Club",
       "job_title": "President",
-      "duration": "Nov 2025 - Present",
+      "duration": "Dec 2024 - Present",
       "location": "Dhaka, Bangladesh",
       "sort_order": 2,
       "descriptions": [
@@ -401,7 +407,7 @@
       "id": 3,
       "company": "Self-Employed",
       "job_title": "Freelance Full-Stack Developer",
-      "duration": "Dec 2024 - Aug 2026",
+      "duration": "Jan 2024 - Aug 2026",
       "location": "Remote",
       "sort_order": 3,
       "descriptions": [
@@ -663,14 +669,6 @@
     }
   },
   "messages": [
-    {
-      "id": 3,
-      "name": "Aranya",
-      "email": "akishor991@gmail.com",
-      "message": "sdadasd",
-      "is_read": true,
-      "created_at": "2026-08-23T00:14:37.009Z"
-    },
     {
       "id": 2,
       "name": "Aranya",
