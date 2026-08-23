@@ -1,7 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { api } from "../services/api";
+import { api, getApiBaseUrl } from "../services/api";
 import "./styles/Admin.css";
-import { VscLock, VscKey, VscAccount, VscArrowLeft, VscEye, VscEyeClosed, VscCheck, VscShield } from "react-icons/vsc";
+import {
+  VscLock,
+  VscKey,
+  VscAccount,
+  VscArrowLeft,
+  VscEye,
+  VscEyeClosed,
+  VscCheck,
+  VscShield,
+  VscSettingsGear,
+  VscGlobe,
+  VscChecklist,
+  VscDebugRestart,
+} from "react-icons/vsc";
 
 export default function AdminLogin({ onLoginSuccess, onBackToSite }) {
   const [username, setUsername] = useState("AKD");
@@ -13,6 +26,14 @@ export default function AdminLogin({ onLoginSuccess, onBackToSite }) {
   const [slowNotice, setSlowNotice] = useState(false);
   const [error, setError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+
+  // Backend Endpoint Configuration
+  const [showEndpointConfig, setShowEndpointConfig] = useState(false);
+  const [apiUrlInput, setApiUrlInput] = useState(() => {
+    return localStorage.getItem("admin_custom_api_url") || getApiBaseUrl();
+  });
+  const [testingConnection, setTestingConnection] = useState(false);
+  const [testResult, setTestResult] = useState(null); // { success: boolean, message: string }
 
   useEffect(() => {
     let timer;
@@ -53,47 +74,92 @@ export default function AdminLogin({ onLoginSuccess, onBackToSite }) {
         }
       }
     } catch (err) {
-      setError(
-        err.message === "Failed to fetch"
-          ? "Cannot connect to backend server. Make sure your local server (port 5000) or Render backend is active."
-          : err.message || "Authentication failed. Check credentials."
-      );
+      const isFetchErr = err.message === "Failed to fetch" || err.message?.includes("NetworkError") || err.message?.includes("connect");
+      if (isFetchErr) {
+        setShowEndpointConfig(true);
+        setError("Cannot reach backend server. Please verify your Backend API URL below.");
+      } else {
+        setError(err.message || "Authentication failed. Check credentials.");
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  const handleFillDemo = () => {
-    setUsername("AKD");
-    setPassword("admin123");
-    setError("");
+  const handleTestConnection = async () => {
+    setTestingConnection(true);
+    setTestResult(null);
+
+    const targetUrl = (apiUrlInput || "").trim().replace(/\/$/, "");
+    try {
+      const res = await fetch(`${targetUrl}/health`);
+      const data = await res.json().catch(() => null);
+      if (res.ok && data) {
+        setTestResult({
+          success: true,
+          message: `Backend is Online! PostgreSQL status: ${data.postgres?.connected ? "Connected" : "Local fallback"}`,
+        });
+      } else {
+        setTestResult({
+          success: false,
+          message: `Server returned HTTP ${res.status}.`,
+        });
+      }
+    } catch (err) {
+      setTestResult({
+        success: false,
+        message: `Connection failed: ${err.message}. Ensure backend is deployed online (e.g. Render, Railway) and accessible via HTTPS.`,
+      });
+    } finally {
+      setTestingConnection(false);
+    }
+  };
+
+  const handleSaveApiUrl = () => {
+    const targetUrl = (apiUrlInput || "").trim().replace(/\/$/, "");
+    if (targetUrl) {
+      localStorage.setItem("admin_custom_api_url", targetUrl);
+      setSuccessMsg(`Backend URL set to: ${targetUrl}`);
+      setError("");
+    } else {
+      localStorage.removeItem("admin_custom_api_url");
+      setSuccessMsg("Reset backend URL to default.");
+    }
+  };
+
+  const handleResetApiUrl = () => {
+    localStorage.removeItem("admin_custom_api_url");
+    const defaultUrl = getApiBaseUrl();
+    setApiUrlInput(defaultUrl);
+    setTestResult(null);
+    setSuccessMsg("Backend URL reset to default.");
   };
 
   return (
     <div className="admin-login-wrap">
       <div className="admin-login-box">
-        <div style={{ textAlign: "center", marginBottom: 28 }}>
+        <div style={{ textAlign: "center", marginBottom: 24 }}>
           <div
             style={{
-              width: 58,
-              height: 58,
+              width: 54,
+              height: 54,
               background: "linear-gradient(135deg, #10b981, #059669)",
-              borderRadius: 16,
+              borderRadius: 14,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              margin: "0 auto 16px",
-              fontSize: 28,
+              margin: "0 auto 14px",
+              fontSize: 26,
               color: "#07090e",
-              boxShadow: "0 0 30px rgba(16, 185, 129, 0.4)",
+              boxShadow: "0 0 26px rgba(16, 185, 129, 0.4)",
             }}
           >
             <VscShield />
           </div>
-          <h2 style={{ fontSize: "1.45rem", fontWeight: 800, margin: "0 0 6px", color: "#fff", letterSpacing: "-0.3px" }}>
+          <h2 style={{ fontSize: "1.4rem", fontWeight: 800, margin: "0 0 6px", color: "#fff", letterSpacing: "-0.3px" }}>
             {isRegisterMode ? "Create Admin Credentials" : "Admin Security Gateway"}
           </h2>
-          <p style={{ fontSize: "0.85rem", color: "#94a3b8", margin: 0 }}>
+          <p style={{ fontSize: "0.82rem", color: "#94a3b8", margin: 0 }}>
             {isRegisterMode
               ? "Set up administrator account to manage portfolio database"
               : "Access PostgreSQL management console & sector editor"}
@@ -101,13 +167,13 @@ export default function AdminLogin({ onLoginSuccess, onBackToSite }) {
         </div>
 
         {error && (
-          <div className="admin-alert admin-alert-error" style={{ marginBottom: 18 }}>
+          <div className="admin-alert admin-alert-error" style={{ marginBottom: 16 }}>
             <span>{error}</span>
           </div>
         )}
 
         {successMsg && (
-          <div className="admin-alert admin-alert-success" style={{ marginBottom: 18 }}>
+          <div className="admin-alert admin-alert-success" style={{ marginBottom: 16 }}>
             <span>{successMsg}</span>
           </div>
         )}
@@ -116,14 +182,14 @@ export default function AdminLogin({ onLoginSuccess, onBackToSite }) {
           <div
             className="admin-alert"
             style={{
-              marginBottom: 18,
+              marginBottom: 16,
               background: "rgba(56, 189, 248, 0.12)",
               border: "1px solid rgba(56, 189, 248, 0.3)",
               color: "#7dd3fc",
               fontSize: "0.82rem",
             }}
           >
-            <span>⏳ Contacting server (if running on free cloud tier, waking takes ~30s)...</span>
+            <span>⏳ Contacting server (free cloud services may take ~30s on cold start)...</span>
           </div>
         )}
 
@@ -199,7 +265,7 @@ export default function AdminLogin({ onLoginSuccess, onBackToSite }) {
           <button
             type="submit"
             className="admin-btn admin-btn-primary"
-            style={{ width: "100%", padding: "13px", fontSize: "0.95rem", marginTop: 6 }}
+            style={{ width: "100%", padding: "12px", fontSize: "0.95rem", marginTop: 4 }}
             disabled={loading}
           >
             {loading
@@ -210,7 +276,99 @@ export default function AdminLogin({ onLoginSuccess, onBackToSite }) {
           </button>
         </form>
 
-        <div style={{ marginTop: 22, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        {/* Backend Endpoint Config Section */}
+        <div style={{ marginTop: 18, paddingTop: 14, borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span style={{ fontSize: "0.76rem", color: "#64748b", display: "flex", alignItems: "center", gap: 5 }}>
+              <VscGlobe /> Endpoint: <code style={{ color: "#38bdf8", background: "rgba(56, 189, 248, 0.1)", padding: "1px 5px", borderRadius: 4 }}>{getApiBaseUrl()}</code>
+            </span>
+            <button
+              type="button"
+              onClick={() => setShowEndpointConfig(!showEndpointConfig)}
+              style={{
+                background: "none",
+                border: "none",
+                color: "#10b981",
+                fontSize: "0.76rem",
+                cursor: "pointer",
+                padding: "2px 6px",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 4,
+              }}
+            >
+              <VscSettingsGear /> {showEndpointConfig ? "Hide Config" : "Change URL"}
+            </button>
+          </div>
+
+          {showEndpointConfig && (
+            <div
+              style={{
+                marginTop: 12,
+                background: "rgba(10, 14, 24, 0.8)",
+                border: "1px solid rgba(255,255,255,0.12)",
+                borderRadius: "var(--admin-radius-md)",
+                padding: 14,
+                animation: "fade-in 0.2s ease-out",
+              }}
+            >
+              <label style={{ fontSize: "0.78rem", fontWeight: 600, color: "#cbd5e1", display: "block", marginBottom: 6 }}>
+                Backend API URL (e.g. Render or Railway):
+              </label>
+              <input
+                type="text"
+                className="admin-input"
+                placeholder="https://your-backend.onrender.com/api"
+                value={apiUrlInput}
+                onChange={(e) => setApiUrlInput(e.target.value)}
+                style={{ fontSize: "0.82rem", padding: "8px 10px", marginBottom: 10 }}
+              />
+
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                <button
+                  type="button"
+                  className="admin-btn admin-btn-secondary admin-btn-sm"
+                  onClick={handleTestConnection}
+                  disabled={testingConnection}
+                  style={{ fontSize: "0.78rem" }}
+                >
+                  {testingConnection ? "Testing..." : "Test Connection"}
+                </button>
+                <button
+                  type="button"
+                  className="admin-btn admin-btn-primary admin-btn-sm"
+                  onClick={handleSaveApiUrl}
+                  style={{ fontSize: "0.78rem" }}
+                >
+                  Save URL
+                </button>
+                <button
+                  type="button"
+                  className="admin-btn admin-btn-secondary admin-btn-sm"
+                  onClick={handleResetApiUrl}
+                  style={{ fontSize: "0.78rem", color: "#94a3b8" }}
+                >
+                  Reset
+                </button>
+              </div>
+
+              {testResult && (
+                <div
+                  style={{
+                    marginTop: 10,
+                    fontSize: "0.78rem",
+                    color: testResult.success ? "#6ee7b7" : "#fda4af",
+                    lineHeight: 1.4,
+                  }}
+                >
+                  {testResult.success ? "✅ " : "❌ "} {testResult.message}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        <div style={{ marginTop: 16, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <button
             type="button"
             onClick={() => setIsRegisterMode(!isRegisterMode)}
@@ -248,4 +406,3 @@ export default function AdminLogin({ onLoginSuccess, onBackToSite }) {
     </div>
   );
 }
-

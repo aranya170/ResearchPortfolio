@@ -3,7 +3,9 @@ const PROD_API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api
 export const getApiBaseUrl = () => {
   if (typeof window !== "undefined") {
     const custom = localStorage.getItem("admin_custom_api_url");
-    if (custom) return custom.replace(/\/$/, "");
+    if (custom && custom.trim()) {
+      return custom.trim().replace(/\/$/, "");
+    }
 
     const isLocalhost =
       window.location.hostname === "localhost" ||
@@ -12,6 +14,13 @@ export const getApiBaseUrl = () => {
     if (isLocalhost) {
       return process.env.REACT_APP_LOCAL_API_URL || "http://localhost:5000/api";
     }
+
+    if (process.env.REACT_APP_API_URL) {
+      return process.env.REACT_APP_API_URL.replace(/\/$/, "");
+    }
+
+    // On hosted domains (e.g. Vercel / Firebase), default to same origin "/api"
+    return `${window.location.origin}/api`;
   }
 
   if (process.env.REACT_APP_API_URL) {

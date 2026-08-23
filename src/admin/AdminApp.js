@@ -151,6 +151,13 @@ export default function AdminApp() {
 
   return (
     <div className="admin-wrapper">
+      {/* Mobile Backdrop Overlay */}
+      <div
+        className={`admin-sidebar-backdrop ${mobileMenuOpen ? "active" : ""}`}
+        onClick={() => setMobileMenuOpen(false)}
+        aria-hidden="true"
+      />
+
       {/* Responsive Sidebar */}
       <aside className={`admin-sidebar ${mobileMenuOpen ? "open" : ""}`}>
         <div className="admin-sidebar-header">
@@ -159,6 +166,13 @@ export default function AdminApp() {
             <div className="admin-brand-title">Aranya Portfolio</div>
             <div className="admin-brand-sub">Management Engine</div>
           </div>
+          <button
+            className="admin-sidebar-close-btn"
+            onClick={() => setMobileMenuOpen(false)}
+            aria-label="Close navigation drawer"
+          >
+            <VscClose />
+          </button>
         </div>
 
         <nav className="admin-nav">
@@ -191,14 +205,24 @@ export default function AdminApp() {
             </div>
           </div>
 
-          <button className="admin-nav-item" onClick={handleBackToSite} title="Open main website">
+          <button
+            className="admin-nav-item"
+            onClick={() => {
+              setMobileMenuOpen(false);
+              handleBackToSite();
+            }}
+            title="Open main website"
+          >
             <VscGlobe />
             <span>Return to Portfolio</span>
           </button>
 
           <button
             className="admin-nav-item"
-            onClick={handleLogout}
+            onClick={() => {
+              setMobileMenuOpen(false);
+              handleLogout();
+            }}
             style={{ color: "#f43f5e" }}
             title="Terminate session"
           >

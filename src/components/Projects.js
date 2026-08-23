@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import ReactDOM from "react-dom";
 import ProjectList from "./ProjectList";
 import "../styles/Projects.css";
 import { usePortfolio } from "../context/PortfolioContext";
@@ -58,6 +59,18 @@ export default function Projects() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [selectedProject, setSelectedProject] = useState(null);
   const [modalMediaTab, setModalMediaTab] = useState("video");
+
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (selectedProject) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [selectedProject]);
 
   // Read video URL directly from database / project data
   const getVideoUrl = (proj) => {
@@ -257,10 +270,11 @@ export default function Projects() {
                       href={proj.github}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-icon-link"
-                      title="GitHub Repository"
+                      className="p-icon-btn"
+                      title="Source Code (GitHub)"
+                      aria-label="Source Code"
                     >
-                      <FiGithub /> Repo
+                      <FiGithub />
                     </a>
                   )}
                   {proj.website && (
@@ -268,10 +282,11 @@ export default function Projects() {
                       href={proj.website}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-icon-link"
-                      title="Live Deployment"
+                      className="p-icon-btn"
+                      title="Live Demo"
+                      aria-label="Live Demo"
                     >
-                      <FiExternalLink /> Live
+                      <FiExternalLink />
                     </a>
                   )}
                   {notebook && (
@@ -279,10 +294,11 @@ export default function Projects() {
                       href={notebook}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-icon-link"
-                      title="Jupyter Notebook / Paper"
+                      className="p-icon-btn"
+                      title="Research Notebook / Paper"
+                      aria-label="Research Notebook"
                     >
-                      <FiFileText /> Notebook
+                      <FiFileText />
                     </a>
                   )}
                   {proj.dataset && (
@@ -290,10 +306,11 @@ export default function Projects() {
                       href={proj.dataset}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-icon-link"
+                      className="p-icon-btn"
                       title="Dataset"
+                      aria-label="Dataset"
                     >
-                      <FiDatabase /> Dataset
+                      <FiDatabase />
                     </a>
                   )}
                   {proj.medium && (
@@ -301,10 +318,11 @@ export default function Projects() {
                       href={proj.medium}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-icon-link"
-                      title="Article"
+                      className="p-icon-btn"
+                      title="Technical Article"
+                      aria-label="Technical Article"
                     >
-                      Article
+                      <FiLayers />
                     </a>
                   )}
                 </div>
@@ -315,7 +333,7 @@ export default function Projects() {
       </div>
 
       {/* Clean Technical Specs & Video Player Modal */}
-      {selectedProject && (
+      {selectedProject && typeof document !== "undefined" && ReactDOM.createPortal(
         <div className="modal-backdrop" onClick={() => setSelectedProject(null)}>
           <div className="modal-container" onClick={(e) => e.stopPropagation()}>
             <div className="modal-head">
@@ -365,51 +383,42 @@ export default function Projects() {
                       {isEmbedVideo(currentVideoUrl) ? (
                         <iframe
                           src={getEmbedUrl(currentVideoUrl)}
-                          title={selectedProject.name}
-                          frameBorder="0"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
+                          title={`${selectedProject.name} Demo Video`}
                           className="modal-video-iframe"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                          allowFullScreen
                         />
                       ) : (
                         <video
-                          key={currentVideoUrl}
-                          className="modal-video-player"
                           src={getAssetUrl(currentVideoUrl)}
                           controls
-                          autoPlay
+                          className="modal-video-player"
                           playsInline
-                          preload="auto"
-                          poster={selectedProject.image ? getAssetUrl(selectedProject.image) : undefined}
-                        >
-                          <source src={getAssetUrl(currentVideoUrl)} type="video/mp4" />
-                          <source src={getAssetUrl(currentVideoUrl)} type="video/webm" />
-                          Your browser does not support HTML5 video playback.
-                        </video>
+                        />
                       )}
                     </div>
-                  ) : (
+                  ) : selectedProject.image ? (
                     /* Image View */
-                    selectedProject.image && (
-                      <div className="modal-banner">
-                        <img src={getAssetUrl(selectedProject.image)} alt={selectedProject.name} />
-                      </div>
-                    )
-                  )}
+                    <div className="modal-banner">
+                      <img src={getAssetUrl(selectedProject.image)} alt={selectedProject.name} />
+                    </div>
+                  ) : null}
                 </div>
               )}
 
+              {/* Description */}
               <div className="modal-block">
                 <div className="modal-block-label">Project Description & Overview</div>
                 <p className="modal-text">{getInfoContent(selectedProject)}</p>
               </div>
 
+              {/* Tags */}
               {selectedProject.tags && selectedProject.tags.length > 0 && (
                 <div className="modal-block">
                   <div className="modal-block-label">Technologies & Stack</div>
                   <div className="modal-pills">
-                    {selectedProject.tags.map((t, i) => (
-                      <span key={i} className="modal-pill">
+                    {selectedProject.tags.map((t, idx) => (
+                      <span key={idx} className="modal-pill">
                         {t}
                       </span>
                     ))}
@@ -417,22 +426,23 @@ export default function Projects() {
                 </div>
               )}
 
-              {selectedProject.files && selectedProject.files.length > 1 && (
+              {/* Attached Code Files & Documentation */}
+              {selectedProject.files && selectedProject.files.length > 0 && (
                 <div className="modal-block">
-                  <div className="modal-block-label">Attached Links & Files</div>
+                  <div className="modal-block-label">Attached Repository Files & Notebooks</div>
                   <div className="modal-files">
-                    {selectedProject.files.map((file, fIdx) => (
-                      <div key={fIdx} className="file-item-row">
+                    {selectedProject.files.map((file, idx) => (
+                      <div key={idx} className="file-item-row">
                         <span className="file-item-title">{file.name}</span>
                         <span className="file-item-type">({file.type})</span>
-                        {file.content && file.content.startsWith("http") && (
+                        {file.type === "notebook" && (
                           <a
                             href={file.content}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="file-item-link"
                           >
-                            Open Link <FiArrowUpRight />
+                            Open Notebook <FiExternalLink />
                           </a>
                         )}
                       </div>
@@ -442,6 +452,7 @@ export default function Projects() {
               )}
             </div>
 
+            {/* Footer Action Links */}
             <div className="modal-foot">
               <div className="modal-foot-links">
                 {selectedProject.github && (
@@ -474,7 +485,8 @@ export default function Projects() {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </section>
   );

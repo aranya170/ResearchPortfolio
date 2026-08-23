@@ -10,66 +10,78 @@
 .dossier-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 18px;
+  border-radius: 12px;
+  padding: 20px;
   box-shadow: var(--shadow-sm);
+  transition: border-color var(--trans-normal), box-shadow var(--trans-normal);
+}
+
+.dossier-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-card);
 }
 
 .dossier-photo {
   width: 100%;
-  height: 230px;
-  border-radius: 6px;
+  height: 240px;
+  border-radius: 8px;
   overflow: hidden;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
   border: 1px solid var(--border-subtle);
+  background: #EAE6DD;
 }
 .dossier-photo img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+  transition: transform 0.4s var(--ease-spring);
+}
+.dossier-card:hover .dossier-photo img {
+  transform: scale(1.02);
 }
 
 .dossier-title {
   font-family: var(--font-heading);
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--text-primary);
-  margin: 0 0 3px 0;
+  margin: 0 0 4px 0;
 }
 
 .dossier-subtitle {
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: 12.5px;
   color: var(--accent);
   font-weight: 600;
-  margin: 0 0 14px 0;
+  margin: 0 0 16px 0;
 }
 
 .dossier-rows {
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: 10px;
   border-top: 1px solid var(--border-subtle);
-  padding-top: 12px;
+  padding-top: 14px;
 }
 
 .d-row {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 2px;
 }
 
 .d-label {
   font-family: var(--font-mono);
   font-size: 10.5px;
+  font-weight: 600;
   color: var(--text-muted);
   text-transform: uppercase;
 }
 
 .d-val {
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: 12.5px;
   color: var(--text-secondary);
   font-weight: 500;
 }
@@ -84,16 +96,16 @@
 .about-bio-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 22px 24px;
+  border-radius: 12px;
+  padding: 24px 26px;
   box-shadow: var(--shadow-sm);
 }
 .about-bio-card p {
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 14.5px;
   line-height: 1.75;
   color: var(--text-secondary);
-  margin: 0 0 12px 0;
+  margin: 0 0 14px 0;
 }
 .about-bio-card p:last-child {
   margin-bottom: 0;
@@ -109,20 +121,26 @@
 .pillar-box {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 16px 18px;
+  border-radius: 10px;
+  padding: 18px 20px;
   display: flex;
-  gap: 12px;
+  gap: 14px;
   align-items: flex-start;
+  transition: transform var(--trans-fast), border-color var(--trans-fast), box-shadow var(--trans-fast);
+}
+.pillar-box:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-border);
+  box-shadow: var(--shadow-card);
 }
 
 .pillar-ico {
-  font-size: 16px;
+  font-size: 17px;
   color: var(--accent);
   background: var(--accent-soft);
-  width: 34px;
-  height: 34px;
-  border-radius: 6px;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -131,8 +149,8 @@
 
 .pillar-info h4 {
   font-family: var(--font-heading);
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 13.5px;
+  font-weight: 700;
   color: var(--text-primary);
   margin: 0 0 4px 0;
 }
@@ -148,8 +166,12 @@
 @media (max-width: 900px) {
   .about-grid {
     grid-template-columns: 1fr;
+    gap: 24px;
   }
   .pillars-grid {
     grid-template-columns: 1fr;
+  }
+  .dossier-photo {
+    height: 200px;
   }
 }

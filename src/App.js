@@ -12,12 +12,17 @@ import Contact from "./components/Contact";
 import Credits from "./components/Credits";
 import NavBar from "./components/NavBar";
 import AdminApp from "./admin/AdminApp";
+import LoadingScreen from "./components/LoadingScreen";
+import { usePortfolio } from "./context/PortfolioContext";
 import "./App.css";
 import "./styles/Global.css";
 
 function MainPortfolio() {
+  const { loading } = usePortfolio();
+
   return (
     <div className="App">
+      <LoadingScreen isLoaded={!loading} />
       <NavBar />
       <div id="content">
         <Intro />

@@ -12,6 +12,7 @@ import {
   VscCopy,
   VscReply,
   VscInbox,
+  VscChevronLeft,
 } from "react-icons/vsc";
 
 export default function MessagesSector() {
@@ -22,6 +23,7 @@ export default function MessagesSector() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterMode, setFilterMode] = useState("all"); // "all" or "unread"
   const [copied, setCopied] = useState(false);
+  const [mobileViewingDetail, setMobileViewingDetail] = useState(false);
 
   const loadMessages = async () => {
     try {
@@ -69,6 +71,7 @@ export default function MessagesSector() {
       if (selectedMessage && selectedMessage.id === id) {
         setSelectedMessage(remaining.length > 0 ? remaining[0] : null);
       }
+      setMobileViewingDetail(false);
       setAlert({ type: "success", text: "Message permanently deleted." });
     } catch (err) {
       setAlert({ type: "error", text: "Failed to delete: " + err.message });
@@ -77,6 +80,7 @@ export default function MessagesSector() {
 
   const handleSelectMessage = (msg) => {
     setSelectedMessage(msg);
+    setMobileViewingDetail(true);
     if (!msg.is_read) {
       handleToggleRead(msg);
     }
@@ -104,18 +108,19 @@ export default function MessagesSector() {
     <div className="admin-card">
       <div className="admin-card-header">
         <div>
-          <h3 className="admin-card-title">
-            <VscMail style={{ color: "#f43f5e" }} /> Inbound Inquiries & Contact Messages
-            {unreadCount > 0 && <span className="admin-nav-badge" style={{ marginLeft: 8 }}>{unreadCount} unread</span>}
-          </h3>
+          <h2 className="admin-card-title">
+            <VscInbox style={{ color: "var(--admin-primary)" }} /> Inbound Message Inbox
+          </h2>
           <div className="admin-card-subtitle">
-            Prospective recruiters, partners, and viewers submitting from your portfolio contact form.
+            Direct communications submitted by visitors and recruiters through the contact form
           </div>
         </div>
 
-        <button className="admin-btn admin-btn-secondary admin-btn-sm" onClick={loadMessages} title="Refresh Inbox">
-          <VscRefresh /> Check New
-        </button>
+        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+          <button className="admin-btn admin-btn-secondary admin-btn-sm" onClick={loadMessages}>
+            <VscRefresh /> Refresh
+          </button>
+        </div>
       </div>
 
       {alert && (
@@ -136,15 +141,15 @@ export default function MessagesSector() {
           </p>
         </div>
       ) : (
-        <div className="admin-inbox-grid">
+        <div className={`admin-inbox-grid ${mobileViewingDetail ? "mobile-detail-active" : ""}`}>
           {/* Left Column: Messages List */}
-          <div>
-            <div style={{ marginBottom: 12, display: "flex", gap: 8 }}>
-              <div style={{ position: "relative", flex: 1 }}>
+          <div className="admin-inbox-list-col">
+            <div style={{ marginBottom: 12, display: "flex", gap: 8, flexWrap: "wrap" }}>
+              <div style={{ position: "relative", flex: 1, minWidth: 160 }}>
                 <input
                   type="text"
                   className="admin-input"
-                  placeholder="Search sender, email, keywords..."
+                  placeholder="Search sender, email..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   style={{ paddingLeft: 34, fontSize: "0.85rem", padding: "8px 12px 8px 34px" }}
@@ -206,16 +211,26 @@ export default function MessagesSector() {
           </div>
 
           {/* Right Column: Message Detail Viewer */}
-          <div>
+          <div className="admin-inbox-detail-col">
             {selectedMessage ? (
               <div className="admin-inbox-viewer">
+                {/* Mobile Back Button */}
+                <div className="admin-inbox-mobile-back">
+                  <button
+                    className="admin-btn admin-btn-secondary admin-btn-sm"
+                    onClick={() => setMobileViewingDetail(false)}
+                  >
+                    <VscChevronLeft /> Back to Messages
+                  </button>
+                </div>
+
                 {/* Header Actions */}
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20, paddingBottom: 16, borderBottom: "1px solid var(--admin-card-border)" }}>
+                <div className="admin-inbox-detail-header">
                   <div>
-                    <h3 style={{ margin: "0 0 8px", fontSize: "1.25rem", color: "#fff", fontWeight: 700 }}>
+                    <h3 style={{ margin: "0 0 8px", fontSize: "1.2rem", color: "#fff", fontWeight: 700 }}>
                       {selectedMessage.subject || "(No Subject Provided)"}
                     </h3>
-                    <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", fontSize: "0.85rem", color: "#94a3b8" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", fontSize: "0.85rem", color: "#94a3b8" }}>
                       <span style={{ color: "#fff", fontWeight: 600 }}>{selectedMessage.name}</span>
                       <span>&lt;{selectedMessage.email}&gt;</span>
                       <span>•</span>
@@ -225,7 +240,7 @@ export default function MessagesSector() {
                     </div>
                   </div>
 
-                  <div style={{ display: "flex", gap: 8 }}>
+                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                     <button
                       className="admin-btn admin-btn-secondary admin-btn-sm"
                       onClick={() => handleToggleRead(selectedMessage)}
@@ -245,23 +260,23 @@ export default function MessagesSector() {
                 </div>
 
                 {/* Message Body */}
-                <div style={{ flexGrow: 1, whiteSpace: "pre-wrap", lineHeight: 1.6, fontSize: "0.95rem", color: "#e2e8f0", background: "rgba(0,0,0,0.2)", padding: 20, borderRadius: "var(--admin-radius-md)", border: "1px solid var(--admin-card-border)", minHeight: 220 }}>
+                <div style={{ flexGrow: 1, whiteSpace: "pre-wrap", lineHeight: 1.6, fontSize: "0.95rem", color: "#e2e8f0", background: "rgba(0,0,0,0.2)", padding: 18, borderRadius: "var(--admin-radius-md)", border: "1px solid var(--admin-card-border)", minHeight: 200, margin: "16px 0" }}>
                   {selectedMessage.message}
                 </div>
 
                 {/* Reply Toolbar */}
-                <div style={{ marginTop: 20, display: "flex", gap: 10 }}>
+                <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
                   <a
                     href={`mailto:${selectedMessage.email}?subject=Re: ${encodeURIComponent(selectedMessage.subject || "Portfolio Inquiry")}`}
                     className="admin-btn admin-btn-primary admin-btn-sm"
                   >
-                    <VscReply /> Reply via Email Client
+                    <VscReply /> Reply via Email
                   </a>
                   <button
                     className="admin-btn admin-btn-secondary admin-btn-sm"
                     onClick={() => handleCopyEmail(selectedMessage.email)}
                   >
-                    <VscCopy /> {copied ? "Email Copied!" : "Copy Email Address"}
+                    <VscCopy /> {copied ? "Copied!" : "Copy Email"}
                   </button>
                 </div>
               </div>

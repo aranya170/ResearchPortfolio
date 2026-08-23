@@ -1,27 +1,33 @@
 /* ── Tech Stack Matrix ── */
 .tech-matrix-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 18px;
 }
 
 .matrix-domain-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 20px;
+  border-radius: 12px;
+  padding: 22px;
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
+  transition: border-color var(--trans-normal), box-shadow var(--trans-normal);
+}
+
+.matrix-domain-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-card);
 }
 
 .matrix-domain-title {
   font-family: var(--font-heading);
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 700;
   color: var(--accent);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   margin: 0 0 14px 0;
   padding-bottom: 10px;
   border-bottom: 1px solid var(--border-subtle);
@@ -30,36 +36,48 @@
 .matrix-tools-wrap {
   display: flex;
   flex-wrap: wrap;
-  gap: 7px;
+  gap: 8px;
 }
 
 .tool-chip {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   background: #FAF8F5;
   border: 1px solid var(--border);
-  border-radius: 5px;
-  padding: 5px 10px;
-  font-size: 12px;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 12.5px;
+  transition: background var(--trans-fast), border-color var(--trans-fast), transform var(--trans-fast);
 }
 .tool-chip:hover {
   background: #FFFFFF;
-  border-color: var(--border-strong);
+  border-color: var(--accent-border);
+  transform: translateY(-1px);
 }
 
 .tool-icon {
   display: flex;
   align-items: center;
-  font-size: 13px;
+  font-size: 14px;
 }
 .tool-icon svg {
-  width: 13px;
-  height: 13px;
+  width: 14px;
+  height: 14px;
 }
 
 .tool-name {
   font-family: var(--font-body);
   color: var(--text-secondary);
   font-weight: 500;
+}
+
+@media (max-width: 600px) {
+  .tech-matrix-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .matrix-domain-card {
+    padding: 18px 16px;
+  }
 }

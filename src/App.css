@@ -1,50 +1,7 @@
-html {
-  scroll-behavior: auto; /* no smooth scroll */
-  scrollbar-color: var(--border-strong) var(--bg-card);
-  scrollbar-width: thin;
-}
-
-*, *::before, *::after {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  background: var(--bg);
-  font-family: var(--font-sans);
-  color: var(--text-primary);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  text-decoration: none !important;
-  color: var(--accent) !important;
-}
-
-ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-/* ── App shell ── */
-.App {
-  display: flex;
-  flex-direction: column;
-  background: var(--bg);
-  min-height: 100vh;
-}
-
-/* ── Content column ── */
-#content {
-  width: 100%;
-  padding: 0 32px;
-}
-
-/* ── Selection ── */
+/* ── Selection Styling ── */
 ::selection {
-  background: rgba(64, 145, 108, 0.18);
+  background: rgba(30, 67, 52, 0.15);
+  color: #1A1917;
 }
 
 /* ── Section wrapper ── */
@@ -54,60 +11,14 @@ ul {
   padding: var(--section-gap) 0;
 }
 
-/* ── Section heading ── */
-.section-header {
-  margin-bottom: 40px;
-}
-
-.section-title {
-  font-family: var(--font-serif);
-  font-size: 2rem;
-  font-weight: 400;
-  color: var(--text-primary);
-  letter-spacing: -0.02em;
-  background: none;
-  -webkit-text-fill-color: unset;
-  display: block;
-  padding-bottom: 0;
-}
-
-.section-title::after {
-  display: none; /* remove underline decoration */
-}
-
-/* ── Divider ── */
-.section-divider {
-  width: 100%;
-  height: 1px;
-  background: var(--border);
-  margin-bottom: 48px;
-}
-
 /* ── Text link style ── */
 .text-link {
   color: var(--accent) !important;
   font-weight: 500;
   border-bottom: 1px solid var(--accent-border);
+  transition: border-color var(--trans-fast), color var(--trans-fast);
 }
-
-/* ── Responsive ── */
-@media (max-width: 800px) {
-  #content {
-    padding: 0 20px;
-  }
-  :root {
-    --section-gap: 80px;
-  }
-}
-
-@media (max-width: 500px) {
-  #content {
-    padding: 0 16px;
-  }
-  :root {
-    --section-gap: 64px;
-  }
-  .section-title {
-    font-size: 1.7rem;
-  }
+.text-link:hover {
+  border-color: var(--accent);
+  color: var(--accent-hover) !important;
 }

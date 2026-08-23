@@ -2,7 +2,7 @@
 .portfolio-footer {
   margin-top: 80px;
   border-top: 1px solid var(--border);
-  padding: 30px 0;
+  padding: 32px 0;
 }
 
 .footer-inner {
@@ -14,7 +14,7 @@
 }
 
 .footer-copy {
-  font-family: var(--font-sans);
+  font-family: var(--font-body);
   font-size: 13px;
   color: var(--text-muted);
   margin: 0;
@@ -23,14 +23,16 @@
 .footer-right {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
+  flex-wrap: wrap;
 }
 
 .footer-link {
-  font-family: var(--font-sans);
+  font-family: var(--font-body);
   font-size: 13px;
   color: var(--text-muted) !important;
   font-weight: 500;
+  transition: color var(--trans-fast);
 }
 .footer-link:hover {
   color: var(--accent) !important;
@@ -44,4 +46,17 @@
 .admin-portal-link {
   color: var(--accent) !important;
   font-weight: 600;
+}
+
+@media (max-width: 600px) {
+  .portfolio-footer {
+    margin-top: 60px;
+    padding: 24px 0;
+  }
+  .footer-inner {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 12px;
+  }
 }

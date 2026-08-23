@@ -1,23 +1,32 @@
 /* ── GitHub Contributions ── */
 .gh-header-profile-link {
-  font-family: var(--font-sans);
+  font-family: var(--font-body);
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--accent) !important;
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  transition: transform var(--trans-fast);
+}
+.gh-header-profile-link:hover {
+  transform: translateX(2px);
 }
 
 .gh-widescreen-card {
   background: var(--bg-card);
-  border: 1px solid var(--border-strong);
-  border-radius: 10px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
   padding: 24px 28px;
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
   gap: 20px;
+  transition: border-color var(--trans-normal), box-shadow var(--trans-normal);
+}
+.gh-widescreen-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-card);
 }
 
 .gh-card-header {
@@ -25,12 +34,15 @@
   justify-content: space-between;
   align-items: center;
   padding-bottom: 16px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
 .gh-stats-items {
   display: flex;
-  gap: 36px;
+  gap: 32px;
+  flex-wrap: wrap;
 }
 
 .gh-stat-block {
@@ -42,7 +54,7 @@
 .gh-stat-icon {
   font-size: 20px;
   color: var(--accent);
-  background: var(--accent-pale);
+  background: var(--accent-soft);
   width: 40px;
   height: 40px;
   border-radius: 8px;
@@ -53,15 +65,15 @@
 
 .gh-stat-val {
   display: block;
-  font-family: var(--font-serif);
-  font-size: 1.4rem;
-  font-weight: 400;
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 700;
   color: var(--text-primary);
   line-height: 1.1;
 }
 
 .gh-stat-label {
-  font-family: var(--font-sans);
+  font-family: var(--font-body);
   font-size: 12px;
   color: var(--text-muted);
 }
@@ -70,9 +82,20 @@
   overflow-x: auto;
   padding: 10px 0;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
+  -webkit-overflow-scrolling: touch;
 }
 
 .gh-calendar-wrapper svg {
   max-width: 100%;
+  min-width: 680px;
+}
+
+@media (max-width: 768px) {
+  .gh-widescreen-card {
+    padding: 18px 16px;
+  }
+  .gh-stats-items {
+    gap: 20px;
+  }
 }
