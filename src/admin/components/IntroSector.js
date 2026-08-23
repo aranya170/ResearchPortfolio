@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { api, getAssetUrl } from "../../services/api";
 import { usePortfolio } from "../../context/PortfolioContext";
 import { VscSave, VscCloudUpload, VscCheck, VscFilePdf } from "react-icons/vsc";
 
 export default function IntroSector() {
   const { portfolio, refreshPortfolio } = usePortfolio();
+  const fileInputRef = useRef(null);
+
   const [formData, setFormData] = useState({
     greeting: "Hi there! I'm ",
     name: "Aranya Kishor Das",
@@ -44,20 +46,33 @@ export default function IntroSector() {
   };
 
   const handleCvUpload = async (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files && e.target.files[0];
     if (!file) return;
 
     try {
       setUploading(true);
+      setAlert(null);
       const res = await api.uploadFile(file);
-      if (res && res.url) {
-        setFormData((prev) => ({ ...prev, cv_url: res.url }));
-        setAlert({ type: "success", text: `CV uploaded successfully (${file.name})` });
+      if (res && (res.url || (res.file && res.file.url))) {
+        const uploadedUrl = res.url || res.file.url;
+        const updated = { ...formData, cv_url: uploadedUrl };
+        setFormData(updated);
+
+        // Auto-save immediately to database
+        await api.updateIntro(updated);
+        refreshPortfolio();
+        setAlert({
+          type: "success",
+          text: `CV uploaded and saved to database successfully (${file.name})!`,
+        });
       }
     } catch (err) {
       setAlert({ type: "error", text: "Upload failed: " + err.message });
     } finally {
       setUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     }
   };
 
@@ -79,6 +94,12 @@ export default function IntroSector() {
     }
   };
 
+  const handleOpenCvPreview = () => {
+    if (!formData.cv_url) return;
+    const targetUrl = getAssetUrl(formData.cv_url);
+    window.open(targetUrl, "_blank", "noopener,noreferrer");
+  };
+
   return (
     <div className="admin-card">
       <div className="admin-card-header">
@@ -94,6 +115,7 @@ export default function IntroSector() {
         <div className={`admin-alert admin-alert-${alert.type}`}>
           <span>{alert.text}</span>
           <button
+            type="button"
             onClick={() => setAlert(null)}
             style={{ background: "none", border: "none", color: "inherit", cursor: "pointer" }}
           >
@@ -140,7 +162,6 @@ export default function IntroSector() {
               value={formData.subtitle}
               onChange={handleChange}
               placeholder="AI Researcher & Robotics Enthusiast"
-              required
             />
           </div>
 
@@ -171,7 +192,7 @@ export default function IntroSector() {
 
         <div className="admin-form-group">
           <label className="admin-label">Curriculum Vitae (CV / Resume)</label>
-          <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+          <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
             <input
               type="text"
               name="cv_url"
@@ -179,17 +200,70 @@ export default function IntroSector() {
               value={formData.cv_url}
               onChange={handleChange}
               placeholder="/assets/My_CV.pdf"
+              style={{ flex: 1, minWidth: 260 }}
             />
-            <label className="admin-btn admin-btn-secondary" style={{ cursor: "pointer", whiteSpace: "nowrap" }}>
-              <VscCloudUpload /> {uploading ? "Uploading..." : "Upload New PDF"}
-              <input type="file" accept=".pdf" onChange={handleCvUpload} style={{ display: "none" }} />
-            </label>
+            
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".pdf,application/pdf"
+              onChange={handleCvUpload}
+              style={{ display: "none" }}
+            />
+
+            <button
+              type="button"
+              className="admin-btn admin-btn-secondary"
+              onClick={() => fileInputRef.current && fileInputRef.current.click()}
+              disabled={uploading}
+              style={{ cursor: "pointer", whiteSpace: "nowrap" }}
+            >
+              <VscCloudUpload /> {uploading ? "Uploading PDF..." : "Upload New PDF"}
+            </button>
+
+            <button
+              type="button"
+              className="admin-btn admin-btn-secondary"
+              onClick={handleOpenCvPreview}
+              style={{ cursor: "pointer", whiteSpace: "nowrap" }}
+              title="Open current CV in a new tab"
+            >
+              <VscFilePdf /> Preview CV ↗
+            </button>
           </div>
-          <div className="admin-helper" style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 6 }}>
-            <span>Linked CV:</span>
-            <a href={getAssetUrl(formData.cv_url)} target="_blank" rel="noopener noreferrer" style={{ color: "#2D6A4F", fontWeight: 600, textDecoration: "underline" }}>
-              Preview / Test CV Document ↗
-            </a>
+
+          <div className="admin-helper" style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 8 }}>
+            <span>Quick Select Asset:</span>
+            <button
+              type="button"
+              onClick={() => setFormData((prev) => ({ ...prev, cv_url: "/assets/My_CV.pdf" }))}
+              style={{
+                background: "none",
+                border: "1px solid #30363d",
+                color: "#58a6ff",
+                borderRadius: 4,
+                padding: "2px 8px",
+                fontSize: "0.8rem",
+                cursor: "pointer",
+              }}
+            >
+              /assets/My_CV.pdf
+            </button>
+            <button
+              type="button"
+              onClick={() => setFormData((prev) => ({ ...prev, cv_url: "/assets/resume.pdf" }))}
+              style={{
+                background: "none",
+                border: "1px solid #30363d",
+                color: "#58a6ff",
+                borderRadius: 4,
+                padding: "2px 8px",
+                fontSize: "0.8rem",
+                cursor: "pointer",
+              }}
+            >
+              /assets/resume.pdf
+            </button>
           </div>
         </div>
 
