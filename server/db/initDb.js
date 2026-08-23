@@ -66,15 +66,38 @@ async function initDatabase(force = false) {
       );
     }
 
+    // Run column migrations for about_section if table already existed
+    await pool.query(`
+      ALTER TABLE about_section 
+      ADD COLUMN IF NOT EXISTS name VARCHAR(150) DEFAULT 'Aranya Kishor Das',
+      ADD COLUMN IF NOT EXISTS role VARCHAR(255) DEFAULT 'Undergraduate Researcher & Club President',
+      ADD COLUMN IF NOT EXISTS affiliation VARCHAR(255) DEFAULT 'United International University',
+      ADD COLUMN IF NOT EXISTS core_focus VARCHAR(255) DEFAULT 'Deep Learning, Autonomous Robotics, Kinematics',
+      ADD COLUMN IF NOT EXISTS location VARCHAR(255) DEFAULT 'Dhaka, Bangladesh',
+      ADD COLUMN IF NOT EXISTS pillars JSONB DEFAULT '[]'::jsonb;
+    `).catch(() => {});
+
     // Check if about_section exists
     const aboutCheck = await pool.query("SELECT COUNT(*) FROM about_section");
     if (parseInt(aboutCheck.rows[0].count, 10) === 0) {
       console.log("Seeding about section...");
       const a = seedData.about;
       await pool.query(
-        `INSERT INTO about_section (title, profile_image, paragraphs, timeline_link_text, contact_button_text)
-         VALUES ($1, $2, $3, $4, $5)`,
-        [a.title, a.profile_image, JSON.stringify(a.paragraphs), a.timeline_link_text, a.contact_button_text]
+        `INSERT INTO about_section (title, profile_image, name, role, affiliation, core_focus, location, paragraphs, pillars, timeline_link_text, contact_button_text)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8::jsonb, $9::jsonb, $10, $11)`,
+        [
+          a.title,
+          a.profile_image,
+          a.name,
+          a.role,
+          a.affiliation,
+          a.core_focus,
+          a.location,
+          JSON.stringify(a.paragraphs || []),
+          JSON.stringify(a.pillars || []),
+          a.timeline_link_text,
+          a.contact_button_text,
+        ]
       );
     }
 
