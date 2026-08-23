@@ -1,22 +1,32 @@
 /* ── GitHub Contributions ── */
 .gh-header-profile-link {
-  font-family: var(--font-body);
+  font-family: var(--font-heading);
   font-size: 13px;
   font-weight: 600;
   color: var(--accent) !important;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  transition: transform var(--trans-fast);
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  transition: all var(--trans-fast);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
 }
+
 .gh-header-profile-link:hover {
-  transform: translateX(2px);
+  background: var(--accent);
+  color: #FFFFFF !important;
+  border-color: var(--accent);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(30, 67, 52, 0.2);
 }
 
 .gh-widescreen-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 24px 28px;
   box-shadow: var(--shadow-sm);
   display: flex;
@@ -24,6 +34,7 @@
   gap: 20px;
   transition: border-color var(--trans-normal), box-shadow var(--trans-normal);
 }
+
 .gh-widescreen-card:hover {
   border-color: var(--border-strong);
   box-shadow: var(--shadow-card);
@@ -61,6 +72,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  border: 1px solid var(--accent-border);
 }
 
 .gh-stat-val {
@@ -79,16 +91,65 @@
 }
 
 .gh-calendar-wrapper {
+  width: 100%;
   overflow-x: auto;
-  padding: 10px 0;
+  padding: 12px 0 6px 0;
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
+  align-items: center;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
 }
 
-.gh-calendar-wrapper svg {
+.gh-calendar-wrapper::-webkit-scrollbar {
+  height: 5px;
+}
+
+.gh-calendar-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.gh-calendar-wrapper::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 4px;
+}
+
+/* Calendar Element Styling */
+.gh-calendar-wrapper .react-activity-calendar {
+  margin: 0 auto;
   max-width: 100%;
-  min-width: 680px;
+}
+
+.gh-calendar-wrapper .react-activity-calendar > svg {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  height: auto;
+}
+
+.gh-calendar-wrapper .react-activity-calendar__footer {
+  font-family: var(--font-mono) !important;
+  font-size: 11px !important;
+  color: var(--text-muted) !important;
+  margin-top: 14px !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  gap: 16px !important;
+}
+
+.gh-calendar-wrapper .react-activity-calendar__legend-colors {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.gh-calendar-wrapper .react-activity-calendar__legend-colors svg {
+  width: 11px !important;
+  height: 11px !important;
+  min-width: unset !important;
+  display: inline-block !important;
 }
 
 @media (max-width: 768px) {
@@ -97,5 +158,8 @@
   }
   .gh-stats-items {
     gap: 20px;
+  }
+  .gh-calendar-wrapper {
+    justify-content: flex-start;
   }
 }
