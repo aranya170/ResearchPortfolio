@@ -27,11 +27,17 @@ const upload = multer({
   storage,
   limits: { fileSize: 500 * 1024 * 1024 }, // 500MB limit
   fileFilter: (req, file, cb) => {
-    const allowed = /jpeg|jpg|png|webp|gif|svg|bmp|pdf|mp4|webm|ogg|ogv|mov|quicktime|mkv|m4v|avi|3gp|flv|wmv/i;
+    const allowed = /jpeg|jpg|png|webp|gif|svg|bmp|avif|ico|pdf|mp4|webm|ogg|ogv|mov|quicktime|mkv|m4v|avi|3gp|flv|wmv|doc|docx|txt|zip/i;
     const ext = path.extname(file.originalname).toLowerCase().replace(".", "");
-    const mime = file.mimetype.toLowerCase();
+    const mime = (file.mimetype || "").toLowerCase();
 
-    if (allowed.test(ext) || mime.startsWith("image/") || mime.startsWith("video/") || mime === "application/pdf") {
+    if (
+      allowed.test(ext) ||
+      mime.startsWith("image/") ||
+      mime.startsWith("video/") ||
+      mime === "application/pdf" ||
+      mime.startsWith("text/")
+    ) {
       cb(null, true);
     } else {
       cb(new Error(`File type .${ext} is not supported. Please upload an image, PDF, or video file.`));
@@ -64,6 +70,13 @@ exports.handleUpload = (req, res) => {
     success: true,
     message: "File uploaded successfully",
     url: fileUrl,
+    file: {
+      url: fileUrl,
+      name: req.file.originalname,
+      filename: req.file.filename,
+      size: req.file.size,
+      mimetype: req.file.mimetype,
+    },
     filename: req.file.filename,
     size: req.file.size,
     mimetype: req.file.mimetype,

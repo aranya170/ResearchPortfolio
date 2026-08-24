@@ -56,7 +56,7 @@ export const getAssetUrl = (url) => {
     formatted = `/${formatted}`;
   }
 
-  // If it's an uploaded asset from backend and we are running separately
+  // If it's an uploaded asset from backend (/uploads/...)
   if (formatted.startsWith("/uploads/")) {
     const apiBase = getApiBaseUrl().replace(/\/api\/?$/, "");
     return `${apiBase}${encodeURI(formatted)}`;

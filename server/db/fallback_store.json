@@ -15,7 +15,7 @@
     "show_stars": true
   },
   "about": {
-    "title": "About Me",
+    "title": "Academic Profile & Focus",
     "profile_image": "/assets/Aranya Kishor Das.png",
     "name": "Aranya Kishor Das",
     "role": "Undergraduate Researcher & Club President",
@@ -39,16 +39,16 @@
         "description": "Engineered advanced machine learning systems by developing adaptive ensemble learning frameworks, psychometric classification models, and robust computer vision pipelines."
       },
       {
-        "id": 3,
-        "icon": "book",
+        "id": 1787602262215,
         "title": "Open Research & Mentorship",
-        "description": "Created the open-source robotics learning repository RoboNeT and served as a Teaching Assistant for IoT & Robotics."
+        "description": "Created the open-source robotics learning repository RoboNeT and served as a Teaching Assistant for IoT & Robotics.",
+        "icon": "book"
       },
       {
-        "id": 4,
-        "icon": "award",
+        "id": 1787602263192,
         "title": "Global Recognition",
-        "description": "Evaluated entries across prominent national and international competitions, notably serving as a judge for the World Robot Olympiad 2026, while concurrently earning over 5 awards in nationwide technical contests."
+        "description": "Evaluated entries across prominent national and international competitions, notably serving as a judge for the World Robot Olympiad 2026, while concurrently earning over 5 awards in nationwide technical contests.",
+        "icon": "award"
       }
     ]
   },
@@ -66,7 +66,7 @@
         "UI/UX Design",
         "PHP"
       ],
-      "sort_order": 1,
+      "sort_order": 11,
       "files": [
         {
           "id": 1,
@@ -84,7 +84,11 @@
           "language": "markdown",
           "sort_order": 2
         }
-      ]
+      ],
+      "video": "",
+      "medium": "",
+      "tableau": "",
+      "dataset": ""
     },
     {
       "id": 2,
@@ -98,10 +102,10 @@
         "Tailwind CSS",
         "PHP"
       ],
-      "sort_order": 2,
+      "sort_order": 12,
       "files": [
         {
-          "id": 3,
+          "id": 51,
           "name": "Dacca Delights Website",
           "type": "notebook",
           "content": "https://daccadelights.com/",
@@ -109,14 +113,18 @@
           "sort_order": 1
         },
         {
-          "id": 4,
+          "id": 52,
           "name": "README.md",
           "type": "info",
           "content": "A full-stack e-commerce platform developed for a bakery shop. This freelance project involved designing an intuitive frontend and a robust backend to manage orders, inventory, and customer interactions. Hosted at daccadelights.com, the site provides a seamless shopping experience for high-quality baked goods.",
           "language": "markdown",
           "sort_order": 2
         }
-      ]
+      ],
+      "video": "",
+      "medium": "",
+      "tableau": "",
+      "dataset": ""
     },
     {
       "id": 3,
@@ -131,17 +139,22 @@
         "Tailwind CSS",
         "React"
       ],
-      "sort_order": 3,
+      "sort_order": 14,
       "files": [
         {
-          "id": 5,
+          "id": 49,
           "name": "README.md",
           "type": "info",
           "content": "DirectEdge revolutionizes sourcing by connecting businesses directly with farmers, streamlining distribution for fresher, sustainable goods. As an all-in-one solution, we manage procurement through delivery via a transparent supply chain. We’ve integrated a compact, user-friendly POS and ERP system alongside advanced demand forecasting to optimize efficiency. By eliminating intermediaries, we ensure competitive pricing for businesses and fair compensation for farmers. Join us in building a smarter, data-driven, and sustainable food system.",
           "language": "markdown",
           "sort_order": 1
         }
-      ]
+      ],
+      "video": "",
+      "website": "",
+      "medium": "",
+      "tableau": "",
+      "dataset": ""
     },
     {
       "id": 4,
@@ -155,7 +168,7 @@
         "PHP",
         "JavaScript"
       ],
-      "sort_order": 4,
+      "sort_order": 15,
       "files": [
         {
           "id": 6,
@@ -165,7 +178,12 @@
           "language": "markdown",
           "sort_order": 1
         }
-      ]
+      ],
+      "video": "",
+      "website": "",
+      "medium": "",
+      "tableau": "",
+      "dataset": ""
     },
     {
       "id": 5,
@@ -178,7 +196,7 @@
         "MySQL",
         "CSS"
       ],
-      "sort_order": 5,
+      "sort_order": 13,
       "files": [
         {
           "id": 7,
@@ -188,13 +206,18 @@
           "language": "markdown",
           "sort_order": 1
         }
-      ]
+      ],
+      "video": "",
+      "website": "",
+      "medium": "",
+      "tableau": "",
+      "dataset": ""
     },
     {
       "id": 6,
       "category": "Research",
       "name": "RoboNeT - Robotics, Networking, IoT & Data Communication Repository",
-      "image": "/assets/research.png",
+      "image": "/uploads/1787602775832_Screenshot_2026-08-25_021914.png",
       "github": "https://github.com/FahimHafiz/RoboNeT-Robotics-Network-IoT-Repository.git",
       "tags": [
         "Autonomus",
@@ -220,13 +243,18 @@
           "language": "Robotics, Networking, IoT & Data Communication",
           "sort_order": 2
         }
-      ]
+      ],
+      "video": "",
+      "website": "",
+      "medium": "",
+      "tableau": "",
+      "dataset": ""
     },
     {
       "id": 7,
       "category": "Research",
-      "name": "Identification and Classification of the Dark Triad Personality Traits Using Machine Learning",
-      "image": "/assets/DarkTriads.png",
+      "name": "A Multiclass Image Segmentation Dataset for Waste in Urban Water Bodies of Bangladesh",
+      "image": "/uploads/1787602370811_Screenshot_2026-08-25_020002.png",
       "tags": [
         "Pandas",
         "Numpy",
@@ -235,28 +263,26 @@
       "sort_order": 2,
       "files": [
         {
-          "id": 10,
+          "id": 38,
           "name": "README.md",
           "type": "info",
-          "content": "This project utilizes machine learning algorithms to analyze behavioral data and psychometric patterns for the automated detection of Machiavellianism, Narcissism, and Psychopathy. By identifying these 'Dark Triad' traits, the system provides a data-driven framework for personality classification in clinical, organizational, or forensic contexts.",
+          "content": "In Bangladesh, inadequate waste management in canals, lakes, and ponds presents significant environmental and public health challenges. Addressing these issues requires implementing automated monitoring systems. However, the creation of such systems is hindered by the lack of datasets containing real-world waste in unconstrained, complex environments. The proposed WasteSegCluster dataset consists of annotated waste images collected from a variety of water-based environments in Dhaka, Bangladesh. It contains 1,947 images, with nearly 3,900 instances belonging to 4 categories of Composite_Rubber_Textile, Organic, Paper, and Plastic, all annotated using polygon-based masks and released in COCO format to support object detection, instance segmentation and classification problems. The dataset is divided into training (70%), validation (20%), and testing (10%) subsets using stratified sampling. The dataset was evaluated using multiple models. Mask R-CNN achieves an accuracy of 0.90 for instance segmentation, while EfficientNetV2-M and Vision Transformer achieve classification accuracies of 0.92 and 0.89 respectively. These results indicate that the dataset supports model development and evaluation across different architectures.",
           "language": "markdown",
           "sort_order": 1
-        },
-        {
-          "id": 11,
-          "name": "FinalUpdate.ipynb",
-          "type": "notebook",
-          "content": "https://nbviewer.org/github/aranya170/Dark-Traid-Personality/blob/main/FinalUpdate.ipynb",
-          "language": "python",
-          "sort_order": 2
         }
-      ]
+      ],
+      "video": "",
+      "github": "",
+      "website": "",
+      "medium": "",
+      "tableau": "",
+      "dataset": ""
     },
     {
       "id": 8,
       "category": "Research",
-      "name": "Adaptive Weighted Ensemble Learning for Mixed Waste Classification",
-      "image": "/assets/research2.jpg",
+      "name": "BDWaterSurfaceSet: A Satellite Imagery Dataset for Surface Water Body Segmentation Across Diverse Aquatic Environments",
+      "image": "/uploads/1787602671467_Screenshot_2026-08-25_021724.png",
       "tags": [
         "Pandas",
         "Latex",
@@ -268,11 +294,17 @@
           "id": 12,
           "name": "README.md",
           "type": "info",
-          "content": "This project implements an adaptive ensemble framework that dynamically adjusts the influence of multiple deep learning models to improve classification accuracy across diverse waste streams. By prioritizing the most reliable sub-models for specific materials, the system achieves superior robustness in identifying recyclables and hazardous items within complex, mixed environments.",
+          "content": "This data article describes the BDWaterSurfaceSet dataset, a collection of satellite imagery for detecting inland water surfaces in Bangladesh. The dataset comprises 3,115 satellite images and 10,142 region-level samples, including 7,112 water-surface and 3,030 non-water-surface regions. Data extraction follows a multi-stage pipeline in which raw satellite images are converted into region crops via binary mask extraction with stratified partitioning to prevent data leakage. A 70/20/10 image-level split is applied across training, validation, and test sets (2180, 623 and 312 images respectively). Four pretrained models were benchmarked for binary classification: ViT-Base-Patch16-224 achieved 0.9991 accuracy (0.9983 precision, 0.9994 recall, 0.9989 F1), DeiT-Base-Patch16-224 achieved 0.9991 accuracy (0.9983 precision, 0.9994 recall, 0.9989 F1), Swin-Tiny-Patch4-Window7-224 achieved 0.9973 accuracy (0.9961 precision, 0.9971 recall, 0.9966 F1), and ConvNeXt-Tiny achieved 0.9982 accuracy (0.9967 precision, 0.9988 recall, 0.9977 F1). The dataset is released in COCO segmentation format with companion annotation files, enabling direct use with standard data loaders for segmentation and classification tasks.",
           "language": "markdown",
           "sort_order": 1
         }
-      ]
+      ],
+      "video": "",
+      "github": "",
+      "website": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7286437",
+      "medium": "",
+      "tableau": "",
+      "dataset": ""
     },
     {
       "id": 9,
@@ -286,7 +318,7 @@
         "Parallel Robotics",
         "3D Printing"
       ],
-      "sort_order": 1,
+      "sort_order": 4,
       "files": [
         {
           "id": 13,
@@ -296,7 +328,12 @@
           "language": "markdown",
           "sort_order": 1
         }
-      ]
+      ],
+      "github": "",
+      "website": "",
+      "medium": "",
+      "tableau": "",
+      "dataset": ""
     },
     {
       "id": 10,
@@ -309,7 +346,7 @@
         "3D Design",
         "Kinematics"
       ],
-      "sort_order": 2,
+      "sort_order": 5,
       "files": [
         {
           "id": 14,
@@ -319,14 +356,19 @@
           "language": "markdown",
           "sort_order": 1
         }
-      ]
+      ],
+      "github": "",
+      "website": "",
+      "medium": "",
+      "tableau": "",
+      "dataset": ""
     },
     {
       "id": 12,
       "category": "Hardware",
       "name": "IOT Based Smart Bus Tracking System",
       "image": "/assets/Hardware1.png",
-      "video": "/assets/hardware_videos/Field Bot.mp4",
+      "video": "",
       "github": "https://github.com/aranya170/Shuttle-Bus-Tracking-System",
       "tags": [
         "Arduino",
@@ -334,10 +376,10 @@
         "LDR",
         "GPS Module"
       ],
-      "sort_order": 4,
+      "sort_order": 7,
       "files": [
         {
-          "id": 16,
+          "id": 56,
           "name": "README.md",
           "type": "info",
           "content": "This project is a comprehensive Shuttle Bus Tracking and Monitoring System developed for a university-level IoT and embedded systems project. The system combines multiple sensors and technologies to ensure real-time location tracking, passenger queue monitoring, environmental sensing, and safety alerts for shuttle operations on campus.",
@@ -361,13 +403,43 @@
         "Buzzer",
         "Laser"
       ],
-      "sort_order": 5,
+      "sort_order": 20,
       "files": [
         {
           "id": 17,
           "name": "README.md",
           "type": "info",
           "content": "Designed and fabricated an IoT-enabled smart voting machine ensuring biometric authentication, tamper-evident vote logging, and real-time tabulation using embedded microcontrollers.",
+          "language": "markdown",
+          "sort_order": 1
+        }
+      ],
+      "video": "",
+      "github": "",
+      "website": "",
+      "medium": "",
+      "tableau": "",
+      "dataset": ""
+    },
+    {
+      "id": 23,
+      "category": "Hardware",
+      "name": "Autonomous Field Bot",
+      "image": "/uploads/1787602929909_Screenshot_2026-08-25_022132.png",
+      "video": "/assets/hardware_videos/Field Bot.mp4",
+      "github": "",
+      "website": "",
+      "medium": "",
+      "tableau": "",
+      "dataset": "",
+      "tags": [],
+      "sort_order": 6,
+      "files": [
+        {
+          "id": 45,
+          "name": "README.md",
+          "type": "info",
+          "content": "This is an autonomous field bot that can autonomously navigate through open spaces and survey an area for an user defined task.",
           "language": "markdown",
           "sort_order": 1
         }
@@ -414,16 +486,6 @@
         "Built custom web apps and e-commerce platforms using Tailwind CSS, PHP, React, and MySQL.",
         "Delivered end-to-end commercial solutions such as Dacca Delights bakery platform."
       ]
-    },
-    {
-      "id": 6,
-      "company": "Crossroads Initiative",
-      "job_title": "Technical Support ",
-      "duration": "Nov 2020 - Jun 2022",
-      "descriptions": [
-        "Directed the development of community-focused web and mobile applications while managing and delivering IT solutions for internal operations and students"
-      ],
-      "sort_order": 4
     }
   ],
   "timeline": [
@@ -465,7 +527,8 @@
       "description": "Became President of UIU Robotics and Undergraduate Assistant under Dr. Mohammad Nurul Huda.",
       "timeframe": "2024 - 2025",
       "type": "startup",
-      "sort_order": 5
+      "sort_order": 5,
+      "year": "2024 - 2026"
     },
     {
       "id": 6,
@@ -473,7 +536,8 @@
       "description": "Pursuing higher research in AI, intelligent robotics, and scalable systems.",
       "timeframe": "2025 - Present",
       "type": "statistics",
-      "sort_order": 6
+      "sort_order": 6,
+      "year": "2026 - Present"
     }
   ],
   "techStack": [

@@ -14,6 +14,8 @@ import {
 
 export default function ProjectsSector() {
   const { refreshPortfolio } = usePortfolio();
+  const imageInputRef = React.useRef(null);
+  const videoInputRef = React.useRef(null);
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("All");
@@ -143,30 +145,37 @@ export default function ProjectsSector() {
   };
 
   const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files && e.target.files[0];
     if (!file) return;
     try {
       setUploading(true);
+      setAlert(null);
       const res = await api.uploadFile(file);
-      if (res && res.success) {
-        setFormState((prev) => ({ ...prev, image: res.url }));
-        setAlert({ type: "success", text: "Thumbnail uploaded successfully!" });
+      const uploadedUrl = res?.url || res?.file?.url;
+      if (uploadedUrl) {
+        setFormState((prev) => ({ ...prev, image: uploadedUrl }));
+        setAlert({ type: "success", text: `Thumbnail "${file.name}" uploaded successfully!` });
       }
     } catch (err) {
       setAlert({ type: "error", text: "Upload failed: " + err.message });
     } finally {
       setUploading(false);
+      if (imageInputRef.current) {
+        imageInputRef.current.value = "";
+      }
     }
   };
 
   const handleVideoUpload = async (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files && e.target.files[0];
     if (!file) return;
     try {
       setUploadingVideo(true);
+      setAlert(null);
       const res = await api.uploadFile(file);
-      if (res && res.success) {
-        setFormState((prev) => ({ ...prev, video: res.url }));
+      const uploadedUrl = res?.url || res?.file?.url;
+      if (uploadedUrl) {
+        setFormState((prev) => ({ ...prev, video: uploadedUrl }));
         setAlert({ type: "success", text: `Video "${file.name}" uploaded successfully!` });
         loadAvailableVideos();
       }
@@ -174,6 +183,9 @@ export default function ProjectsSector() {
       setAlert({ type: "error", text: "Video upload failed: " + err.message });
     } finally {
       setUploadingVideo(false);
+      if (videoInputRef.current) {
+        videoInputRef.current.value = "";
+      }
     }
   };
 
@@ -331,9 +343,12 @@ export default function ProjectsSector() {
                   <td>
                     {p.image ? (
                       <img
-                        src={p.image}
+                        src={getAssetUrl(p.image)}
                         alt={p.name}
-                        style={{ width: 44, height: 44, borderRadius: 6, objectFit: "cover" }}
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                        }}
+                        style={{ width: 44, height: 44, borderRadius: 6, objectFit: "cover", border: "1px solid rgba(255, 255, 255, 0.1)" }}
                       />
                     ) : (
                       <div
@@ -562,14 +577,15 @@ export default function ProjectsSector() {
                       className="admin-input"
                       value={formState.image}
                       onChange={(e) => setFormState({ ...formState, image: e.target.value })}
-                      placeholder="/assets/uiu_robotics.png or https://..."
+                      placeholder="/assets/uiu_robotics.png or /uploads/..."
                     />
                     <label
                       className="admin-btn admin-btn-secondary admin-btn-sm"
                       style={{ cursor: "pointer", whiteSpace: "nowrap" }}
                     >
-                      <VscCloudUpload /> {uploading ? "Uploading..." : "Upload"}
+                      <VscCloudUpload /> {uploading ? "Uploading..." : "Upload Image"}
                       <input
+                        ref={imageInputRef}
                         type="file"
                         accept="image/*"
                         onChange={handleImageUpload}
@@ -577,6 +593,34 @@ export default function ProjectsSector() {
                       />
                     </label>
                   </div>
+                  {formState.image && (
+                    <div style={{ marginTop: 10, display: "flex", alignItems: "center", gap: 12, background: "rgba(0,0,0,0.2)", padding: 8, borderRadius: 6, border: "1px solid rgba(255,255,255,0.06)" }}>
+                      <img
+                        src={getAssetUrl(formState.image)}
+                        alt="Thumbnail preview"
+                        onError={(e) => {
+                          e.target.style.opacity = "0.3";
+                        }}
+                        style={{ width: 50, height: 50, objectFit: "cover", borderRadius: 6, border: "1px solid rgba(255,255,255,0.15)" }}
+                      />
+                      <div style={{ flex: 1, overflow: "hidden" }}>
+                        <div style={{ fontSize: "0.8rem", color: "#fff", fontWeight: 600, textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>
+                          Selected Thumbnail
+                        </div>
+                        <div style={{ fontSize: "0.72rem", color: "#8b949e", textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>
+                          {formState.image}
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        className="admin-btn admin-btn-secondary admin-btn-sm"
+                        style={{ fontSize: "0.75rem", padding: "4px 8px" }}
+                        onClick={() => setFormState({ ...formState, image: "" })}
+                      >
+                        Clear
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {/* Project Demo Video (Hardware & Screencasts) */}
@@ -610,6 +654,7 @@ export default function ProjectsSector() {
                     >
                       <VscCloudUpload /> {uploadingVideo ? "Uploading..." : "Upload Video"}
                       <input
+                        ref={videoInputRef}
                         type="file"
                         accept="video/*,.mp4,.webm,.ogg,.mov,.mkv"
                         onChange={handleVideoUpload}

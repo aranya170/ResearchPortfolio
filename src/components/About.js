@@ -1,6 +1,7 @@
 import React from "react";
 import "../styles/About.css";
 import { usePortfolio } from "../context/PortfolioContext";
+import { getAssetUrl } from "../services/api";
 import { FiAward, FiBookOpen, FiCpu, FiTrendingUp, FiCode, FiDatabase } from "react-icons/fi";
 
 const defaultParagraphs = [
@@ -103,7 +104,7 @@ const About = () => {
         {/* Left: Dossier Card */}
         <div className="dossier-card">
           <div className="dossier-photo">
-            <img src={profileImg} alt={name} />
+            <img src={getAssetUrl(profileImg)} alt={name} />
           </div>
           <div className="dossier-details">
             <h3 className="dossier-title">{name}</h3>

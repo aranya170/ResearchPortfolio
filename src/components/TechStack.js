@@ -1,6 +1,7 @@
 import React from "react";
 import * as SiIcons from "react-icons/si";
 import "../styles/TechStack.css";
+import { usePortfolio } from "../context/PortfolioContext";
 
 const DOMAIN_GROUPS = [
   {
@@ -50,10 +51,30 @@ const DOMAIN_GROUPS = [
 ];
 
 export default function TechStack() {
+  const { portfolio } = usePortfolio();
+
   const renderIcon = (iconName) => {
     const IconComp = SiIcons[iconName] || SiIcons.SiCodefactor;
     return <IconComp />;
   };
+
+  // If live techStack exists in portfolio, group it dynamically
+  let domainGroups = DOMAIN_GROUPS;
+  if (portfolio && Array.isArray(portfolio.techStack) && portfolio.techStack.length > 0) {
+    const groupsMap = {};
+    portfolio.techStack.forEach((t) => {
+      const cat = t.category || "General";
+      if (!groupsMap[cat]) {
+        groupsMap[cat] = { category: cat, tools: [] };
+      }
+      groupsMap[cat].tools.push({
+        name: t.name,
+        icon: t.icon_name || "SiCodefactor",
+        color: t.color || "#64D98A",
+      });
+    });
+    domainGroups = Object.values(groupsMap);
+  }
 
   return (
     <section id="tech-stack" className="portfolio-section">
@@ -65,7 +86,7 @@ export default function TechStack() {
       </div>
 
       <div className="tech-matrix-grid">
-        {DOMAIN_GROUPS.map((group, gIdx) => (
+        {domainGroups.map((group, gIdx) => (
           <div key={gIdx} className="matrix-domain-card">
             <h3 className="matrix-domain-title">{group.category}</h3>
             <div className="matrix-tools-wrap">

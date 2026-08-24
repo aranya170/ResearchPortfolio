@@ -37,8 +37,9 @@ const defaultPillars = [
 
 export default function AboutSector() {
   const { portfolio, refreshPortfolio } = usePortfolio();
+  const fileInputRef = React.useRef(null);
   const [formData, setFormData] = useState({
-    title: "Academic Profile & Focus",
+    title: "About Me",
     profile_image: "/assets/Aranya Kishor Das.png",
     name: "Aranya Kishor Das",
     role: "Undergraduate Researcher & Club President",
@@ -70,7 +71,7 @@ export default function AboutSector() {
       if (!Array.isArray(pils) || pils.length === 0) pils = defaultPillars;
 
       setFormData({
-        title: a.title || "Academic Profile & Focus",
+        title: a.title || "About Me",
         profile_image: a.profile_image || "/assets/Aranya Kishor Das.png",
         name: a.name || "Aranya Kishor Das",
         role: a.role || "Undergraduate Researcher & Club President",
@@ -136,20 +137,32 @@ export default function AboutSector() {
   };
 
   const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files && e.target.files[0];
     if (!file) return;
 
     try {
       setUploading(true);
+      setAlert(null);
       const res = await api.uploadFile(file);
-      if (res && res.url) {
-        setFormData((prev) => ({ ...prev, profile_image: res.url }));
-        setAlert({ type: "success", text: "Profile image uploaded successfully!" });
+      const uploadedUrl = res?.url || res?.file?.url;
+      if (uploadedUrl) {
+        const updated = { ...formData, profile_image: uploadedUrl };
+        setFormData(updated);
+        // Auto-save immediately to database
+        await api.updateAbout(updated);
+        refreshPortfolio();
+        setAlert({
+          type: "success",
+          text: `Profile image uploaded and saved to database successfully (${file.name})!`,
+        });
       }
     } catch (err) {
       setAlert({ type: "error", text: "Upload failed: " + err.message });
     } finally {
       setUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     }
   };
 
@@ -279,7 +292,7 @@ export default function AboutSector() {
           </div>
 
           <div className="admin-form-group" style={{ marginBottom: 0 }}>
-            <label className="admin-label">Profile Image</label>
+            <label className="admin-label">Profile Image URL or Upload</label>
             <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
               <input
                 type="text"
@@ -287,20 +300,49 @@ export default function AboutSector() {
                 className="admin-input"
                 value={formData.profile_image}
                 onChange={handleChange}
-                placeholder="/assets/Aranya Kishor Das.png"
+                placeholder="/assets/Aranya Kishor Das.png or /uploads/..."
               />
               <label className="admin-btn admin-btn-secondary" style={{ cursor: "pointer", whiteSpace: "nowrap" }}>
                 <VscCloudUpload /> {uploading ? "Uploading..." : "Upload Photo"}
-                <input type="file" accept="image/*" onChange={handleImageUpload} style={{ display: "none" }} />
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  style={{ display: "none" }}
+                />
               </label>
             </div>
             {formData.profile_image && (
-              <div style={{ marginTop: 8 }}>
+              <div style={{ marginTop: 12, display: "flex", alignItems: "center", gap: 14, background: "rgba(0,0,0,0.2)", padding: 10, borderRadius: 8, border: "1px solid rgba(255,255,255,0.06)" }}>
                 <img
                   src={getAssetUrl(formData.profile_image)}
-                  alt="Preview"
-                  style={{ width: 48, height: 48, objectFit: "cover", borderRadius: 6, border: "1px solid var(--border)" }}
+                  alt="Profile Preview"
+                  onError={(e) => {
+                    e.target.style.opacity = "0.3";
+                  }}
+                  style={{ width: 60, height: 60, objectFit: "cover", borderRadius: 8, border: "1px solid var(--admin-accent)" }}
                 />
+                <div style={{ flex: 1, overflow: "hidden" }}>
+                  <div style={{ fontSize: "0.82rem", fontWeight: 600, color: "#fff", textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>
+                    Active Profile Picture
+                  </div>
+                  <div style={{ fontSize: "0.72rem", color: "#8b949e", textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>
+                    {formData.profile_image}
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  className="admin-btn admin-btn-secondary admin-btn-sm"
+                  onClick={() => {
+                    const updated = { ...formData, profile_image: "/assets/Aranya Kishor Das.png" };
+                    setFormData(updated);
+                    api.updateAbout(updated).then(() => refreshPortfolio());
+                  }}
+                  style={{ fontSize: "0.75rem", padding: "4px 8px" }}
+                >
+                  Reset Default
+                </button>
               </div>
             )}
           </div>

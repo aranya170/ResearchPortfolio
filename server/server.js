@@ -34,9 +34,16 @@ app.use(
 app.use(express.json({ limit: "25mb" }));
 app.use(express.urlencoded({ extended: true, limit: "25mb" }));
 
-// Static files for uploads & public assets
-app.use("/uploads", express.static(path.join(__dirname, "../public/uploads")));
-app.use("/assets", express.static(path.join(__dirname, "../public/assets")));
+// Static files for uploads & public assets with cross-origin headers
+const staticOptions = {
+  setHeaders: (res) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+  },
+};
+
+app.use("/uploads", express.static(path.join(__dirname, "../public/uploads"), staticOptions));
+app.use("/assets", express.static(path.join(__dirname, "../public/assets"), staticOptions));
 
 // API router
 app.use("/api", apiRoutes);
