@@ -20,7 +20,10 @@ function createTransporter() {
 
   if (user && pass) {
     return nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
+      family: 4, // Force IPv4 to prevent ENETUNREACH IPv6 routing errors on cloud hosts like Render
       auth: {
         user,
         pass,
