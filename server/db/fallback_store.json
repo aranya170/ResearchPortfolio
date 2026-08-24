@@ -54,166 +54,6 @@
   },
   "projects": [
     {
-      "id": 1,
-      "category": "Software",
-      "name": "UIU Robotics",
-      "image": "/assets/uiu_robotics.png",
-      "github": "https://github.com/aranya170/UIURC.git",
-      "website": "https://robotics.uiu.ac.bd/",
-      "tags": [
-        "Tailwind CSS",
-        "Laravel",
-        "UI/UX Design",
-        "PHP"
-      ],
-      "sort_order": 11,
-      "files": [
-        {
-          "id": 1,
-          "name": "UIU Robotics Website",
-          "type": "notebook",
-          "content": "https://robotics.uiu.ac.bd/",
-          "language": "robotics.uiu.ac.bd",
-          "sort_order": 1
-        },
-        {
-          "id": 2,
-          "name": "README.md",
-          "type": "info",
-          "content": "Initiated, designed, and implemented the official full-stack website for UIU Robotics. I handled the entire lifecycle from initial prototyping to final deployment. The platform serves as a central hub for club members, showcasing robotics projects, managing events, and fostering innovation within the university community.",
-          "language": "markdown",
-          "sort_order": 2
-        }
-      ],
-      "video": "",
-      "medium": "",
-      "tableau": "",
-      "dataset": ""
-    },
-    {
-      "id": 2,
-      "category": "Software",
-      "name": "Dacca Delights",
-      "image": "/assets/daccadelights.png",
-      "github": "https://github.com/aranya170/DaccaDelights.git",
-      "website": "https://daccadelights.com/",
-      "tags": [
-        "MySQL",
-        "Tailwind CSS",
-        "PHP"
-      ],
-      "sort_order": 12,
-      "files": [
-        {
-          "id": 51,
-          "name": "Dacca Delights Website",
-          "type": "notebook",
-          "content": "https://daccadelights.com/",
-          "language": "daccadelights.com",
-          "sort_order": 1
-        },
-        {
-          "id": 52,
-          "name": "README.md",
-          "type": "info",
-          "content": "A full-stack e-commerce platform developed for a bakery shop. This freelance project involved designing an intuitive frontend and a robust backend to manage orders, inventory, and customer interactions. Hosted at daccadelights.com, the site provides a seamless shopping experience for high-quality baked goods.",
-          "language": "markdown",
-          "sort_order": 2
-        }
-      ],
-      "video": "",
-      "medium": "",
-      "tableau": "",
-      "dataset": ""
-    },
-    {
-      "id": 3,
-      "category": "Software",
-      "name": "DirectEdge",
-      "image": "/assets/directedge.png",
-      "github": "https://github.com/aranya170/DirectEdge",
-      "tags": [
-        "Computer Vision",
-        "Deep Learning",
-        "Python",
-        "Tailwind CSS",
-        "React"
-      ],
-      "sort_order": 14,
-      "files": [
-        {
-          "id": 49,
-          "name": "README.md",
-          "type": "info",
-          "content": "DirectEdge revolutionizes sourcing by connecting businesses directly with farmers, streamlining distribution for fresher, sustainable goods. As an all-in-one solution, we manage procurement through delivery via a transparent supply chain. We’ve integrated a compact, user-friendly POS and ERP system alongside advanced demand forecasting to optimize efficiency. By eliminating intermediaries, we ensure competitive pricing for businesses and fair compensation for farmers. Join us in building a smarter, data-driven, and sustainable food system.",
-          "language": "markdown",
-          "sort_order": 1
-        }
-      ],
-      "video": "",
-      "website": "",
-      "medium": "",
-      "tableau": "",
-      "dataset": ""
-    },
-    {
-      "id": 4,
-      "category": "Software",
-      "name": "Kairos",
-      "image": "/assets/kairos.png",
-      "github": "https://github.com/aranya170/Kairos",
-      "tags": [
-        "MySQL",
-        "Bootstrap",
-        "PHP",
-        "JavaScript"
-      ],
-      "sort_order": 15,
-      "files": [
-        {
-          "id": 6,
-          "name": "README.md",
-          "type": "info",
-          "content": "Kairos functions as a supportive system meticulously crafted to facilitate personal growth and development. Our primary objective revolves around fostering the cultivation of positive habits, furnishing users with effective tools for life tracking, and aiding in the eradication of detrimental behaviors, notably procrastination.",
-          "language": "markdown",
-          "sort_order": 1
-        }
-      ],
-      "video": "",
-      "website": "",
-      "medium": "",
-      "tableau": "",
-      "dataset": ""
-    },
-    {
-      "id": 5,
-      "category": "Software",
-      "name": "Peer Pie",
-      "image": "/assets/peerpie.png",
-      "github": "https://github.com/aranya170/Peer_Pie/tree/main",
-      "tags": [
-        "JAVA",
-        "MySQL",
-        "CSS"
-      ],
-      "sort_order": 13,
-      "files": [
-        {
-          "id": 7,
-          "name": "README.md",
-          "type": "info",
-          "content": "Connecting learners, expanding horizons. Peer Pie is a platform designed to connect students with peers who share similar interests, enabling them to collaborate on projects, share knowledge, and learn from each other. The platform aims to foster a community of learners who can support and motivate one another in their academic journeys.",
-          "language": "markdown",
-          "sort_order": 1
-        }
-      ],
-      "video": "",
-      "website": "",
-      "medium": "",
-      "tableau": "",
-      "dataset": ""
-    },
-    {
       "id": 6,
       "category": "Research",
       "name": "RoboNeT - Robotics, Networking, IoT & Data Communication Repository",
@@ -364,64 +204,6 @@
       "dataset": ""
     },
     {
-      "id": 12,
-      "category": "Hardware",
-      "name": "IOT Based Smart Bus Tracking System",
-      "image": "/assets/Hardware1.png",
-      "video": "",
-      "github": "https://github.com/aranya170/Shuttle-Bus-Tracking-System",
-      "tags": [
-        "Arduino",
-        "ESP 32",
-        "LDR",
-        "GPS Module"
-      ],
-      "sort_order": 7,
-      "files": [
-        {
-          "id": 56,
-          "name": "README.md",
-          "type": "info",
-          "content": "This project is a comprehensive Shuttle Bus Tracking and Monitoring System developed for a university-level IoT and embedded systems project. The system combines multiple sensors and technologies to ensure real-time location tracking, passenger queue monitoring, environmental sensing, and safety alerts for shuttle operations on campus.",
-          "language": "markdown",
-          "sort_order": 1
-        }
-      ],
-      "website": "",
-      "medium": "",
-      "tableau": "",
-      "dataset": ""
-    },
-    {
-      "id": 13,
-      "category": "Hardware",
-      "name": "Smart Voting Machine",
-      "image": "/assets/Hardware2.jpg",
-      "tags": [
-        "Arduino",
-        "i2C",
-        "Buzzer",
-        "Laser"
-      ],
-      "sort_order": 20,
-      "files": [
-        {
-          "id": 17,
-          "name": "README.md",
-          "type": "info",
-          "content": "Designed and fabricated an IoT-enabled smart voting machine ensuring biometric authentication, tamper-evident vote logging, and real-time tabulation using embedded microcontrollers.",
-          "language": "markdown",
-          "sort_order": 1
-        }
-      ],
-      "video": "",
-      "github": "",
-      "website": "",
-      "medium": "",
-      "tableau": "",
-      "dataset": ""
-    },
-    {
       "id": 23,
       "category": "Hardware",
       "name": "Autonomous Field Bot",
@@ -444,6 +226,224 @@
           "sort_order": 1
         }
       ]
+    },
+    {
+      "id": 1,
+      "category": "Software",
+      "name": "UIU Robotics",
+      "image": "/assets/uiu_robotics.png",
+      "github": "https://github.com/aranya170/UIURC.git",
+      "website": "https://robotics.uiu.ac.bd/",
+      "tags": [
+        "Tailwind CSS",
+        "Laravel",
+        "UI/UX Design",
+        "PHP"
+      ],
+      "sort_order": 7,
+      "files": [
+        {
+          "id": 1,
+          "name": "UIU Robotics Website",
+          "type": "notebook",
+          "content": "https://robotics.uiu.ac.bd/",
+          "language": "robotics.uiu.ac.bd",
+          "sort_order": 1
+        },
+        {
+          "id": 2,
+          "name": "README.md",
+          "type": "info",
+          "content": "Initiated, designed, and implemented the official full-stack website for UIU Robotics. I handled the entire lifecycle from initial prototyping to final deployment. The platform serves as a central hub for club members, showcasing robotics projects, managing events, and fostering innovation within the university community.",
+          "language": "markdown",
+          "sort_order": 2
+        }
+      ],
+      "video": "",
+      "medium": "",
+      "tableau": "",
+      "dataset": ""
+    },
+    {
+      "id": 2,
+      "category": "Software",
+      "name": "Dacca Delights",
+      "image": "/assets/daccadelights.png",
+      "github": "https://github.com/aranya170/DaccaDelights.git",
+      "website": "https://daccadelights.com/",
+      "tags": [
+        "MySQL",
+        "Tailwind CSS",
+        "PHP"
+      ],
+      "sort_order": 8,
+      "files": [
+        {
+          "id": 51,
+          "name": "Dacca Delights Website",
+          "type": "notebook",
+          "content": "https://daccadelights.com/",
+          "language": "daccadelights.com",
+          "sort_order": 1
+        },
+        {
+          "id": 52,
+          "name": "README.md",
+          "type": "info",
+          "content": "A full-stack e-commerce platform developed for a bakery shop. This freelance project involved designing an intuitive frontend and a robust backend to manage orders, inventory, and customer interactions. Hosted at daccadelights.com, the site provides a seamless shopping experience for high-quality baked goods.",
+          "language": "markdown",
+          "sort_order": 2
+        }
+      ],
+      "video": "",
+      "medium": "",
+      "tableau": "",
+      "dataset": ""
+    },
+    {
+      "id": 12,
+      "category": "Hardware",
+      "name": "IOT Based Smart Bus Tracking System",
+      "image": "/assets/Hardware1.png",
+      "video": "",
+      "github": "https://github.com/aranya170/Shuttle-Bus-Tracking-System",
+      "tags": [
+        "Arduino",
+        "ESP 32",
+        "LDR",
+        "GPS Module"
+      ],
+      "sort_order": 9,
+      "files": [
+        {
+          "id": 58,
+          "name": "README.md",
+          "type": "info",
+          "content": "This project is a comprehensive Shuttle Bus Tracking and Monitoring System developed for a university-level IoT and embedded systems project. The system combines multiple sensors and technologies to ensure real-time location tracking, passenger queue monitoring, environmental sensing, and safety alerts for shuttle operations on campus.",
+          "language": "markdown",
+          "sort_order": 1
+        }
+      ],
+      "website": "",
+      "medium": "",
+      "tableau": "",
+      "dataset": ""
+    },
+    {
+      "id": 5,
+      "category": "Software",
+      "name": "Peer Pie",
+      "image": "/assets/peerpie.png",
+      "github": "https://github.com/aranya170/Peer_Pie/tree/main",
+      "tags": [
+        "JAVA",
+        "MySQL",
+        "CSS"
+      ],
+      "sort_order": 10,
+      "files": [
+        {
+          "id": 7,
+          "name": "README.md",
+          "type": "info",
+          "content": "Connecting learners, expanding horizons. Peer Pie is a platform designed to connect students with peers who share similar interests, enabling them to collaborate on projects, share knowledge, and learn from each other. The platform aims to foster a community of learners who can support and motivate one another in their academic journeys.",
+          "language": "markdown",
+          "sort_order": 1
+        }
+      ],
+      "video": "",
+      "website": "",
+      "medium": "",
+      "tableau": "",
+      "dataset": ""
+    },
+    {
+      "id": 3,
+      "category": "Software",
+      "name": "DirectEdge",
+      "image": "/assets/directedge.png",
+      "github": "https://github.com/aranya170/DirectEdge",
+      "tags": [
+        "Computer Vision",
+        "Deep Learning",
+        "Python",
+        "Tailwind CSS",
+        "React"
+      ],
+      "sort_order": 11,
+      "files": [
+        {
+          "id": 49,
+          "name": "README.md",
+          "type": "info",
+          "content": "DirectEdge revolutionizes sourcing by connecting businesses directly with farmers, streamlining distribution for fresher, sustainable goods. As an all-in-one solution, we manage procurement through delivery via a transparent supply chain. We’ve integrated a compact, user-friendly POS and ERP system alongside advanced demand forecasting to optimize efficiency. By eliminating intermediaries, we ensure competitive pricing for businesses and fair compensation for farmers. Join us in building a smarter, data-driven, and sustainable food system.",
+          "language": "markdown",
+          "sort_order": 1
+        }
+      ],
+      "video": "",
+      "website": "",
+      "medium": "",
+      "tableau": "",
+      "dataset": ""
+    },
+    {
+      "id": 13,
+      "category": "Hardware",
+      "name": "Smart Voting Machine",
+      "image": "/assets/Hardware2.jpg",
+      "tags": [
+        "Arduino",
+        "i2C",
+        "Buzzer",
+        "Laser"
+      ],
+      "sort_order": 12,
+      "files": [
+        {
+          "id": 17,
+          "name": "README.md",
+          "type": "info",
+          "content": "Designed and fabricated an IoT-enabled smart voting machine ensuring biometric authentication, tamper-evident vote logging, and real-time tabulation using embedded microcontrollers.",
+          "language": "markdown",
+          "sort_order": 1
+        }
+      ],
+      "video": "",
+      "github": "",
+      "website": "",
+      "medium": "",
+      "tableau": "",
+      "dataset": ""
+    },
+    {
+      "id": 4,
+      "category": "Software",
+      "name": "Kairos",
+      "image": "/assets/kairos.png",
+      "github": "https://github.com/aranya170/Kairos",
+      "tags": [
+        "MySQL",
+        "Bootstrap",
+        "PHP",
+        "JavaScript"
+      ],
+      "sort_order": 13,
+      "files": [
+        {
+          "id": 6,
+          "name": "README.md",
+          "type": "info",
+          "content": "Kairos functions as a supportive system meticulously crafted to facilitate personal growth and development. Our primary objective revolves around fostering the cultivation of positive habits, furnishing users with effective tools for life tracking, and aiding in the eradication of detrimental behaviors, notably procrastination.",
+          "language": "markdown",
+          "sort_order": 1
+        }
+      ],
+      "video": "",
+      "website": "",
+      "medium": "",
+      "tableau": "",
+      "dataset": ""
     }
   ],
   "experiences": [

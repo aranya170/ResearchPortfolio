@@ -311,6 +311,9 @@ exports.createProject = async (req, res) => {
 
 exports.updateProject = async (req, res) => {
   const { id } = req.params;
+  if (id === "reorder") {
+    return exports.reorderProjects(req, res);
+  }
   const { category, name, image, video, video_url, github, website, medium, tableau, dataset, tags, sort_order, files } = req.body;
   const projectVideo = video !== undefined ? video : (video_url !== undefined ? video_url : "");
 
@@ -353,6 +356,56 @@ exports.updateProject = async (req, res) => {
   } catch (err) {
     console.error("Update project error:", err);
     return res.status(500).json({ success: false, message: "Failed to update project" });
+  }
+};
+
+exports.reorderProjects = async (req, res) => {
+  const { items } = req.body;
+  if (!items || !Array.isArray(items)) {
+    return res.status(400).json({ success: false, message: "Invalid items array for reordering" });
+  }
+
+  try {
+    const isDbConnected = await testConnection();
+
+    if (isDbConnected && pool) {
+      const client = await pool.connect();
+      try {
+        await client.query("BEGIN");
+        for (let i = 0; i < items.length; i++) {
+          const item = items[i];
+          const id = typeof item === "object" && item.id !== undefined ? item.id : item;
+          const sortOrder = typeof item === "object" && item.sort_order !== undefined ? item.sort_order : i + 1;
+          await client.query("UPDATE projects SET sort_order = $1, updated_at = NOW() WHERE id = $2", [sortOrder, id]);
+        }
+        await client.query("COMMIT");
+      } catch (e) {
+        await client.query("ROLLBACK");
+        throw e;
+      } finally {
+        client.release();
+      }
+    }
+
+    // Update fallback store
+    const store = getFallbackStore();
+    if (Array.isArray(store.projects)) {
+      items.forEach((item, i) => {
+        const id = typeof item === "object" && item.id !== undefined ? item.id : item;
+        const sortOrder = typeof item === "object" && item.sort_order !== undefined ? item.sort_order : i + 1;
+        const found = store.projects.find((p) => String(p.id) === String(id));
+        if (found) {
+          found.sort_order = sortOrder;
+        }
+      });
+      store.projects.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+      saveFallbackStore(store);
+    }
+
+    return res.json({ success: true, message: "Projects reordered successfully" });
+  } catch (err) {
+    console.error("Reorder projects error:", err);
+    return res.status(500).json({ success: false, message: "Failed to reorder projects: " + err.message });
   }
 };
 

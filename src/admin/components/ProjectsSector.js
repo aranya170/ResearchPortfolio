@@ -10,6 +10,12 @@ import {
   VscClose,
   VscFileCode,
   VscDeviceCameraVideo,
+  VscGripper,
+  VscChevronUp,
+  VscChevronDown,
+  VscListSelection,
+  VscSplitHorizontal,
+  VscCheck,
 } from "react-icons/vsc";
 
 export default function ProjectsSector() {
@@ -19,6 +25,7 @@ export default function ProjectsSector() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("All");
+  const [viewMode, setViewMode] = useState("table"); // "table" or "board"
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
   const [alert, setAlert] = useState(null);
@@ -26,6 +33,12 @@ export default function ProjectsSector() {
   const [uploading, setUploading] = useState(false);
   const [uploadingVideo, setUploadingVideo] = useState(false);
   const [availableVideos, setAvailableVideos] = useState([]);
+
+  // Drag & Slide Ordering State
+  const [draggedIndex, setDraggedIndex] = useState(null);
+  const [dragOverIndex, setDragOverIndex] = useState(null);
+  const [dragOverPosition, setDragOverPosition] = useState(null); // "top" or "bottom"
+  const [orderSyncing, setOrderSyncing] = useState(false);
 
   // Form State for Create/Edit Modal
   const [formState, setFormState] = useState({
@@ -189,6 +202,99 @@ export default function ProjectsSector() {
     }
   };
 
+  // ==================== SLIDING & DRAG REORDERING ====================
+  const persistReorderedProjects = async (newFilteredList, movedName, newPosition) => {
+    let updatedProjects;
+    if (activeCategory === "All") {
+      updatedProjects = newFilteredList.map((p, idx) => ({ ...p, sort_order: idx + 1 }));
+    } else {
+      const filteredIds = new Set(newFilteredList.map((p) => p.id));
+      const nonFiltered = projects.filter((p) => !filteredIds.has(p.id));
+      const mappedFiltered = newFilteredList.map((p, idx) => ({ ...p, sort_order: idx + 1 }));
+      updatedProjects = [...mappedFiltered, ...nonFiltered].map((p, idx) => ({ ...p, sort_order: idx + 1 }));
+    }
+
+    setProjects(updatedProjects);
+    setOrderSyncing(true);
+    setAlert({
+      type: "success",
+      text: `Order updated: "${movedName}" moved to position #${newPosition}!`,
+    });
+
+    try {
+      const payload = updatedProjects.map((p, idx) => ({ id: p.id, sort_order: idx + 1 }));
+      await api.reorderProjects(payload);
+      refreshPortfolio();
+    } catch (err) {
+      setAlert({ type: "error", text: "Failed to persist new order: " + err.message });
+    } finally {
+      setOrderSyncing(false);
+    }
+  };
+
+  const handleSlide = async (index, direction) => {
+    const targetIndex = index + direction;
+    if (targetIndex < 0 || targetIndex >= filteredProjects.length) return;
+
+    const items = [...filteredProjects];
+    const [movedItem] = items.splice(index, 1);
+    items.splice(targetIndex, 0, movedItem);
+
+    await persistReorderedProjects(items, movedItem.name, targetIndex + 1);
+  };
+
+  const handleDragStart = (e, index) => {
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", String(index));
+  };
+
+  const handleDragOver = (e, index) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === index) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const midY = rect.top + rect.height / 2;
+    const position = e.clientY < midY ? "top" : "bottom";
+    setDragOverIndex(index);
+    setDragOverPosition(position);
+  };
+
+  const handleDrop = async (e, targetIndex) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === undefined) return;
+    if (draggedIndex === targetIndex) {
+      setDraggedIndex(null);
+      setDragOverIndex(null);
+      setDragOverPosition(null);
+      return;
+    }
+
+    const items = [...filteredProjects];
+    const [draggedItem] = items.splice(draggedIndex, 1);
+
+    let insertIndex = targetIndex;
+    if (dragOverPosition === "bottom") {
+      insertIndex = draggedIndex < targetIndex ? targetIndex : targetIndex + 1;
+    } else {
+      insertIndex = draggedIndex < targetIndex ? targetIndex - 1 : targetIndex;
+    }
+
+    insertIndex = Math.max(0, Math.min(items.length, insertIndex));
+    items.splice(insertIndex, 0, draggedItem);
+
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+    setDragOverPosition(null);
+
+    await persistReorderedProjects(items, draggedItem.name, insertIndex + 1);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+    setDragOverPosition(null);
+  };
+
   const handleAddTag = (e) => {
     if (e.key === "Enter" && e.target.value.trim()) {
       e.preventDefault();
@@ -295,40 +401,76 @@ export default function ProjectsSector() {
         </div>
       )}
 
-      {/* Category Tabs */}
-      <div style={{ display: "flex", gap: 8, marginBottom: 20, flexWrap: "wrap" }}>
-        {categories.map((cat) => (
-          <button
-            key={cat}
-            onClick={() => setActiveCategory(cat)}
-            className={`admin-btn ${
-              activeCategory === cat ? "admin-btn-primary" : "admin-btn-secondary"
-            } admin-btn-sm`}
-          >
-            {cat} (
-            {cat === "All"
-              ? projects.length
-              : projects.filter(
-                  (p) => (p.category || "").toLowerCase() === cat.toLowerCase()
-                ).length}
-            )
-          </button>
-        ))}
+      {/* Category Tabs & View Switcher */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18, flexWrap: "wrap", gap: 12 }}>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className={`admin-btn ${
+                activeCategory === cat ? "admin-btn-primary" : "admin-btn-secondary"
+              } admin-btn-sm`}
+            >
+              {cat} (
+              {cat === "All"
+                ? projects.length
+                : projects.filter(
+                    (p) => (p.category || "").toLowerCase() === cat.toLowerCase()
+                  ).length}
+              )
+            </button>
+          ))}
+        </div>
+
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          {orderSyncing && (
+            <span style={{ fontSize: "0.78rem", color: "#10b981", display: "flex", alignItems: "center", gap: 4 }}>
+              <span className="admin-radar-dot online" style={{ width: 6, height: 6 }} /> Syncing order...
+            </span>
+          )}
+
+          <div className="admin-slide-ctrls" style={{ background: "rgba(255, 255, 255, 0.04)" }}>
+            <button
+              type="button"
+              className={`admin-slide-btn ${viewMode === "table" ? "admin-btn-primary" : ""}`}
+              onClick={() => setViewMode("table")}
+              title="Table View with Slide Controls"
+              style={{ fontSize: "0.82rem", padding: "5px 10px" }}
+            >
+              <VscListSelection /> Table View
+            </button>
+            <button
+              type="button"
+              className={`admin-slide-btn ${viewMode === "board" ? "admin-btn-primary" : ""}`}
+              onClick={() => setViewMode("board")}
+              title="Slide Cards Board View"
+              style={{ fontSize: "0.82rem", padding: "5px 10px" }}
+            >
+              <VscSplitHorizontal /> Slide Board
+            </button>
+          </div>
+        </div>
       </div>
 
-      {/* Projects Table */}
+      <div style={{ fontSize: "0.8rem", color: "#8b949e", marginBottom: 14, display: "flex", alignItems: "center", gap: 6, background: "rgba(16, 185, 129, 0.05)", padding: "8px 12px", borderRadius: 6, border: "1px solid rgba(16, 185, 129, 0.15)" }}>
+        <span style={{ color: "#10b981", fontWeight: 700 }}>💡 Slide Reorder:</span>
+        <span>Drag any row using the grip handle <VscGripper style={{ verticalAlign: "middle" }} /> or click the ▲ / ▼ slide buttons to change project order. Changes save live to PostgreSQL automatically.</span>
+      </div>
+
       {loading ? (
         <div style={{ padding: 20, color: "#8b949e" }}>Loading projects...</div>
       ) : filteredProjects.length === 0 ? (
         <div style={{ padding: 30, textAlign: "center", color: "#8b949e" }}>
           No projects found in category "{activeCategory}". Click "Add New Project" to create one.
         </div>
-      ) : (
+      ) : viewMode === "table" ? (
         <div className="admin-table-wrapper">
           <table className="admin-table">
             <thead>
               <tr>
-                <th style={{ width: 60 }}>Img</th>
+                <th style={{ width: 90 }}>Order / Slide</th>
+                <th style={{ width: 54 }}>Img</th>
                 <th>Name</th>
                 <th>Category</th>
                 <th>Tags</th>
@@ -338,153 +480,306 @@ export default function ProjectsSector() {
               </tr>
             </thead>
             <tbody>
-              {filteredProjects.map((p) => (
-                <tr key={p.id}>
-                  <td>
-                    {p.image ? (
-                      <img
-                        src={getAssetUrl(p.image)}
-                        alt={p.name}
-                        onError={(e) => {
-                          e.target.style.display = "none";
-                        }}
-                        style={{ width: 44, height: 44, borderRadius: 6, objectFit: "cover", border: "1px solid rgba(255, 255, 255, 0.1)" }}
-                      />
-                    ) : (
-                      <div
-                        style={{
-                          width: 44,
-                          height: 44,
-                          borderRadius: 6,
-                          background: "#1e2638",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          color: "#8b949e",
-                        }}
-                      >
-                        <VscFileCode />
-                      </div>
-                    )}
-                  </td>
-                  <td>
-                    <div style={{ fontWeight: 600, color: "#fff" }}>{p.name}</div>
-                    <div style={{ fontSize: "0.78rem", color: "#8b949e", display: "flex", gap: 6, alignItems: "center", marginTop: 2 }}>
-                      <span>Order: #{p.sort_order}</span>
-                      {p.video && (
+              {filteredProjects.map((p, idx) => {
+                const isDragging = draggedIndex === idx;
+                const isDragOverTop = dragOverIndex === idx && dragOverPosition === "top";
+                const isDragOverBottom = dragOverIndex === idx && dragOverPosition === "bottom";
+                const rowClass = `admin-drag-row ${isDragging ? "is-dragging" : ""} ${
+                  isDragOverTop ? "is-drag-over-top" : isDragOverBottom ? "is-drag-over-bottom" : ""
+                }`;
+
+                return (
+                  <tr
+                    key={p.id}
+                    className={rowClass}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, idx)}
+                    onDragOver={(e) => handleDragOver(e, idx)}
+                    onDrop={(e) => handleDrop(e, idx)}
+                    onDragEnd={handleDragEnd}
+                  >
+                    <td>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                         <span
+                          className="admin-drag-handle"
+                          title="Drag to slide and reorder position"
+                        >
+                          <VscGripper style={{ fontSize: "1.1rem" }} />
+                        </span>
+
+                        <span className={`admin-order-badge ${idx < 3 ? "top-order" : ""}`}>
+                          #{idx + 1}
+                        </span>
+
+                        <div className="admin-slide-ctrls">
+                          <button
+                            type="button"
+                            className="admin-slide-btn"
+                            disabled={idx === 0}
+                            onClick={() => handleSlide(idx, -1)}
+                            title="Slide Up"
+                          >
+                            <VscChevronUp />
+                          </button>
+                          <button
+                            type="button"
+                            className="admin-slide-btn"
+                            disabled={idx === filteredProjects.length - 1}
+                            onClick={() => handleSlide(idx, 1)}
+                            title="Slide Down"
+                          >
+                            <VscChevronDown />
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td>
+                      {p.image ? (
+                        <img
+                          src={getAssetUrl(p.image)}
+                          alt={p.name}
+                          onError={(e) => {
+                            e.target.style.display = "none";
+                          }}
+                          style={{ width: 40, height: 40, borderRadius: 6, objectFit: "cover", border: "1px solid rgba(255, 255, 255, 0.1)" }}
+                        />
+                      ) : (
+                        <div
                           style={{
-                            background: "rgba(227, 179, 65, 0.2)",
-                            color: "#e3b341",
-                            padding: "1px 6px",
-                            borderRadius: 3,
-                            fontSize: "0.72rem",
-                            display: "inline-flex",
+                            width: 40,
+                            height: 40,
+                            borderRadius: 6,
+                            background: "#1e2638",
+                            display: "flex",
                             alignItems: "center",
-                            gap: 3,
+                            justifyContent: "center",
+                            color: "#8b949e",
                           }}
                         >
-                          <VscDeviceCameraVideo /> Video
-                        </span>
+                          <VscFileCode />
+                        </div>
                       )}
-                    </div>
-                  </td>
-                  <td>
-                    <span
-                      className="admin-tag"
-                      style={{ background: "rgba(88, 166, 255, 0.15)", color: "#58a6ff" }}
-                    >
-                      {p.category || "Software"}
-                    </span>
-                  </td>
-                  <td>
-                    <div style={{ maxWidth: 200 }}>
-                      {(Array.isArray(p.tags) ? p.tags : []).slice(0, 3).map((tag, i) => (
-                        <span key={i} className="admin-tag">
-                          {tag}
-                        </span>
-                      ))}
-                      {(p.tags || []).length > 3 && (
-                        <span style={{ fontSize: "0.75rem", color: "#8b949e" }}>
-                          +{p.tags.length - 3}
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                  <td>
-                    <div style={{ fontSize: "0.82rem", color: "#c9d1d9" }}>
-                      {(p.files || []).length} files:{" "}
-                      <span style={{ color: "#64d98a" }}>
-                        {(p.files || []).map((f) => f.name).join(", ")}
+                    </td>
+
+                    <td>
+                      <div style={{ fontWeight: 600, color: "#fff" }}>{p.name}</div>
+                      <div style={{ fontSize: "0.76rem", color: "#8b949e", display: "flex", gap: 6, alignItems: "center", marginTop: 2 }}>
+                        {p.video && (
+                          <span
+                            style={{
+                              background: "rgba(227, 179, 65, 0.2)",
+                              color: "#e3b341",
+                              padding: "1px 6px",
+                              borderRadius: 3,
+                              fontSize: "0.72rem",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: 3,
+                            }}
+                          >
+                            <VscDeviceCameraVideo /> Video Demo
+                          </span>
+                        )}
+                      </div>
+                    </td>
+
+                    <td>
+                      <span
+                        className="admin-tag"
+                        style={{ background: "rgba(88, 166, 255, 0.15)", color: "#58a6ff" }}
+                      >
+                        {p.category || "Software"}
                       </span>
-                    </div>
-                  </td>
-                  <td>
-                    <div style={{ display: "flex", gap: 6, fontSize: "0.82rem", flexWrap: "wrap" }}>
-                      {p.github && (
-                        <a
-                          href={p.github}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{ color: "#58a6ff" }}
+                    </td>
+
+                    <td>
+                      <div style={{ maxWidth: 180 }}>
+                        {(Array.isArray(p.tags) ? p.tags : []).slice(0, 3).map((tag, i) => (
+                          <span key={i} className="admin-tag">
+                            {tag}
+                          </span>
+                        ))}
+                        {(p.tags || []).length > 3 && (
+                          <span style={{ fontSize: "0.75rem", color: "#8b949e" }}>
+                            +{p.tags.length - 3}
+                          </span>
+                        )}
+                      </div>
+                    </td>
+
+                    <td>
+                      <div style={{ fontSize: "0.82rem", color: "#c9d1d9" }}>
+                        {(p.files || []).length} files:{" "}
+                        <span style={{ color: "#64d98a" }}>
+                          {(p.files || []).map((f) => f.name).join(", ")}
+                        </span>
+                      </div>
+                    </td>
+
+                    <td>
+                      <div style={{ display: "flex", gap: 6, fontSize: "0.82rem", flexWrap: "wrap" }}>
+                        {p.github && (
+                          <a
+                            href={p.github}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ color: "#58a6ff" }}
+                          >
+                            GitHub
+                          </a>
+                        )}
+                        {p.website && (
+                          <a
+                            href={p.website}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ color: "#64d98a" }}
+                          >
+                            Live Site
+                          </a>
+                        )}
+                        {p.medium && (
+                          <a
+                            href={p.medium}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ color: "#f0883e" }}
+                          >
+                            Medium
+                          </a>
+                        )}
+                        {p.tableau && (
+                          <a
+                            href={p.tableau}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ color: "#e3b341" }}
+                          >
+                            Tableau
+                          </a>
+                        )}
+                      </div>
+                    </td>
+
+                    <td style={{ textAlign: "right" }}>
+                      <div style={{ display: "inline-flex", gap: 6 }}>
+                        <button
+                          className="admin-btn admin-btn-secondary admin-btn-sm"
+                          onClick={() => openEditModal(p)}
                         >
-                          GitHub
-                        </a>
-                      )}
-                      {p.website && (
-                        <a
-                          href={p.website}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{ color: "#64d98a" }}
+                          <VscEdit /> Edit
+                        </button>
+                        <button
+                          className="admin-btn admin-btn-danger admin-btn-sm"
+                          onClick={() => handleDelete(p.id, p.name)}
                         >
-                          Live Site
-                        </a>
-                      )}
-                      {p.medium && (
-                        <a
-                          href={p.medium}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{ color: "#f0883e" }}
-                        >
-                          Article
-                        </a>
-                      )}
-                      {p.tableau && (
-                        <a
-                          href={p.tableau}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{ color: "#e3b341" }}
-                        >
-                          Tableau
-                        </a>
-                      )}
-                    </div>
-                  </td>
-                  <td style={{ textAlign: "right" }}>
-                    <div style={{ display: "inline-flex", gap: 6 }}>
-                      <button
-                        className="admin-btn admin-btn-secondary admin-btn-sm"
-                        onClick={() => openEditModal(p)}
-                        title="Edit Project"
-                      >
-                        <VscEdit /> Edit
-                      </button>
-                      <button
-                        className="admin-btn admin-btn-danger admin-btn-sm"
-                        onClick={() => handleDelete(p.id, p.name)}
-                        title="Delete Project"
-                      >
-                        <VscTrash />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                          <VscTrash />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
+        </div>
+      ) : (
+        /* Slide Cards Board View */
+        <div className="admin-slide-board">
+          {filteredProjects.map((p, idx) => {
+            const isDragging = draggedIndex === idx;
+            const isOver = dragOverIndex === idx;
+            return (
+              <div
+                key={p.id}
+                className={`admin-slide-card ${isDragging ? "is-dragging" : ""} ${
+                  isOver ? "is-drag-over" : ""
+                }`}
+                draggable
+                onDragStart={(e) => handleDragStart(e, idx)}
+                onDragOver={(e) => handleDragOver(e, idx)}
+                onDrop={(e) => handleDrop(e, idx)}
+                onDragEnd={handleDragEnd}
+              >
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <span className="admin-drag-handle" title="Drag card to slide">
+                      <VscGripper style={{ fontSize: "1.1rem" }} />
+                    </span>
+                    <span className={`admin-order-badge ${idx < 3 ? "top-order" : ""}`}>
+                      Position #{idx + 1}
+                    </span>
+                  </div>
+
+                  <div className="admin-slide-ctrls">
+                    <button
+                      type="button"
+                      className="admin-slide-btn"
+                      disabled={idx === 0}
+                      onClick={() => handleSlide(idx, -1)}
+                      title="Slide Left / Earlier"
+                    >
+                      ◀
+                    </button>
+                    <button
+                      type="button"
+                      className="admin-slide-btn"
+                      disabled={idx === filteredProjects.length - 1}
+                      onClick={() => handleSlide(idx, 1)}
+                      title="Slide Right / Later"
+                    >
+                      ▶
+                    </button>
+                  </div>
+                </div>
+
+                <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                  {p.image ? (
+                    <img
+                      src={getAssetUrl(p.image)}
+                      alt={p.name}
+                      style={{ width: 48, height: 48, borderRadius: 8, objectFit: "cover", border: "1px solid rgba(255, 255, 255, 0.1)" }}
+                    />
+                  ) : (
+                    <div style={{ width: 48, height: 48, borderRadius: 8, background: "#1e2638", display: "flex", alignItems: "center", justifyContent: "center", color: "#8b949e" }}>
+                      <VscFileCode />
+                    </div>
+                  )}
+                  <div style={{ flex: 1, overflow: "hidden" }}>
+                    <div style={{ fontWeight: 600, color: "#fff", fontSize: "0.95rem", textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>
+                      {p.name}
+                    </div>
+                    <span className="admin-tag" style={{ marginTop: 4 }}>
+                      {p.category || "Software"}
+                    </span>
+                  </div>
+                </div>
+
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 4, paddingTop: 8, borderTop: "1px solid rgba(255, 255, 255, 0.06)" }}>
+                  <span style={{ fontSize: "0.75rem", color: "#8b949e" }}>
+                    {(p.files || []).length} attached files
+                  </span>
+                  <div style={{ display: "flex", gap: 6 }}>
+                    <button
+                      className="admin-btn admin-btn-secondary admin-btn-sm"
+                      onClick={() => openEditModal(p)}
+                      style={{ padding: "3px 8px", fontSize: "0.78rem" }}
+                    >
+                      <VscEdit /> Edit
+                    </button>
+                    <button
+                      className="admin-btn admin-btn-danger admin-btn-sm"
+                      onClick={() => handleDelete(p.id, p.name)}
+                      style={{ padding: "3px 8px", fontSize: "0.78rem" }}
+                    >
+                      <VscTrash />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
 

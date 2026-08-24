@@ -45,6 +45,7 @@ router.put("/admin/about", authenticateToken, adminController.updateAbout);
 // Sector 3: Projects
 router.get("/admin/projects", authenticateToken, adminController.getProjects);
 router.post("/admin/projects", authenticateToken, adminController.createProject);
+router.put("/admin/projects/reorder", authenticateToken, adminController.reorderProjects);
 router.put("/admin/projects/:id", authenticateToken, adminController.updateProject);
 router.delete("/admin/projects/:id", authenticateToken, adminController.deleteProject);
 

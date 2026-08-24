@@ -168,6 +168,11 @@ export const api = {
       method: "PUT",
       body: JSON.stringify(project),
     }),
+  reorderProjects: (items) =>
+    request("/admin/projects/reorder", {
+      method: "PUT",
+      body: JSON.stringify({ items }),
+    }),
   deleteProject: (id) =>
     request(`/admin/projects/${id}`, {
       method: "DELETE",
