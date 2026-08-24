@@ -24,6 +24,7 @@ export default function MessagesSector() {
   const [filterMode, setFilterMode] = useState("all"); // "all" or "unread"
   const [copied, setCopied] = useState(false);
   const [mobileViewingDetail, setMobileViewingDetail] = useState(false);
+  const [testingEmail, setTestingEmail] = useState(false);
 
   const loadMessages = async () => {
     try {
@@ -117,6 +118,29 @@ export default function MessagesSector() {
         </div>
 
         <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+          <button
+            className="admin-btn admin-btn-secondary admin-btn-sm"
+            onClick={async () => {
+              try {
+                setTestingEmail(true);
+                setAlert({ type: "info", text: "Sending test email to configured Gmail address..." });
+                const res = await api.testEmailDelivery();
+                if (res.success) {
+                  setAlert({ type: "success", text: res.message || "Test email delivered successfully!" });
+                } else {
+                  setAlert({ type: "error", text: res.message || "Failed to send test email" });
+                }
+              } catch (err) {
+                setAlert({ type: "error", text: "Test email failed: " + err.message });
+              } finally {
+                setTestingEmail(false);
+              }
+            }}
+            disabled={testingEmail}
+            title="Sends a diagnostic test notification to your Gmail"
+          >
+            <VscMail /> {testingEmail ? "Sending Test..." : "Test Gmail Alert"}
+          </button>
           <button className="admin-btn admin-btn-secondary admin-btn-sm" onClick={loadMessages}>
             <VscRefresh /> Refresh
           </button>

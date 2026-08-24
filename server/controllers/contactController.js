@@ -3,8 +3,8 @@ const { pool, getFallbackStore, saveFallbackStore, testConnection } = require(".
 
 // Helper to create mail transporter
 function createTransporter() {
-  const user = process.env.GMAIL_USER || process.env.EMAIL_USER;
-  const pass = process.env.GMAIL_PASS || process.env.EMAIL_PASS || process.env.GMAIL_APP_PASSWORD;
+  const user = (process.env.GMAIL_USER || process.env.EMAIL_USER || "").trim();
+  const pass = (process.env.GMAIL_PASS || process.env.EMAIL_PASS || process.env.GMAIL_APP_PASSWORD || "").replace(/\s+/g, "");
 
   if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
     return nodemailer.createTransport({
@@ -22,8 +22,8 @@ function createTransporter() {
     return nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: user.trim(),
-        pass: pass.replace(/\s+/g, ""), // remove any spaces from app password
+        user,
+        pass,
       },
     });
   }
@@ -66,11 +66,12 @@ exports.submitContactMessage = async (req, res) => {
     console.log(`[Contact Form Received] From: ${name} (${email}) - Length: ${message.length} chars`);
 
     // ── SEND EMAIL NOTIFICATION TO GMAIL ──
-    const receiver = process.env.RECEIVER_EMAIL || process.env.GMAIL_USER || "aranya.akd@gmail.com";
+    const receiver = (process.env.RECEIVER_EMAIL || process.env.GMAIL_USER || "aranya.akd@gmail.com").trim();
     const transporter = createTransporter();
+    let emailStatus = { sent: false, error: null };
 
     if (transporter) {
-      const senderUser = process.env.GMAIL_USER || process.env.EMAIL_USER || "portfolio-bot@gmail.com";
+      const senderUser = (process.env.GMAIL_USER || process.env.EMAIL_USER || receiver).trim();
       const mailOptions = {
         from: `"${name} (Portfolio)" <${senderUser}>`,
         to: receiver,
@@ -106,21 +107,24 @@ exports.submitContactMessage = async (req, res) => {
         `,
       };
 
-      // Send mail asynchronously without blocking response
-      transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          console.error("⚠️ Nodemailer failed to send email to Gmail:", error.message);
-        } else {
-          console.log("✅ Email successfully forwarded to Gmail:", info.messageId);
-        }
-      });
+      try {
+        const info = await transporter.sendMail(mailOptions);
+        console.log("✅ Email successfully forwarded to Gmail:", info.messageId);
+        emailStatus.sent = true;
+      } catch (mailErr) {
+        console.error("⚠️ Nodemailer failed to send email to Gmail:", mailErr.message);
+        emailStatus.error = mailErr.message;
+      }
     } else {
-      console.log("ℹ️ Nodemailer: GMAIL_USER/GMAIL_PASS not configured yet. Message saved to database & admin inbox.");
+      console.warn("⚠️ Nodemailer: GMAIL_USER and/or GMAIL_PASS environment variables are not set on this server.");
+      emailStatus.error = "GMAIL_USER / GMAIL_PASS not configured in server environment variables";
     }
 
     return res.json({
       success: true,
       message: "Your message has been sent successfully. Thank you for reaching out!",
+      email_sent: emailStatus.sent,
+      email_error: emailStatus.error,
       data: savedMessage || fallbackItem,
     });
   } catch (err) {

@@ -12,9 +12,18 @@ const { testConnection, getConnectionStatus } = require("../config/db");
 // ==================== PUBLIC ENDPOINTS ====================
 router.get("/health", async (req, res) => {
   const isDbConnected = await testConnection();
+  const mailerConfigured = Boolean(
+    (process.env.GMAIL_USER && process.env.GMAIL_PASS) ||
+    (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS)
+  );
   res.json({
     status: "ok",
     timestamp: new Date().toISOString(),
+    mailer: {
+      configured: mailerConfigured,
+      user: process.env.GMAIL_USER ? process.env.GMAIL_USER.replace(/(.{3})(.*)(@.*)/, "$1***$3") : null,
+      receiver: process.env.RECEIVER_EMAIL ? process.env.RECEIVER_EMAIL.replace(/(.{3})(.*)(@.*)/, "$1***$3") : null,
+    },
     postgres: {
       connected: isDbConnected,
       ...getConnectionStatus(),
@@ -32,9 +41,10 @@ router.get("/auth/me", authenticateToken, authController.me);
 router.post("/auth/change-password", authenticateToken, authController.changePassword);
 
 // ==================== PROTECTED ADMIN ENDPOINTS ====================
-// Stats & DB management
+// Sector 0: Diagnostic & DB
 router.get("/admin/stats", authenticateToken, adminController.getStats);
 router.post("/admin/reseed", authenticateToken, adminController.reseedDatabase);
+router.post("/admin/test-email", authenticateToken, adminController.testEmailDelivery);
 
 // Sector 1: Intro / Site Profile
 router.put("/admin/intro", authenticateToken, adminController.updateSiteProfile);

@@ -240,6 +240,10 @@ export const api = {
     request(`/admin/messages/${id}`, {
       method: "DELETE",
     }),
+  testEmailDelivery: () =>
+    request("/admin/test-email", {
+      method: "POST",
+    }),
 
   // Sector 8: Settings
   getSettings: () => request("/admin/settings"),

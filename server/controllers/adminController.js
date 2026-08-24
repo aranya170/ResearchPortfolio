@@ -58,6 +58,49 @@ exports.reseedDatabase = async (req, res) => {
   }
 };
 
+exports.testEmailDelivery = async (req, res) => {
+  const nodemailer = require("nodemailer");
+  const user = (process.env.GMAIL_USER || process.env.EMAIL_USER || "").trim();
+  const pass = (process.env.GMAIL_PASS || process.env.EMAIL_PASS || process.env.GMAIL_APP_PASSWORD || "").replace(/\s+/g, "");
+  const receiver = (process.env.RECEIVER_EMAIL || user || "aranya.akd@gmail.com").trim();
+
+  if (!user || !pass) {
+    return res.status(400).json({
+      success: false,
+      message: "GMAIL_USER and GMAIL_PASS environment variables are not configured on this server.",
+      debug: {
+        hasUser: Boolean(user),
+        hasPass: Boolean(pass),
+      },
+    });
+  }
+
+  try {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: { user, pass },
+    });
+
+    const info = await transporter.sendMail({
+      from: `"${user} (Portfolio System)" <${user}>`,
+      to: receiver,
+      subject: "✅ Test Email: Portfolio Gmail Notification Working",
+      text: `Hello! This is a test email sent from your portfolio backend server.\n\nTime: ${new Date().toISOString()}\nSender: ${user}\nRecipient: ${receiver}\n\nGmail notification system is fully operational!`,
+    });
+
+    return res.json({
+      success: true,
+      message: `Test email successfully sent to ${receiver}!`,
+      messageId: info.messageId,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: `Failed to send test email: ${err.message}`,
+    });
+  }
+};
+
 // ==================== 1. SITE PROFILE / INTRO SECTOR ====================
 exports.updateSiteProfile = async (req, res) => {
   const { greeting, name, subtitle, subtitle_suffix, description, cv_url, show_robot, show_stars } = req.body;
