@@ -28,9 +28,11 @@ export default function LoadingScreen({ isLoaded, onComplete }) {
       <div className="loading-content">
         <div className="loading-logo-wrapper">
           <div className="loading-pulse-ring"></div>
-          <div className="loading-monogram">
-            <span>A</span>
-          </div>
+          <img
+            src="/icon.png"
+            alt="Aranya Kishor Das"
+            className="loading-logo-img"
+          />
         </div>
         <div className="loading-text-wrap">
           <div className="loading-name">ARANYA KISHOR DAS</div>

@@ -59,20 +59,16 @@
   }
 }
 
-.loading-monogram {
+.loading-logo-img {
   width: 56px;
   height: 56px;
   border-radius: 14px;
-  background: var(--accent, #1E4334);
-  color: #FFFFFF;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-heading, 'Plus Jakarta Sans', sans-serif);
-  font-size: 26px;
-  font-weight: 700;
+  object-fit: cover;
   box-shadow: 0 8px 24px rgba(30, 67, 52, 0.22);
-  letter-spacing: -0.5px;
+  position: relative;
+  z-index: 2;
+  border: 1.5px solid var(--border, #E2DDD3);
+  background: var(--surface, #FFFFFF);
 }
 
 .loading-text-wrap {
