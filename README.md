@@ -16,7 +16,7 @@ npm run server                       # API on http://localhost:5000
 npm start                            # site on http://localhost:3000
 ```
 
-On `localhost` the frontend talks to `REACT_APP_LOCAL_API_URL` (default `http://localhost:5000/api`). Note that if `server/.env` points `DATABASE_URL` at the production database, admin edits made locally change the live site.
+The production API URL (`https://researchportfolio.onrender.com/api`) is set in `src/services/api.js`; on `localhost` the frontend talks to `http://localhost:5000/api` instead. Note that if `server/.env` points `DATABASE_URL` at the production database, admin edits made locally change the live site.
 
 ## Content
 

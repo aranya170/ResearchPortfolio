@@ -1,10 +1,9 @@
-// The API is hosted separately from the static site (Render), so hosted builds without
-// REACT_APP_API_URL must still point there rather than at their own origin
-const DEFAULT_PROD_API_URL = "https://researchportfolio.onrender.com/api";
-const PROD_API_URL = import.meta.env.REACT_APP_API_URL || DEFAULT_PROD_API_URL;
+// Production API (Express on Render). Fixed here so the live site never depends on a
+// hosting provider's build settings; local development uses the local backend instead.
+export const PROD_API_URL = "https://researchportfolio.onrender.com/api";
+const LOCAL_API_URL = "http://localhost:5000/api";
 
 const normalizeApiUrl = (rawUrl) => {
-  if (!rawUrl || typeof rawUrl !== "string") return "http://localhost:5000/api";
   let clean = rawUrl.trim().replace(/\/+$/, "");
   if (!clean.endsWith("/api")) {
     clean = `${clean}/api`;
@@ -13,28 +12,16 @@ const normalizeApiUrl = (rawUrl) => {
 };
 
 export const getApiBaseUrl = () => {
-  if (typeof window !== "undefined") {
-    const custom = localStorage.getItem("admin_custom_api_url");
-    if (custom && custom.trim()) {
-      return normalizeApiUrl(custom);
-    }
+  if (typeof window === "undefined") return PROD_API_URL;
 
-    const isLocalhost =
-      window.location.hostname === "localhost" ||
-      window.location.hostname === "127.0.0.1";
-
-    if (isLocalhost) {
-      return normalizeApiUrl(import.meta.env.REACT_APP_LOCAL_API_URL || "http://localhost:5000/api");
-    }
-
-    return normalizeApiUrl(PROD_API_URL);
+  // Manual override from the admin login screen ("Change URL"), for testing another backend
+  const custom = localStorage.getItem("admin_custom_api_url");
+  if (custom && custom.trim()) {
+    return normalizeApiUrl(custom);
   }
 
-  if (import.meta.env.REACT_APP_API_URL) {
-    return normalizeApiUrl(import.meta.env.REACT_APP_API_URL);
-  }
-
-  return normalizeApiUrl(PROD_API_URL);
+  const isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+  return isLocalhost ? LOCAL_API_URL : PROD_API_URL;
 };
 
 export const getAssetUrl = (url) => {
