@@ -1,4 +1,7 @@
-const PROD_API_URL = import.meta.env.REACT_APP_API_URL || "http://localhost:5000/api";
+// The API is hosted separately from the static site (Render), so hosted builds without
+// REACT_APP_API_URL must still point there rather than at their own origin
+const DEFAULT_PROD_API_URL = "https://researchportfolio.onrender.com/api";
+const PROD_API_URL = import.meta.env.REACT_APP_API_URL || DEFAULT_PROD_API_URL;
 
 const normalizeApiUrl = (rawUrl) => {
   if (!rawUrl || typeof rawUrl !== "string") return "http://localhost:5000/api";
@@ -24,12 +27,7 @@ export const getApiBaseUrl = () => {
       return normalizeApiUrl(import.meta.env.REACT_APP_LOCAL_API_URL || "http://localhost:5000/api");
     }
 
-    if (import.meta.env.REACT_APP_API_URL) {
-      return normalizeApiUrl(import.meta.env.REACT_APP_API_URL);
-    }
-
-    // On hosted domains (e.g. Vercel / Firebase), default to same origin "/api"
-    return `${window.location.origin}/api`;
+    return normalizeApiUrl(PROD_API_URL);
   }
 
   if (import.meta.env.REACT_APP_API_URL) {

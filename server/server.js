@@ -18,6 +18,7 @@ app.set("trust proxy", 1);
 const allowedOrigins = [
   "https://aranyaportfolio.web.app",
   "https://aranyaportfolio.firebaseapp.com",
+  "https://aranyakishordas.vercel.app",
   ...(process.env.FRONTEND_URL || "").split(",").map((o) => o.trim()),
 ].filter(Boolean);
 const devOrigin = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
