@@ -1,34 +1,17 @@
-// Allows only simple inline formatting in admin-authored text; everything else is dropped.
-const ALLOWED_TAGS = new Set(["B", "STRONG", "I", "EM", "U", "BR", "A", "CODE", "SPAN"]);
+// Allows only simple inline formatting in admin-authored text. Everything is escaped first,
+// then a few exact, attribute-free tags (and plain http/mailto links) are restored, so the
+// output is safe and identical on the server (pre-rendering) and in the browser.
+const SIMPLE_TAG = /&lt;(\/?)(b|strong|i|em|u|code|span|br)\s*\/?&gt;/gi;
+const LINK_OPEN = /&lt;a\s+href=(?:&quot;|&#39;)((?:https?:\/\/|mailto:)[^"'&<>\s]+)(?:&quot;|&#39;)\s*&gt;/gi;
+const LINK_CLOSE = /&lt;\/a&gt;/gi;
+
+const escapeHtml = (s) =>
+  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 
 export function sanitizeHtml(html) {
   if (typeof html !== "string" || !html) return "";
-  const doc = new DOMParser().parseFromString(`<div>${html}</div>`, "text/html");
-  const root = doc.body.firstChild;
-
-  const clean = (node) => {
-    [...node.childNodes].forEach((child) => {
-      if (child.nodeType === Node.TEXT_NODE) return;
-      if (child.nodeType !== Node.ELEMENT_NODE || !ALLOWED_TAGS.has(child.tagName)) {
-        // Keep the text of disallowed elements, drop the markup (scripts/styles are dropped entirely)
-        if (child.nodeType === Node.ELEMENT_NODE && !["SCRIPT", "STYLE", "IFRAME", "OBJECT"].includes(child.tagName)) {
-          child.replaceWith(doc.createTextNode(child.textContent));
-        } else {
-          child.remove();
-        }
-        return;
-      }
-      const href = child.tagName === "A" ? child.getAttribute("href") : null;
-      [...child.attributes].forEach((attr) => child.removeAttribute(attr.name));
-      if (href && /^(https?:|mailto:|#)/i.test(href.trim())) {
-        child.setAttribute("href", href.trim());
-        child.setAttribute("target", "_blank");
-        child.setAttribute("rel", "noopener noreferrer");
-      }
-      clean(child);
-    });
-  };
-
-  clean(root);
-  return root.innerHTML;
+  return escapeHtml(html)
+    .replace(SIMPLE_TAG, (_, slash, tag) => `<${slash}${tag.toLowerCase()}>`)
+    .replace(LINK_OPEN, (_, href) => `<a href="${href}" target="_blank" rel="noopener noreferrer">`)
+    .replace(LINK_CLOSE, "</a>");
 }

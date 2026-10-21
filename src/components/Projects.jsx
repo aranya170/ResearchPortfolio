@@ -112,10 +112,10 @@ function ProjectMedia({ proj, onOpen, className = "" }) {
       type="button"
       className={`p-media ${showImage ? "" : "p-media-placeholder"} ${className}`}
       onClick={onOpen}
-      aria-label={`Open details for ${proj.name}`}
     >
+      <span className="visually-hidden">Open details for {proj.name}: </span>
       {showImage ? (
-        <img src={getAssetUrl(proj.image)} alt="" loading="lazy" decoding="async" onError={() => setImageFailed(true)} />
+        <img src={getAssetUrl(proj.image)} alt={proj.name} loading="lazy" decoding="async" onError={() => setImageFailed(true)} />
       ) : (
         // Every card gets a media block so cards line up even without an image
         <span className="p-media-fallback-icon" aria-hidden="true">
@@ -361,7 +361,7 @@ export default function Projects() {
         <div className="section-head-left">
           <div className="section-tagline">Portfolio Showcase</div>
           <h2 className="section-heading" id="projects-heading">
-            Featured Works & Systems
+            Research, Robotics & Software Projects
           </h2>
         </div>
         <span className="section-count-badge">{allProjects.length} projects</span>

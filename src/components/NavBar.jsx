@@ -20,7 +20,9 @@ const getInitialTheme = () => {
 const NavBar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [theme, setTheme] = useState(getInitialTheme);
+  // Start from "light" so pre-rendered HTML and the first client render match; sync after mount
+  const [theme, setTheme] = useState("light");
+  useEffect(() => setTheme(getInitialTheme()), []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -60,7 +62,7 @@ const NavBar = () => {
       <nav className={`site-nav${scrolled ? " scrolled" : ""}${mobileOpen ? " menu-open" : ""}`} aria-label="Primary">
         <div className="nav-inner">
           <a href="#intro" className="nav-logo" onClick={closeMenu}>
-            <img src="/icon.png" alt="" className="nav-logo-img" width="32" height="32" />
+            <img src="/icon-192.png" alt="" className="nav-logo-img" width="32" height="32" />
             <span className="nav-logo-text">Aranya Kishor Das</span>
           </a>
 

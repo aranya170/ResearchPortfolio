@@ -92,6 +92,7 @@
 
 .gh-calendar-wrapper {
   width: 100%;
+  min-height: 170px; /* reserve space so the late-loading calendar doesn't shift the page */
   overflow-x: auto;
   padding: 12px 0 6px 0;
   display: flex;

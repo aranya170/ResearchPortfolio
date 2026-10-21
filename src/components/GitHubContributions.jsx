@@ -42,10 +42,14 @@ const GitHubContributions = () => {
     light: ['#E6E1D6', '#B7D5C4', '#70B090', '#3D8B66', '#1E533B'],
     dark: ['#262521', '#1F4A35', '#2E7050', '#4FA078', '#7FC4A0'],
   };
-  const [colorScheme, setColorScheme] = useState(currentScheme);
+  const [colorScheme, setColorScheme] = useState("light");
+  // The calendar fetches live data in the browser; skip it in the pre-rendered HTML
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
   useEffect(() => {
     // NavBar announces manual theme switches; also follow OS changes
     const update = () => setColorScheme(currentScheme());
+    update();
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
     window.addEventListener("portfolio:theme-change", update);
     mq.addEventListener("change", update);
@@ -93,15 +97,17 @@ const GitHubContributions = () => {
         </div>
 
         <div className="gh-calendar-wrapper">
-          <GitHubCalendar
-            username={username}
-            theme={theme}
-            fontSize={12}
-            blockSize={13}
-            blockMargin={4}
-            colorScheme={colorScheme}
-            showWeekdayLabels
-          />
+          {mounted && (
+            <GitHubCalendar
+              username={username}
+              theme={theme}
+              fontSize={12}
+              blockSize={13}
+              blockMargin={4}
+              colorScheme={colorScheme}
+              showWeekdayLabels
+            />
+          )}
         </div>
       </div>
     </section>

@@ -12,7 +12,7 @@ export default function Timeline() {
       <div className="section-head-bar">
         <div className="section-head-left">
           <div className="section-tagline">Progression & Career Path</div>
-          <h2 className="section-heading">Milestones & Trajectory</h2>
+          <h2 className="section-heading">Journey & Milestones</h2>
         </div>
       </div>
 

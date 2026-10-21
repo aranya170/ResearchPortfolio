@@ -6,14 +6,11 @@
       "**/.*",
       "**/node_modules/**"
     ],
-    "rewrites": [
+    "redirects": [
       {
-        "source": "/sitemap.xml", 
-        "destination": "/sitemap.xml"
-      },
-      {
-        "source": "**",
-        "destination": "/index.html"
+        "regex": "^/(?P<path>.*)$",
+        "destination": "https://aranyakishordas.vercel.app/:path",
+        "type": 301
       }
     ]
   }

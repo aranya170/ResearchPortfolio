@@ -13,7 +13,8 @@ const Credits = () => {
       <div className="footer-inner">
         <div className="footer-left">
           <p className="footer-copy">
-            © {currentYear} Aranya Kishor Das
+            © {currentYear} Aranya Kishor Das · AI &amp; robotics researcher and software engineer in{" "}
+            {portfolio.about?.location || "Dhaka, Bangladesh"}
           </p>
         </div>
 

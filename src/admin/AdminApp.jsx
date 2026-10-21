@@ -42,6 +42,20 @@ export default function AdminApp() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  // Keep the admin console out of search results and give it its own tab title
+  useEffect(() => {
+    const previousTitle = document.title;
+    document.title = "Admin | Aranya Kishor Das";
+    const robots = document.createElement("meta");
+    robots.name = "robots";
+    robots.content = "noindex, nofollow";
+    document.head.appendChild(robots);
+    return () => {
+      document.title = previousTitle;
+      robots.remove();
+    };
+  }, []);
+
   // Check existing token on mount
   useEffect(() => {
     const checkAuth = async () => {

@@ -2,7 +2,7 @@ import React from "react";
 import "../styles/Intro.css";
 import { usePortfolio } from "../context/PortfolioContext";
 import { getAssetUrl } from "../services/api";
-import { FiArrowUpRight, FiGithub, FiLinkedin, FiMail, FiFileText, FiCpu, FiCode } from "react-icons/fi";
+import { FiArrowUpRight, FiGithub, FiLinkedin, FiMail, FiFileText, FiCpu, FiCode, FiMapPin } from "react-icons/fi";
 
 const Intro = () => {
   const { portfolio } = usePortfolio();
@@ -14,6 +14,7 @@ const Intro = () => {
   const description =
     p.description ||
     "Undergraduate Research Assistant & President of UIU Robotics Club. Specializing in Deep Learning architectures, autonomous robotics, parallel kinematics, and full-stack systems.";
+  const location = portfolio.about?.location || "Dhaka, Bangladesh";
   const cvUrl = getAssetUrl(p.cv_url || "/assets/My_CV.pdf");
   const githubUrl = socials.github || "https://github.com/aranya170";
   const linkedinUrl = socials.linkedin || "https://www.linkedin.com/in/aranya170";
@@ -45,6 +46,9 @@ const Intro = () => {
 
           <h1 className="hero-name">{name}</h1>
           <p className="hero-role">{subtitle}</p>
+          <p className="hero-location">
+            <FiMapPin aria-hidden="true" /> {location}
+          </p>
 
           <p className="hero-bio">{description}</p>
 
@@ -94,7 +98,7 @@ const Intro = () => {
               <a href="#projects" className="jump-item" onClick={jumpTo("Research")}>
                 <div className="jump-icon" aria-hidden="true"><FiFileText /></div>
                 <div className="jump-details">
-                  <h3>Research & AI Models</h3>
+                  <p className="jump-title">Research & AI Models</p>
                   <p>Open-source repositories, psychometric classification & ensemble networks</p>
                 </div>
                 <span className="jump-arrow" aria-hidden="true"><FiArrowUpRight /></span>
@@ -103,7 +107,7 @@ const Intro = () => {
               <a href="#projects" className="jump-item" onClick={jumpTo("Hardware")}>
                 <div className="jump-icon" aria-hidden="true"><FiCpu /></div>
                 <div className="jump-details">
-                  <h3>Hardware & Kinematics</h3>
+                  <p className="jump-title">Hardware & Kinematics</p>
                   <p>Delta parallel arms, 4-axis SCARA robots, quadcopters & IoT telemetry</p>
                 </div>
                 <span className="jump-arrow" aria-hidden="true"><FiArrowUpRight /></span>
@@ -112,7 +116,7 @@ const Intro = () => {
               <a href="#projects" className="jump-item" onClick={jumpTo("Software")}>
                 <div className="jump-icon" aria-hidden="true"><FiCode /></div>
                 <div className="jump-details">
-                  <h3>Full-Stack & Distributed Systems</h3>
+                  <p className="jump-title">Full-Stack & Distributed Systems</p>
                   <p>Production web portals, ERP supply chains, Laravel & React architectures</p>
                 </div>
                 <span className="jump-arrow" aria-hidden="true"><FiArrowUpRight /></span>

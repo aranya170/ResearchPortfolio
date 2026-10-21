@@ -1,3 +1,32 @@
+/* Size-matched fallbacks (metrics from Capsize): text keeps the same line lengths while the
+   web fonts load, so the page doesn't jump when they swap in */
+@font-face {
+  font-family: "Inter Variable Fallback";
+  src: local("Arial"), local("ArialMT");
+  ascent-override: 90.4365%;
+  descent-override: 22.518%;
+  line-gap-override: 0%;
+  size-adjust: 107.1194%;
+}
+
+@font-face {
+  font-family: "Plus Jakarta Sans Variable Fallback";
+  src: local("Arial"), local("ArialMT");
+  ascent-override: 98.8763%;
+  descent-override: 21.147%;
+  line-gap-override: 0%;
+  size-adjust: 104.9796%;
+}
+
+@font-face {
+  font-family: "JetBrains Mono Fallback";
+  src: local("Courier New"), local("CourierNewPSMT");
+  ascent-override: 102.0166%;
+  descent-override: 30.0049%;
+  line-gap-override: 0%;
+  size-adjust: 99.9837%;
+}
+
 :root {
   /* Clean, crisp modern palette */
   --bg:            #F7F5F0;
@@ -38,9 +67,9 @@
   --shadow-hover:  0 10px 30px rgba(26, 25, 23, 0.1);
 
   /* Typography */
-  --font-heading: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-body:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono:    'JetBrains Mono', monospace;
+  --font-heading: 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans Variable Fallback', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-body:    'Inter Variable', 'Inter Variable Fallback', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono:    'JetBrains Mono', 'JetBrains Mono Fallback', monospace;
 
   /* Modern Animation Physics */
   --ease-spring:   cubic-bezier(0.16, 1, 0.3, 1);

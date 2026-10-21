@@ -35,7 +35,7 @@ export default function TechStack() {
       <div className="section-head-bar">
         <div className="section-head-left">
           <div className="section-tagline">Engineering Proficiencies</div>
-          <h2 className="section-heading" id="tech-heading">Technical Matrix & Tooling</h2>
+          <h2 className="section-heading" id="tech-heading">Technical Skills & Tools</h2>
         </div>
       </div>
 
