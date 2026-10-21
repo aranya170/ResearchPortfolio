@@ -4,7 +4,7 @@
   grid-template-columns: 270px 1fr;
   gap: 0;
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius-card);
   overflow: hidden;
   background: var(--bg-card);
   box-shadow: var(--shadow-sm);
@@ -16,7 +16,7 @@
   display: flex;
   flex-direction: column;
   border-right: 1px solid var(--border);
-  background: #FAF8F5;
+  background: var(--bg-card-hover);
 }
 
 .joblist-tab {
@@ -36,22 +36,35 @@
 }
 .joblist-tab:hover {
   color: var(--text-primary);
-  background: rgba(0, 0, 0, 0.02);
+  background: color-mix(in srgb, var(--text-primary) 2%, transparent);
 }
 .joblist-tab.active {
   color: var(--accent);
   border-left-color: var(--accent);
-  background: #FFFFFF;
+  background: var(--bg-card);
   font-weight: 700;
+}
+
+.joblist-tab-company,
+.joblist-tab-role {
+  display: block;
+}
+.joblist-tab-role {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-top: 2px;
 }
 
 /* Content Area */
 .joblist-content {
   padding: 30px 34px;
-  background: #FFFFFF;
+  background: var(--bg-card);
 }
 
 .jl-header {
+  margin-top: 0;
+  font-size: inherit;
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;

@@ -8,7 +8,7 @@
   align-items: center;
   gap: 6px;
   padding: 6px 12px;
-  border-radius: 6px;
+  border-radius: var(--radius-xs);
   background: var(--bg-card);
   border: 1px solid var(--border);
   transition: all var(--trans-fast);
@@ -17,17 +17,17 @@
 
 .gh-header-profile-link:hover {
   background: var(--accent);
-  color: #FFFFFF !important;
+  color: var(--on-accent) !important;
   border-color: var(--accent);
   transform: translateY(-1px);
-  box-shadow: 0 3px 8px rgba(30, 67, 52, 0.2);
+  box-shadow: 0 3px 8px color-mix(in srgb, var(--accent) 20%, transparent);
 }
 
 .gh-widescreen-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 24px 28px;
+  border-radius: var(--radius-card);
+  padding: var(--card-pad);
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
@@ -68,7 +68,7 @@
   background: var(--accent-soft);
   width: 40px;
   height: 40px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;

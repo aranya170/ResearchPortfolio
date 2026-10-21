@@ -1,0 +1,746 @@
+{
+  "siteProfile": {
+    "id": 1,
+    "greeting": "Hi there! I'm ",
+    "name": "Aranya Kishor Das",
+    "subtitle": "AI Researcher & Robotics Enthusiast",
+    "subtitle_suffix": "dedicated to Intelligent Systems.",
+    "description": "From building RC cars in highschool to leading UIU Robotics and researching AI, I'm driven by a passion for creating smarter solutions through Deep Learning and Robotics.",
+    "cv_url": "/assets/My_CV.pdf",
+    "show_robot": true,
+    "show_stars": true
+  },
+  "about": {
+    "id": 1,
+    "title": "Academic Profile & Focus",
+    "profile_image": "/assets/Aranya Kishor Das.png",
+    "name": "Aranya Kishor Das",
+    "role": "Undergraduate Researcher & Club President",
+    "affiliation": "United International University",
+    "core_focus": "Deep Learning, Autonomous Robotics, Kinematics",
+    "location": "Dhaka, Bangladesh",
+    "paragraphs": [
+      "I am an undergraduate research assistant and the President of the UIU Robotics Club at United International University, following a childhood spark for electronics that expanded into web development, deep learning, and artificial intelligence. Driven by a passion for solving puzzles and building things, my background spans computer science, design, and multiple academic offers abroad. Outside of my technical work and leadership roles, I enjoy playing video games, exploring aesthetic interior designs, and collecting cool tech products."
+    ],
+    "pillars": [
+      {
+        "id": 1,
+        "icon": "cpu",
+        "title": "Robotics & Kinematics",
+        "description": "Engineered high-precision robotic motion control architectures by developing parallel Delta geometry and 4-axis SCARA kinematics, while implementing advanced trajectory planning and real-time multi-motor synchronization."
+      },
+      {
+        "id": 2,
+        "icon": "ai",
+        "title": "Deep Learning & AI",
+        "description": "Engineered advanced machine learning systems by developing adaptive ensemble learning frameworks, psychometric classification models, and robust computer vision pipelines."
+      },
+      {
+        "id": 1787602262215,
+        "icon": "book",
+        "title": "Open Research & Mentorship",
+        "description": "Created the open-source robotics learning repository RoboNeT and served as a Teaching Assistant for IoT & Robotics."
+      },
+      {
+        "id": 1787602263192,
+        "icon": "award",
+        "title": "Global Recognition",
+        "description": "Evaluated entries across prominent national and international competitions, notably serving as a judge for the World Robot Olympiad 2026, while concurrently earning over 5 awards in nationwide technical contests."
+      }
+    ],
+    "timeline_link_text": "View my timeline",
+    "contact_button_text": "Get in Touch"
+  },
+  "projects": {
+    "Research": [
+      {
+        "id": 6,
+        "name": "RoboNeT - Robotics, Networking, IoT & Data Communication Repository",
+        "category": "Research",
+        "image": "/uploads/1787602775832_Screenshot_2026-08-25_021914.png",
+        "video": null,
+        "github": "https://github.com/FahimHafiz/RoboNeT-Robotics-Network-IoT-Repository.git",
+        "website": "",
+        "medium": "",
+        "tableau": "",
+        "dataset": "",
+        "tags": [
+          "Autonomous",
+          "Robotics",
+          "IoT",
+          "Data Communication"
+        ],
+        "sort_order": 1,
+        "files": [
+          {
+            "id": 43,
+            "name": "README.md",
+            "type": "info",
+            "content": "I led the development of RoboNeT as its highest contributor and Undergraduate Assistant of United International University, establishing Bangladesh’s first-ever open-source repository dedicated to robotics learning. This comprehensive platform centralizes resources for robotics, networking, IoT, and data communication to empower the country's next generation of engineers and researchers.",
+            "language": "markdown",
+            "sort_order": 1
+          },
+          {
+            "id": 44,
+            "name": "RoboNeT-Robotics-Network-IoT-Repository",
+            "type": "notebook",
+            "content": "https://prettyhub.vercel.app/FahimHafiz/RoboNeT-Robotics-Network-IoT-Repository",
+            "language": "Robotics, Networking, IoT & Data Communication",
+            "sort_order": 2
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "name": "A Multiclass Image Segmentation Dataset for Waste in Urban Water Bodies of Bangladesh",
+        "category": "Research",
+        "image": "/uploads/1787602370811_Screenshot_2026-08-25_020002.png",
+        "video": null,
+        "github": "",
+        "website": "",
+        "medium": "",
+        "tableau": "",
+        "dataset": "",
+        "tags": [
+          "Pandas",
+          "Numpy",
+          "Matplotlib"
+        ],
+        "sort_order": 2,
+        "files": [
+          {
+            "id": 41,
+            "name": "README.md",
+            "type": "info",
+            "content": "In Bangladesh, inadequate waste management in canals, lakes, and ponds presents significant environmental and public health challenges. Addressing these issues requires implementing automated monitoring systems. However, the creation of such systems is hindered by the lack of datasets containing real-world waste in unconstrained, complex environments. The proposed WasteSegCluster dataset consists of annotated waste images collected from a variety of water-based environments in Dhaka, Bangladesh. It contains 1,947 images, with nearly 3,900 instances belonging to 4 categories of Composite_Rubber_Textile, Organic, Paper, and Plastic, all annotated using polygon-based masks and released in COCO format to support object detection, instance segmentation and classification problems. The dataset is divided into training (70%), validation (20%), and testing (10%) subsets using stratified sampling. The dataset was evaluated using multiple models. Mask R-CNN achieves an accuracy of 0.90 for instance segmentation, while EfficientNetV2-M and Vision Transformer achieve classification accuracies of 0.92 and 0.89 respectively. These results indicate that the dataset supports model development and evaluation across different architectures.",
+            "language": "markdown",
+            "sort_order": 1
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "name": "BDWaterSurfaceSet: A Satellite Imagery Dataset for Surface Water Body Segmentation Across Diverse Aquatic Environments",
+        "category": "Research",
+        "image": "/uploads/1787602671467_Screenshot_2026-08-25_021724.png",
+        "video": null,
+        "github": "",
+        "website": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7286437",
+        "medium": "",
+        "tableau": "",
+        "dataset": "",
+        "tags": [
+          "Pandas",
+          "Latex",
+          "Matplotlib"
+        ],
+        "sort_order": 3,
+        "files": [
+          {
+            "id": 42,
+            "name": "README.md",
+            "type": "info",
+            "content": "This data article describes the BDWaterSurfaceSet dataset, a collection of satellite imagery for detecting inland water surfaces in Bangladesh. The dataset comprises 3,115 satellite images and 10,142 region-level samples, including 7,112 water-surface and 3,030 non-water-surface regions. Data extraction follows a multi-stage pipeline in which raw satellite images are converted into region crops via binary mask extraction with stratified partitioning to prevent data leakage. A 70/20/10 image-level split is applied across training, validation, and test sets (2180, 623 and 312 images respectively). Four pretrained models were benchmarked for binary classification: ViT-Base-Patch16-224 achieved 0.9991 accuracy (0.9983 precision, 0.9994 recall, 0.9989 F1), DeiT-Base-Patch16-224 achieved 0.9991 accuracy (0.9983 precision, 0.9994 recall, 0.9989 F1), Swin-Tiny-Patch4-Window7-224 achieved 0.9973 accuracy (0.9961 precision, 0.9971 recall, 0.9966 F1), and ConvNeXt-Tiny achieved 0.9982 accuracy (0.9967 precision, 0.9988 recall, 0.9977 F1). The dataset is released in COCO segmentation format with companion annotation files, enabling direct use with standard data loaders for segmentation and classification tasks.",
+            "language": "markdown",
+            "sort_order": 1
+          }
+        ]
+      }
+    ],
+    "Hardware": [
+      {
+        "id": 9,
+        "name": "Delta Arm",
+        "category": "Hardware",
+        "image": "/assets/Hardware5.jpg",
+        "video": "/assets/hardware_videos/Delta Arm.mp4",
+        "github": "",
+        "website": "",
+        "medium": "",
+        "tableau": "",
+        "dataset": "",
+        "tags": [
+          "Arduino",
+          "Inverse Kinematics",
+          "Parallel Robotics",
+          "3D Printing"
+        ],
+        "sort_order": 4,
+        "files": [
+          {
+            "id": 54,
+            "name": "README.md",
+            "type": "info",
+            "content": "Developed a high-speed Delta parallel robot designed for rapid assembly and precision sorting. Utilizing a parallel kinematic geometry, I synchronized three motors to control spatial coordinates via complex inverse kinematics. This design ensures the end-effector remains stable and parallel to the work surface, enabling high-acceleration movements and exceptional repeatability.",
+            "language": "markdown",
+            "sort_order": 1
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "name": "Scara Arm",
+        "category": "Hardware",
+        "image": "/assets/Hardware4.jpeg",
+        "video": "/assets/hardware_videos/Scara.mp4",
+        "github": "",
+        "website": "",
+        "medium": "",
+        "tableau": "",
+        "dataset": "",
+        "tags": [
+          "Arduino Nano",
+          "3D Design",
+          "Kinematics"
+        ],
+        "sort_order": 5,
+        "files": [
+          {
+            "id": 55,
+            "name": "README.md",
+            "type": "info",
+            "content": "Designed and prototyped a 4-axis SCARA robotic arm utilizing 3D-printed components and an Arduino Nano. The project focuses on high-precision movement for automated pick-and-place tasks. I implemented the kinematics logic to control joint rotations, ensuring smooth trajectories while optimizing the arm’s reach and payload stability.",
+            "language": "markdown",
+            "sort_order": 1
+          }
+        ]
+      },
+      {
+        "id": 23,
+        "name": "Autonomous Field Bot",
+        "category": "Hardware",
+        "image": "/uploads/1787602929909_Screenshot_2026-08-25_022132.png",
+        "video": "/assets/hardware_videos/Field Bot.mp4",
+        "github": "",
+        "website": "",
+        "medium": "",
+        "tableau": "",
+        "dataset": "",
+        "tags": [],
+        "sort_order": 6,
+        "files": [
+          {
+            "id": 57,
+            "name": "README.md",
+            "type": "info",
+            "content": "This is an autonomous field bot that can autonomously navigate through open spaces and survey an area for an user defined task.",
+            "language": "markdown",
+            "sort_order": 1
+          }
+        ]
+      },
+      {
+        "id": 12,
+        "name": "IoT-Based Smart Bus Tracking System",
+        "category": "Hardware",
+        "image": "/assets/Hardware1.png",
+        "video": null,
+        "github": "https://github.com/aranya170/Shuttle-Bus-Tracking-System",
+        "website": "",
+        "medium": "",
+        "tableau": "",
+        "dataset": "",
+        "tags": [
+          "Arduino",
+          "ESP 32",
+          "LDR",
+          "GPS Module"
+        ],
+        "sort_order": 9,
+        "files": [
+          {
+            "id": 63,
+            "name": "README.md",
+            "type": "info",
+            "content": "This project is a comprehensive Shuttle Bus Tracking and Monitoring System developed for a university-level IoT and embedded systems project. The system combines multiple sensors and technologies to ensure real-time location tracking, passenger queue monitoring, environmental sensing, and safety alerts for shuttle operations on campus.",
+            "language": "markdown",
+            "sort_order": 1
+          }
+        ]
+      },
+      {
+        "id": 13,
+        "name": "Smart Voting Machine",
+        "category": "Hardware",
+        "image": "/assets/Hardware2.jpg",
+        "video": null,
+        "github": "",
+        "website": "",
+        "medium": "",
+        "tableau": "",
+        "dataset": "",
+        "tags": [
+          "Arduino",
+          "i2C",
+          "Buzzer",
+          "Laser"
+        ],
+        "sort_order": 12,
+        "files": [
+          {
+            "id": 59,
+            "name": "README.md",
+            "type": "info",
+            "content": "Designed and fabricated an IoT-enabled smart voting machine ensuring biometric authentication, tamper-evident vote logging, and real-time tabulation using embedded microcontrollers.",
+            "language": "markdown",
+            "sort_order": 1
+          }
+        ]
+      }
+    ],
+    "Software": [
+      {
+        "id": 1,
+        "name": "UIU Robotics",
+        "category": "Software",
+        "image": "/assets/uiu_robotics.png",
+        "video": null,
+        "github": "https://github.com/aranya170/UIURC.git",
+        "website": "https://robotics.uiu.ac.bd/",
+        "medium": "",
+        "tableau": "",
+        "dataset": "",
+        "tags": [
+          "Tailwind CSS",
+          "Laravel",
+          "UI/UX Design",
+          "PHP"
+        ],
+        "sort_order": 7,
+        "files": [
+          {
+            "id": 47,
+            "name": "UIU Robotics Website",
+            "type": "notebook",
+            "content": "https://robotics.uiu.ac.bd/",
+            "language": "robotics.uiu.ac.bd",
+            "sort_order": 1
+          },
+          {
+            "id": 48,
+            "name": "README.md",
+            "type": "info",
+            "content": "Initiated, designed, and implemented the official full-stack website for UIU Robotics. I handled the entire lifecycle from initial prototyping to final deployment. The platform serves as a central hub for club members, showcasing robotics projects, managing events, and fostering innovation within the university community.",
+            "language": "markdown",
+            "sort_order": 2
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "Dacca Delights",
+        "category": "Software",
+        "image": "/assets/daccadelights.png",
+        "video": null,
+        "github": "https://github.com/aranya170/DaccaDelights.git",
+        "website": "https://daccadelights.com/",
+        "medium": "",
+        "tableau": "",
+        "dataset": "",
+        "tags": [
+          "MySQL",
+          "Tailwind CSS",
+          "PHP"
+        ],
+        "sort_order": 8,
+        "files": [
+          {
+            "id": 60,
+            "name": "Dacca Delights Website",
+            "type": "notebook",
+            "content": "https://daccadelights.com/",
+            "language": "daccadelights.com",
+            "sort_order": 1
+          },
+          {
+            "id": 61,
+            "name": "README.md",
+            "type": "info",
+            "content": "A full-stack e-commerce platform developed for a bakery shop. This freelance project involved designing an intuitive frontend and a robust backend to manage orders, inventory, and customer interactions. Hosted at daccadelights.com, the site provides a seamless shopping experience for high-quality baked goods.",
+            "language": "markdown",
+            "sort_order": 2
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "name": "Peer Pie",
+        "category": "Software",
+        "image": "/assets/peerpie.png",
+        "video": null,
+        "github": "https://github.com/aranya170/Peer_Pie/tree/main",
+        "website": "",
+        "medium": "",
+        "tableau": "",
+        "dataset": "",
+        "tags": [
+          "JAVA",
+          "MySQL",
+          "CSS"
+        ],
+        "sort_order": 10,
+        "files": [
+          {
+            "id": 50,
+            "name": "README.md",
+            "type": "info",
+            "content": "Connecting learners, expanding horizons. Peer Pie is a platform designed to connect students with peers who share similar interests, enabling them to collaborate on projects, share knowledge, and learn from each other. The platform aims to foster a community of learners who can support and motivate one another in their academic journeys.",
+            "language": "markdown",
+            "sort_order": 1
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "name": "DirectEdge",
+        "category": "Software",
+        "image": "/assets/directedge.png",
+        "video": null,
+        "github": "https://github.com/aranya170/DirectEdge",
+        "website": "",
+        "medium": "",
+        "tableau": "",
+        "dataset": "",
+        "tags": [
+          "Computer Vision",
+          "Deep Learning",
+          "Python",
+          "Tailwind CSS",
+          "React"
+        ],
+        "sort_order": 11,
+        "files": [
+          {
+            "id": 62,
+            "name": "README.md",
+            "type": "info",
+            "content": "DirectEdge revolutionizes sourcing by connecting businesses directly with farmers, streamlining distribution for fresher, sustainable goods. As an all-in-one solution, we manage procurement through delivery via a transparent supply chain. We’ve integrated a compact, user-friendly POS and ERP system alongside advanced demand forecasting to optimize efficiency. By eliminating intermediaries, we ensure competitive pricing for businesses and fair compensation for farmers. Join us in building a smarter, data-driven, and sustainable food system.",
+            "language": "markdown",
+            "sort_order": 1
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "name": "Kairos",
+        "category": "Software",
+        "image": "/assets/kairos.png",
+        "video": null,
+        "github": "https://github.com/aranya170/Kairos",
+        "website": "",
+        "medium": "",
+        "tableau": "",
+        "dataset": "",
+        "tags": [
+          "MySQL",
+          "Bootstrap",
+          "PHP",
+          "JavaScript"
+        ],
+        "sort_order": 13,
+        "files": [
+          {
+            "id": 53,
+            "name": "README.md",
+            "type": "info",
+            "content": "Kairos functions as a supportive system meticulously crafted to facilitate personal growth and development. Our primary objective revolves around fostering the cultivation of positive habits, furnishing users with effective tools for life tracking, and aiding in the eradication of detrimental behaviors, notably procrastination.",
+            "language": "markdown",
+            "sort_order": 1
+          }
+        ]
+      }
+    ]
+  },
+  "experiences": [
+    {
+      "id": 7,
+      "company": "ChargeMe",
+      "job_title": "Software Engineer (Team Lead)",
+      "duration": "NOV 2026 - Present",
+      "descriptions": [
+        "Develop charging station infrastructure in Bangladesh.",
+        "Build mobile application for easier accessibility for EV."
+      ],
+      "sort_order": 1
+    },
+    {
+      "id": 1,
+      "company": "United International University",
+      "job_title": "Undergraduate Assistant",
+      "duration": "Feb 2024 - Present",
+      "descriptions": [
+        "Served as an Undergraduate Assistant under Professor Dr. Mohammad Nurul Huda.",
+        "Created RoboNeT, the first-ever open-source robotics, networking, IoT & data communication repository in Bangladesh.",
+        "Facilitated hands-on labs and mentoring for students in robotics and embedded systems."
+      ],
+      "sort_order": 2
+    },
+    {
+      "id": 2,
+      "company": "UIU Robotics Club",
+      "job_title": "President",
+      "duration": "Dec 2024 - Present",
+      "descriptions": [
+        "Strategic Leadership: Directing the organization's overarching strategy, operations, and corporate partnerships to drive success in national competitions.",
+        "Team Mentorship: Actively mentoring sub-team leads across the Software, Hardware, and R&D divisions.",
+        "Technical Training: Planning and executing advanced technical training series, such as \"RoboNeT in Practice.\"",
+        "Financial & Corporate Management: Managing comprehensive finances and securing corporate sponsorships.",
+        "Event Oversight: Directing the execution of large-scale initiatives, including CSE Fest, the Global Robotics and Innovation Competition, and the World Robot Olympiad."
+      ],
+      "sort_order": 3
+    },
+    {
+      "id": 3,
+      "company": "Self-Employed",
+      "job_title": "Freelance Full-Stack Developer",
+      "duration": "Jan 2024 - Aug 2026",
+      "descriptions": [
+        "Built custom web apps and e-commerce platforms using Tailwind CSS, PHP, React, and MySQL.",
+        "Delivered end-to-end commercial solutions such as Dacca Delights bakery platform."
+      ],
+      "sort_order": 16
+    }
+  ],
+  "timeline": [
+    {
+      "id": 1,
+      "title": "Early Curiosity",
+      "description": "Fascinated by computers and RC cars in Class 8, discovering microcontrollers like Arduino and ESP.",
+      "year": "2015",
+      "type": "idea",
+      "sort_order": 1
+    },
+    {
+      "id": 2,
+      "title": "Tech Exploration",
+      "description": "Explored competitive programming, web development, graphics design, and video editing.",
+      "year": "2015 - 2019",
+      "type": "career",
+      "sort_order": 2
+    },
+    {
+      "id": 3,
+      "title": "Global Offers & Pivots",
+      "description": "Received 19 university admission offers across the USA and Switzerland; enrolled at UIU.",
+      "year": "2020 - 2021",
+      "type": "education",
+      "sort_order": 3
+    },
+    {
+      "id": 4,
+      "title": "Deep Dive in AI & Robotics",
+      "description": "Joined UIU Robotics, began publishing research, and focused on Deep Learning.",
+      "year": "2022 - 2024",
+      "type": "research",
+      "sort_order": 4
+    },
+    {
+      "id": 5,
+      "title": "President & Lead Researcher",
+      "description": "Became President of UIU Robotics and Undergraduate Assistant under Dr. Mohammad Nurul Huda.",
+      "year": "2024 - 2026",
+      "type": "startup",
+      "sort_order": 5
+    },
+    {
+      "id": 6,
+      "title": "Present & Future Horizons",
+      "description": "Pursuing higher research in AI, intelligent robotics, and scalable systems.",
+      "year": "2026 - Present",
+      "type": "statistics",
+      "sort_order": 6
+    }
+  ],
+  "techStack": [
+    {
+      "id": 1,
+      "name": "Python",
+      "category": "Language",
+      "icon_name": "SiPython",
+      "color": "#3776AB",
+      "sort_order": 1
+    },
+    {
+      "id": 2,
+      "name": "C++",
+      "category": "Language",
+      "icon_name": "SiCplusplus",
+      "color": "#00599C",
+      "sort_order": 2
+    },
+    {
+      "id": 3,
+      "name": "JavaScript",
+      "category": "Language",
+      "icon_name": "SiJavascript",
+      "color": "#F7DF1E",
+      "sort_order": 3
+    },
+    {
+      "id": 4,
+      "name": "PHP",
+      "category": "Language",
+      "icon_name": "SiPhp",
+      "color": "#777BB4",
+      "sort_order": 4
+    },
+    {
+      "id": 5,
+      "name": "React",
+      "category": "Frontend",
+      "icon_name": "SiReact",
+      "color": "#61DAFB",
+      "sort_order": 5
+    },
+    {
+      "id": 6,
+      "name": "Tailwind CSS",
+      "category": "Frontend",
+      "icon_name": "SiTailwindcss",
+      "color": "#06B6D4",
+      "sort_order": 6
+    },
+    {
+      "id": 7,
+      "name": "Node.js",
+      "category": "Backend",
+      "icon_name": "SiNodedotjs",
+      "color": "#339933",
+      "sort_order": 7
+    },
+    {
+      "id": 8,
+      "name": "PostgreSQL",
+      "category": "Database",
+      "icon_name": "SiPostgresql",
+      "color": "#4169E1",
+      "sort_order": 8
+    },
+    {
+      "id": 9,
+      "name": "MySQL",
+      "category": "Database",
+      "icon_name": "SiMysql",
+      "color": "#4479A1",
+      "sort_order": 9
+    },
+    {
+      "id": 10,
+      "name": "PyTorch",
+      "category": "AI/ML",
+      "icon_name": "SiPytorch",
+      "color": "#EE4C2C",
+      "sort_order": 10
+    },
+    {
+      "id": 11,
+      "name": "TensorFlow",
+      "category": "AI/ML",
+      "icon_name": "SiTensorflow",
+      "color": "#FF6F00",
+      "sort_order": 11
+    },
+    {
+      "id": 12,
+      "name": "OpenCV",
+      "category": "AI/ML",
+      "icon_name": "SiOpencv",
+      "color": "#5C3EE8",
+      "sort_order": 12
+    },
+    {
+      "id": 13,
+      "name": "Pandas",
+      "category": "AI/ML",
+      "icon_name": "SiPandas",
+      "color": "#150458",
+      "sort_order": 13
+    },
+    {
+      "id": 14,
+      "name": "NumPy",
+      "category": "AI/ML",
+      "icon_name": "SiNumpy",
+      "color": "#013243",
+      "sort_order": 14
+    },
+    {
+      "id": 15,
+      "name": "Scikit-Learn",
+      "category": "AI/ML",
+      "icon_name": "SiScikitlearn",
+      "color": "#F7931E",
+      "sort_order": 15
+    },
+    {
+      "id": 16,
+      "name": "ROS",
+      "category": "Robotics",
+      "icon_name": "SiRos",
+      "color": "#22314E",
+      "sort_order": 16
+    },
+    {
+      "id": 17,
+      "name": "Arduino",
+      "category": "Robotics",
+      "icon_name": "SiArduino",
+      "color": "#00979D",
+      "sort_order": 17
+    },
+    {
+      "id": 18,
+      "name": "Raspberry Pi",
+      "category": "Robotics",
+      "icon_name": "SiRaspberrypi",
+      "color": "#A22846",
+      "sort_order": 18
+    },
+    {
+      "id": 19,
+      "name": "Git",
+      "category": "Tools",
+      "icon_name": "SiGit",
+      "color": "#F05032",
+      "sort_order": 19
+    },
+    {
+      "id": 20,
+      "name": "GitHub",
+      "category": "Tools",
+      "icon_name": "SiGithub",
+      "color": "#181717",
+      "sort_order": 20
+    },
+    {
+      "id": 21,
+      "name": "Docker",
+      "category": "Tools",
+      "icon_name": "SiDocker",
+      "color": "#2496ED",
+      "sort_order": 21
+    },
+    {
+      "id": 22,
+      "name": "Tableau",
+      "category": "Data Viz",
+      "icon_name": "SiTableau",
+      "color": "#E97627",
+      "sort_order": 22
+    }
+  ],
+  "settings": {
+    "socials": {
+      "email": "aranya.akd@gmail.com",
+      "github": "https://github.com/aranya170",
+      "linkedin": "https://www.linkedin.com/in/aranya170"
+    },
+    "footer": {
+      "copyrightText": "© {year} Aranya Kishor Das. All rights reserved."
+    },
+    "theme": {
+      "accentColor": "#64d98a",
+      "enable3DHero": true
+    }
+  }
+}

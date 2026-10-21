@@ -8,9 +8,12 @@ async function updateAdmin() {
     process.exit(1);
   }
 
-  const username = "AKD";
-  const email = "aranya.akd@gmail.com";
-  const newPassword = "20010816Akd";
+  // Usage: ADMIN_USERNAME=... ADMIN_EMAIL=... ADMIN_PASSWORD=... node scripts/updateAdmin.js
+  const { ADMIN_USERNAME: username, ADMIN_EMAIL: email, ADMIN_PASSWORD: newPassword } = process.env;
+  if (!username || !email || !newPassword || newPassword.length < 12) {
+    console.error("Set ADMIN_USERNAME, ADMIN_EMAIL and ADMIN_PASSWORD (12+ chars) in the environment or server/.env.");
+    process.exit(1);
+  }
   const passwordHash = await bcrypt.hash(newPassword, 10);
 
   // Update existing admin or insert new

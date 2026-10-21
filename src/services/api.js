@@ -1,4 +1,4 @@
-const PROD_API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
+const PROD_API_URL = import.meta.env.REACT_APP_API_URL || "http://localhost:5000/api";
 
 const normalizeApiUrl = (rawUrl) => {
   if (!rawUrl || typeof rawUrl !== "string") return "http://localhost:5000/api";
@@ -21,19 +21,19 @@ export const getApiBaseUrl = () => {
       window.location.hostname === "127.0.0.1";
 
     if (isLocalhost) {
-      return normalizeApiUrl(process.env.REACT_APP_LOCAL_API_URL || "http://localhost:5000/api");
+      return normalizeApiUrl(import.meta.env.REACT_APP_LOCAL_API_URL || "http://localhost:5000/api");
     }
 
-    if (process.env.REACT_APP_API_URL) {
-      return normalizeApiUrl(process.env.REACT_APP_API_URL);
+    if (import.meta.env.REACT_APP_API_URL) {
+      return normalizeApiUrl(import.meta.env.REACT_APP_API_URL);
     }
 
     // On hosted domains (e.g. Vercel / Firebase), default to same origin "/api"
     return `${window.location.origin}/api`;
   }
 
-  if (process.env.REACT_APP_API_URL) {
-    return normalizeApiUrl(process.env.REACT_APP_API_URL);
+  if (import.meta.env.REACT_APP_API_URL) {
+    return normalizeApiUrl(import.meta.env.REACT_APP_API_URL);
   }
 
   return normalizeApiUrl(PROD_API_URL);
@@ -75,7 +75,8 @@ async function request(endpoint, options = {}) {
   const url = `${baseUrl}${endpoint}`;
   const headers = {
     "Content-Type": "application/json",
-    ...getAuthHeader(),
+    // Only send the admin token to endpoints that need it
+    ...(endpoint.startsWith("/admin") || endpoint.startsWith("/auth") ? getAuthHeader() : {}),
     ...options.headers,
   };
 
@@ -125,11 +126,6 @@ export const api = {
     request("/auth/login", {
       method: "POST",
       body: JSON.stringify(credentials),
-    }),
-  register: (data) =>
-    request("/auth/register", {
-      method: "POST",
-      body: JSON.stringify(data),
     }),
   getMe: () => request("/auth/me"),
   changePassword: (passwords) =>

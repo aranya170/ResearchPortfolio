@@ -10,8 +10,8 @@
 .contact-card-info {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 26px;
+  border-radius: var(--radius-card);
+  padding: var(--card-pad);
   display: flex;
   flex-direction: column;
   box-shadow: var(--shadow-sm);
@@ -58,7 +58,7 @@
 .c-icon {
   width: 36px;
   height: 36px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   background: var(--accent-soft);
   color: var(--accent);
   display: flex;
@@ -92,8 +92,8 @@
 .contact-card-form {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 26px;
+  border-radius: var(--radius-card);
+  padding: var(--card-pad);
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
@@ -134,9 +134,9 @@
 .input-field input,
 .input-field textarea {
   width: 100%;
-  background: #FAF8F5;
+  background: var(--bg-card-hover);
   border: 1px solid var(--border);
-  border-radius: 7px;
+  border-radius: var(--radius-sm);
   padding: 11px 14px;
   font-family: var(--font-body);
   font-size: 13.5px;
@@ -149,7 +149,7 @@
 .input-field input:focus,
 .input-field textarea:focus {
   border-color: var(--accent);
-  background: #FFFFFF;
+  background: var(--bg-card);
   box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
@@ -159,22 +159,22 @@
   justify-content: center;
   gap: 8px;
   background: var(--accent);
-  color: #FFFFFF !important;
+  color: var(--on-accent) !important;
   font-family: var(--font-body);
   font-size: 13.5px;
   font-weight: 600;
   padding: 11px 22px;
-  border-radius: 7px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--accent);
   cursor: pointer;
   width: fit-content;
-  box-shadow: 0 2px 8px rgba(30, 67, 52, 0.18);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--accent) 18%, transparent);
   transition: all var(--trans-fast);
 }
 .submit-btn:hover:not(:disabled) {
   background: var(--accent-hover);
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(30, 67, 52, 0.25);
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--accent) 25%, transparent);
 }
 .submit-btn:active:not(:disabled) {
   transform: translateY(0);
@@ -187,7 +187,7 @@
 .error-notice {
   font-family: var(--font-body);
   font-size: 12.5px;
-  color: #c93b2b;
+  color: var(--danger);
   margin: 0;
 }
 
@@ -229,7 +229,7 @@
   border: 1px solid var(--border-strong);
   color: var(--text-primary);
   padding: 8px 18px;
-  border-radius: 6px;
+  border-radius: var(--radius-xs);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -240,7 +240,7 @@
   color: var(--accent);
 }
 
-@media (max-width: 800px) {
+@media (max-width: 900px) {
   .contact-grid {
     grid-template-columns: 1fr;
     gap: 22px;

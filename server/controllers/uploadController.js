@@ -23,24 +23,30 @@ const storage = multer.diskStorage({
   },
 });
 
+const ALLOWED_TYPES = {
+  jpg: ["image/jpeg"],
+  jpeg: ["image/jpeg"],
+  png: ["image/png"],
+  webp: ["image/webp"],
+  gif: ["image/gif"],
+  avif: ["image/avif"],
+  mp4: ["video/mp4"],
+  webm: ["video/webm"],
+  pdf: ["application/pdf"],
+};
+const ALLOWED_EXT_RE = /^(jpe?g|png|webp|gif|avif|mp4|webm|pdf)$/;
+
 const upload = multer({
   storage,
-  limits: { fileSize: 500 * 1024 * 1024 }, // 500MB limit
+  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit
   fileFilter: (req, file, cb) => {
-    const allowed = /jpeg|jpg|png|webp|gif|svg|bmp|avif|ico|pdf|mp4|webm|ogg|ogv|mov|quicktime|mkv|m4v|avi|3gp|flv|wmv|doc|docx|txt|zip/i;
     const ext = path.extname(file.originalname).toLowerCase().replace(".", "");
     const mime = (file.mimetype || "").toLowerCase();
 
-    if (
-      allowed.test(ext) ||
-      mime.startsWith("image/") ||
-      mime.startsWith("video/") ||
-      mime === "application/pdf" ||
-      mime.startsWith("text/")
-    ) {
+    if (ALLOWED_EXT_RE.test(ext) && ALLOWED_TYPES[ext].includes(mime)) {
       cb(null, true);
     } else {
-      cb(new Error(`File type .${ext} is not supported. Please upload an image, PDF, or video file.`));
+      cb(new Error("Unsupported file type. Allowed: JPG, PNG, WebP, GIF, AVIF, MP4, WebM, PDF."));
     }
   },
 });
@@ -50,7 +56,7 @@ exports.uploadMiddleware = (req, res, next) => {
   upload.single("file")(req, res, (err) => {
     if (err instanceof multer.MulterError) {
       if (err.code === "LIMIT_FILE_SIZE") {
-        return res.status(400).json({ success: false, message: "File is too large. Maximum allowed size is 500MB." });
+        return res.status(400).json({ success: false, message: "File is too large. Maximum allowed size is 50MB." });
       }
       return res.status(400).json({ success: false, message: `Upload error: ${err.message}` });
     } else if (err) {

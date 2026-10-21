@@ -15,10 +15,24 @@ const isNeonOrSsl =
     connectionString.includes("sslmode=require") ||
     process.env.DB_SSL === "true");
 
+// Verify server certificates by default; DB_SSL_INSECURE=true opts out (e.g. self-signed dev servers)
+const sslOptions = { rejectUnauthorized: process.env.DB_SSL_INSECURE !== "true" };
+
+// pg lets sslmode in the URL override the ssl option, so drop it when we set ssl explicitly
+function withoutSslMode(url) {
+  try {
+    const parsed = new URL(url);
+    parsed.searchParams.delete("sslmode");
+    return parsed.toString();
+  } catch (e) {
+    return url;
+  }
+}
+
 const config = connectionString
   ? {
-      connectionString,
-      ssl: isNeonOrSsl ? { rejectUnauthorized: false } : false,
+      connectionString: isNeonOrSsl ? withoutSslMode(connectionString) : connectionString,
+      ssl: isNeonOrSsl ? sslOptions : false,
     }
   : {
       host: process.env.PGHOST || "localhost",
@@ -26,7 +40,7 @@ const config = connectionString
       user: process.env.PGUSER || "postgres",
       password: process.env.PGPASSWORD || "postgres",
       database: process.env.PGDATABASE || "portfolio",
-      ssl: process.env.DB_SSL === "true" ? { rejectUnauthorized: false } : false,
+      ssl: process.env.DB_SSL === "true" ? sslOptions : false,
     };
 
 try {
@@ -47,14 +61,15 @@ const fallbackDataPath = path.join(__dirname, "../db/fallback_store.json");
 
 function getFallbackStore() {
   if (!fs.existsSync(fallbackDataPath)) {
-    const seedData = require("../db/seedData");
+    // Never persist seed admin credentials to disk.
+    const { admin, ...seedData } = require("../db/seedData");
     fs.writeFileSync(fallbackDataPath, JSON.stringify(seedData, null, 2), "utf8");
     return JSON.parse(JSON.stringify(seedData));
   }
   try {
     return JSON.parse(fs.readFileSync(fallbackDataPath, "utf8"));
   } catch (e) {
-    const seedData = require("../db/seedData");
+    const { admin, ...seedData } = require("../db/seedData");
     return JSON.parse(JSON.stringify(seedData));
   }
 }
@@ -64,6 +79,16 @@ function saveFallbackStore(data) {
     fs.writeFileSync(fallbackDataPath, JSON.stringify(data, null, 2), "utf8");
   } catch (e) {
     console.error("Failed to save fallback store:", e.message);
+  }
+}
+
+// Non-secret parts of DATABASE_URL for the admin status panel (never the password)
+function urlPart(part) {
+  if (!connectionString) return "";
+  try {
+    return decodeURIComponent(new URL(connectionString)[part] || "");
+  } catch (e) {
+    return "";
   }
 }
 
@@ -96,9 +121,9 @@ module.exports = {
     connected: isConnected,
     error: connectionError,
     config: {
-      host: config.host || (connectionString ? "Neon / Remote (DATABASE_URL)" : "localhost"),
-      database: config.database || "portfolio",
-      user: config.user || "postgres",
+      host: config.host || urlPart("hostname") || "localhost",
+      database: config.database || urlPart("pathname").replace(/^\//, "") || "portfolio",
+      user: config.user || urlPart("username") || "postgres",
       ssl: Boolean(config.ssl),
     },
   }),

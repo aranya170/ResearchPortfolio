@@ -26,3 +26,14 @@ server/.env.production
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# firebase cache
+.firebase/
+
+# admin uploads (runtime data; move to object storage).
+# The four images below are still referenced by project records, so they stay tracked for now.
+public/uploads/*
+!public/uploads/1787602370811_Screenshot_2026-08-25_020002.png
+!public/uploads/1787602671467_Screenshot_2026-08-25_021724.png
+!public/uploads/1787602775832_Screenshot_2026-08-25_021914.png
+!public/uploads/1787602929909_Screenshot_2026-08-25_022132.png
