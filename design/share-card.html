@@ -1,0 +1,94 @@
+<!doctype html>
+<!--
+  Source for public/share-card.png (the 1200x630 image shown when the site is shared).
+  Edit this file, then re-render from the project root with:
+    "C:\Program Files\Google\Chrome\Application\chrome.exe" --headless=new --hide-scrollbars --force-device-scale-factor=1 --window-size=1200,630 --virtual-time-budget=3000 --screenshot=public/share-card.png design/share-card.html
+  If you change the image, also rename it (e.g. share-card-2.png) and update shareImage in seo.config.js,
+  because LinkedIn/Facebook/WhatsApp cache previews by image URL.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<style>
+  @font-face { font-family: "Jakarta"; src: url("../node_modules/@fontsource-variable/plus-jakarta-sans/files/plus-jakarta-sans-latin-wght-normal.woff2") format("woff2"); font-weight: 200 800; }
+  @font-face { font-family: "Inter"; src: url("../node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2") format("woff2"); font-weight: 100 900; }
+  @font-face { font-family: "Mono"; src: url("../node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-500-normal.woff2") format("woff2"); font-weight: 500; }
+
+  :root {
+    --bg: #F7F5F0;
+    --ink: #1A1917;
+    --ink-2: #4A4741;
+    --muted: #6B675E;
+    --accent: #1E4334;
+    --accent-2: #2E6A50;
+    --accent-soft: #E8EFEA;
+    --border: #E2DDD3;
+    --mint: #7FC4A0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1200px; height: 630px; overflow: hidden; }
+  body { background: var(--bg); font-family: "Inter", sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+
+  .card { position: relative; width: 1200px; height: 630px; display: grid; grid-template-columns: 1fr 440px; }
+
+  /* Left: identity */
+  .left { padding: 56px 0 52px 72px; display: flex; flex-direction: column; }
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .brand img { width: 44px; height: 44px; border-radius: 10px; border: 1px solid var(--border); }
+  .kicker { font-family: "Mono"; font-size: 17px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+
+  h1 { font-family: "Jakarta"; font-weight: 800; font-size: 84px; line-height: 0.98; letter-spacing: -0.035em; margin-top: 46px; }
+  .role { font-family: "Jakarta"; font-weight: 700; font-size: 30px; color: var(--accent); margin-top: 22px; letter-spacing: -0.01em; }
+  .place { display: flex; align-items: center; gap: 10px; font-size: 22px; color: var(--muted); margin-top: 12px; font-weight: 500; }
+  .place svg { width: 22px; height: 22px; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: auto; padding-right: 40px; }
+  .chip { font-size: 19px; font-weight: 600; color: var(--ink-2); background: #FFFFFF; border: 1px solid var(--border); border-radius: 999px; padding: 10px 18px; display: flex; align-items: center; gap: 10px; }
+  .chip i { width: 9px; height: 9px; border-radius: 50%; background: var(--accent-2); display: block; }
+
+  /* Right: portrait panel */
+  .right { position: relative; background: var(--accent); overflow: hidden; display: flex; align-items: center; justify-content: center; }
+  .right::before { content: ""; position: absolute; inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,0.10) 1.4px, transparent 1.4px); background-size: 22px 22px; }
+  .right::after { content: ""; position: absolute; width: 520px; height: 520px; border-radius: 50%; right: -180px; bottom: -220px;
+    background: radial-gradient(closest-side, rgba(127,196,160,0.35), transparent); }
+  .photo { position: relative; z-index: 1; width: 330px; height: 400px; border-radius: 22px; overflow: hidden;
+    border: 6px solid #FFFFFF; box-shadow: 0 24px 60px rgba(0,0,0,0.35); background: #EAE6DD; transform: rotate(-2deg); }
+  .photo img { width: 100%; height: 100%; object-fit: cover; object-position: 62% 30%; }
+  .url { position: absolute; z-index: 1; bottom: 30px; left: 0; right: 0; text-align: center;
+    font-family: "Mono"; font-size: 17px; color: rgba(255,255,255,0.88); letter-spacing: 0.02em; }
+  .url b { color: var(--mint); font-weight: 500; }
+
+  .rule { position: absolute; left: 72px; top: 0; width: 120px; height: 6px; background: var(--accent); border-radius: 0 0 4px 4px; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="rule"></div>
+    <section class="left">
+      <div class="brand">
+        <img src="../public/icon-192.png" alt="" />
+        <span class="kicker">Research Portfolio</span>
+      </div>
+
+      <h1>Aranya Kishor<br />Das</h1>
+      <p class="role">AI &amp; Robotics Researcher · Software Engineer</p>
+      <p class="place">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Dhaka, Bangladesh
+      </p>
+
+      <div class="chips">
+        <span class="chip"><i></i>President, UIU Robotics Club</span>
+        <span class="chip"><i></i>Creator of RoboNeT</span>
+        <span class="chip"><i></i>Judge, World Robot Olympiad 2026</span>
+      </div>
+    </section>
+
+    <section class="right">
+      <div class="photo"><img src="../public/assets/Aranya Kishor Das.png" alt="" /></div>
+      <div class="url"><b>aranyakishordas</b>.vercel.app</div>
+    </section>
+  </div>
+</body>
+</html>

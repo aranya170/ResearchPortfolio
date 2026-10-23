@@ -7,7 +7,7 @@ const portfolioController = require("../controllers/portfolioController");
 const adminController = require("../controllers/adminController");
 const contactController = require("../controllers/contactController");
 const uploadController = require("../controllers/uploadController");
-const { testConnection, getConnectionStatus } = require("../config/db");
+const { testConnection } = require("../config/db");
 
 // ==================== PUBLIC ENDPOINTS ====================
 router.get("/health", async (req, res) => {
@@ -19,15 +19,8 @@ router.get("/health", async (req, res) => {
   res.json({
     status: "ok",
     timestamp: new Date().toISOString(),
-    mailer: {
-      configured: mailerConfigured,
-      user: process.env.GMAIL_USER ? process.env.GMAIL_USER.replace(/(.{3})(.*)(@.*)/, "$1***$3") : null,
-      receiver: process.env.RECEIVER_EMAIL ? process.env.RECEIVER_EMAIL.replace(/(.{3})(.*)(@.*)/, "$1***$3") : null,
-    },
-    postgres: {
-      connected: isDbConnected,
-      ...getConnectionStatus(),
-    },
+    mailer: { configured: mailerConfigured },
+    postgres: { connected: isDbConnected },
   });
 });
 
@@ -36,7 +29,6 @@ router.post("/contact", contactController.submitContactMessage);
 
 // ==================== AUTH ENDPOINTS ====================
 router.post("/auth/login", authController.login);
-router.post("/auth/register", authController.register);
 router.get("/auth/me", authenticateToken, authController.me);
 router.post("/auth/change-password", authenticateToken, authController.changePassword);
 

@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const rateLimit = require("express-rate-limit");
 const path = require("path");
 require("dotenv").config({ path: path.join(__dirname, ".env") });
 
@@ -9,30 +10,60 @@ const apiRoutes = require("./routes/api");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Enable CORS for frontend requests
+// Render sits behind a proxy; trust it so rate limiting sees the real client IP
+app.set("trust proxy", 1);
+
+// CORS: only the deployed frontend (plus localhost outside production) may call the API.
+// Extra origins can be added via FRONTEND_URL as a comma-separated list.
 const allowedOrigins = [
-  "http://localhost:3000",
-  "http://127.0.0.1:3000",
-  "http://localhost:5000",
-  process.env.FRONTEND_URL,
+  "https://aranyaportfolio.web.app",
+  "https://aranyaportfolio.firebaseapp.com",
+  "https://aranyakishordas.vercel.app",
+  ...(process.env.FRONTEND_URL || "").split(",").map((o) => o.trim()),
 ].filter(Boolean);
+const devOrigin = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps, curl, server-to-server) or in allowed list
-      if (!origin || allowedOrigins.includes(origin) || process.env.NODE_ENV !== "production") {
-        return callback(null, true);
-      }
-      // Allow all subdomains/domains if CORS_ALLOW_ALL is enabled or by default for custom deployments
-      return callback(null, true);
+      // No Origin header means a same-origin or non-browser request; CORS doesn't apply
+      if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+      if (process.env.NODE_ENV !== "production" && devOrigin.test(origin)) return callback(null, true);
+      return callback(null, false);
     },
-    credentials: true,
   })
 );
 
-app.use(express.json({ limit: "25mb" }));
-app.use(express.urlencoded({ extended: true, limit: "25mb" }));
+// Rate limiting
+const jsonLimitMessage = (message) => ({ success: false, message });
+app.use(
+  "/api",
+  rateLimit({ windowMs: 15 * 60 * 1000, limit: 300, standardHeaders: "draft-7", legacyHeaders: false })
+);
+app.use(
+  "/api/auth/login",
+  rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 10,
+    skipSuccessfulRequests: true,
+    standardHeaders: "draft-7",
+    legacyHeaders: false,
+    message: jsonLimitMessage("Too many login attempts. Try again in 15 minutes."),
+  })
+);
+app.use(
+  "/api/contact",
+  rateLimit({
+    windowMs: 60 * 60 * 1000,
+    limit: 5,
+    standardHeaders: "draft-7",
+    legacyHeaders: false,
+    message: jsonLimitMessage("Too many messages sent. Please try again later."),
+  })
+);
+
+app.use(express.json({ limit: "2mb" }));
+app.use(express.urlencoded({ extended: true, limit: "2mb" }));
 
 // Static files for uploads & public assets with cross-origin headers
 const staticOptions = {
@@ -42,7 +73,19 @@ const staticOptions = {
   },
 };
 
-app.use("/uploads", express.static(path.join(__dirname, "../public/uploads"), staticOptions));
+// User-uploaded files are served inert: no MIME sniffing, no script execution
+const uploadsStaticOptions = {
+  setHeaders: (res) => {
+    staticOptions.setHeaders(res);
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    res.setHeader(
+      "Content-Security-Policy",
+      "default-src 'none'; img-src 'self'; media-src 'self'; style-src 'unsafe-inline'; sandbox"
+    );
+  },
+};
+
+app.use("/uploads", express.static(path.join(__dirname, "../public/uploads"), uploadsStaticOptions));
 app.use("/assets", express.static(path.join(__dirname, "../public/assets"), staticOptions));
 
 // API router
@@ -55,10 +98,9 @@ const fs = require("fs");
 
 if (fs.existsSync(indexPath)) {
   app.use(express.static(buildPath));
-  app.get("*", (req, res) => {
-    if (!req.path.startsWith("/api") && !req.path.startsWith("/uploads") && !req.path.startsWith("/assets")) {
-      res.sendFile(indexPath);
-    }
+  app.get("*", (req, res, next) => {
+    if (/^\/(api|uploads|assets)(\/|$)/.test(req.path)) return next();
+    res.sendFile(indexPath);
   });
 } else {
   // Root healthcheck fallback when production build is not present (e.g. running React dev server on :3000)
@@ -71,6 +113,11 @@ if (fs.existsSync(indexPath)) {
     });
   });
 }
+
+// Unmatched API / static asset paths get a JSON 404 instead of hanging
+app.use(["/api", "/uploads", "/assets"], (req, res) => {
+  res.status(404).json({ success: false, message: "Not found" });
+});
 
 // Start server
 app.listen(PORT, async () => {

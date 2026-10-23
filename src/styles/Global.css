@@ -1,4 +1,31 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+/* Size-matched fallbacks (metrics from Capsize): text keeps the same line lengths while the
+   web fonts load, so the page doesn't jump when they swap in */
+@font-face {
+  font-family: "Inter Variable Fallback";
+  src: local("Arial"), local("ArialMT");
+  ascent-override: 90.4365%;
+  descent-override: 22.518%;
+  line-gap-override: 0%;
+  size-adjust: 107.1194%;
+}
+
+@font-face {
+  font-family: "Plus Jakarta Sans Variable Fallback";
+  src: local("Arial"), local("ArialMT");
+  ascent-override: 98.8763%;
+  descent-override: 21.147%;
+  line-gap-override: 0%;
+  size-adjust: 104.9796%;
+}
+
+@font-face {
+  font-family: "JetBrains Mono Fallback";
+  src: local("Courier New"), local("CourierNewPSMT");
+  ascent-override: 102.0166%;
+  descent-override: 30.0049%;
+  line-gap-override: 0%;
+  size-adjust: 99.9837%;
+}
 
 :root {
   /* Clean, crisp modern palette */
@@ -6,6 +33,8 @@
   --bg-card:       #FFFFFF;
   --bg-card-sub:   #F3EFE6;
   --bg-input:      #FFFFFF;
+  --bg-card-hover: #FAF8F5;
+  --bg-media:      #EAE6DD;
   
   /* Borders */
   --border:        #E2DDD3;
@@ -15,13 +44,16 @@
   /* High-contrast typography colors */
   --text-primary:   #1A1917;
   --text-secondary: #4A4741;
-  --text-muted:     #78746B;
+  --text-muted:     #6B675E;
 
   /* Deep Forest Green Accent */
   --accent:        #1E4334;
   --accent-hover:  #143025;
   --accent-soft:   #E8EFEA;
   --accent-border: #BCD1C6;
+  --on-accent:     #FFFFFF;
+  --danger:        #C93B2B;
+  --focus-ring:    0 0 0 3px color-mix(in srgb, var(--accent) 35%, transparent);
 
   /* Category colors */
   --cat-research:  #2B4C7E;
@@ -35,9 +67,9 @@
   --shadow-hover:  0 10px 30px rgba(26, 25, 23, 0.1);
 
   /* Typography */
-  --font-heading: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-body:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono:    'JetBrains Mono', monospace;
+  --font-heading: 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans Variable Fallback', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-body:    'Inter Variable', 'Inter Variable Fallback', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono:    'JetBrains Mono', 'JetBrains Mono Fallback', monospace;
 
   /* Modern Animation Physics */
   --ease-spring:   cubic-bezier(0.16, 1, 0.3, 1);
@@ -49,6 +81,74 @@
   /* Layout */
   --content-width: 1180px;
   --section-gap:   96px;
+  --radius-card:   12px;
+  --radius-sm:     8px;
+  --radius-xs:     6px;
+  --card-pad:      24px;
+  /* Breakpoints used across stylesheets: 900px (tablet), 768px (small tablet), 600px (phone) */
+
+  color-scheme: light;
+}
+
+/* ── Dark theme: follows the OS unless the visitor picked one with the nav toggle ── */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:            #121210;
+    --bg-card:       #1B1B18;
+    --bg-card-sub:   #23231F;
+    --bg-input:      #1B1B18;
+    --bg-card-hover: #201F1C;
+    --bg-media:      #23221E;
+    --border:        #2F2E2A;
+    --border-subtle: #262521;
+    --border-strong: #45433D;
+    --text-primary:   #EDEBE5;
+    --text-secondary: #BDB9AF;
+    --text-muted:     #9A968C;
+    --accent:        #7FC4A0;
+    --accent-hover:  #9AD6B5;
+    --accent-soft:   #1D2B24;
+    --accent-border: #2F4A3D;
+    --on-accent:     #0F1A15;
+    --danger:        #F07B6B;
+    --cat-research:  #8FB0E3;
+    --cat-hardware:  #E0A570;
+    --cat-software:  #7FC4A0;
+    --cat-data:      #BFA2E6;
+    --shadow-sm:     0 1px 3px rgba(0, 0, 0, 0.4);
+    --shadow-card:   0 4px 16px rgba(0, 0, 0, 0.35);
+    --shadow-hover:  0 10px 30px rgba(0, 0, 0, 0.45);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg:            #121210;
+  --bg-card:       #1B1B18;
+  --bg-card-sub:   #23231F;
+  --bg-input:      #1B1B18;
+  --bg-card-hover: #201F1C;
+  --bg-media:      #23221E;
+  --border:        #2F2E2A;
+  --border-subtle: #262521;
+  --border-strong: #45433D;
+  --text-primary:   #EDEBE5;
+  --text-secondary: #BDB9AF;
+  --text-muted:     #9A968C;
+  --accent:        #7FC4A0;
+  --accent-hover:  #9AD6B5;
+  --accent-soft:   #1D2B24;
+  --accent-border: #2F4A3D;
+  --on-accent:     #0F1A15;
+  --danger:        #F07B6B;
+  --cat-research:  #8FB0E3;
+  --cat-hardware:  #E0A570;
+  --cat-software:  #7FC4A0;
+  --cat-data:      #BFA2E6;
+  --shadow-sm:     0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-card:   0 4px 16px rgba(0, 0, 0, 0.35);
+  --shadow-hover:  0 10px 30px rgba(0, 0, 0, 0.45);
+  color-scheme: dark;
 }
 
 *, *::before, *::after {
@@ -74,7 +174,7 @@ body {
 }
 
 a {
-  text-decoration: none !important;
+  text-decoration: none;
   color: inherit;
   transition: color var(--trans-fast), opacity var(--trans-fast);
 }
@@ -87,7 +187,37 @@ ul, ol {
 
 button {
   font-family: inherit;
-  outline: none;
+}
+
+/* ── Keyboard focus ── */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 16px;
+  z-index: 10000;
+  padding: 10px 16px;
+  background: var(--accent);
+  color: var(--on-accent);
+  border-radius: 8px;
+  font-weight: 600;
+}
+.skip-link:focus {
+  top: 12px;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 
 /* ── App Layout ── */
@@ -174,6 +304,7 @@ button {
   }
   :root {
     --section-gap: 64px;
+    --card-pad: 18px;
   }
   .section-head-bar {
     margin-bottom: 20px;

@@ -142,7 +142,7 @@ exports.getPortfolioData = async (req, res) => {
         data: {
           siteProfile: profile,
           about,
-          projects: Object.keys(projectsGrouped).length > 0 ? projectsGrouped : seedData.projects,
+          projects: projectsGrouped,
           experiences,
           timeline,
           techStack,

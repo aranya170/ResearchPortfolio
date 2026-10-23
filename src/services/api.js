@@ -1,7 +1,9 @@
-const PROD_API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
+// Production API (Express on Render). Fixed here so the live site never depends on a
+// hosting provider's build settings; local development uses the local backend instead.
+export const PROD_API_URL = "https://researchportfolio.onrender.com/api";
+const LOCAL_API_URL = "http://localhost:5000/api";
 
 const normalizeApiUrl = (rawUrl) => {
-  if (!rawUrl || typeof rawUrl !== "string") return "http://localhost:5000/api";
   let clean = rawUrl.trim().replace(/\/+$/, "");
   if (!clean.endsWith("/api")) {
     clean = `${clean}/api`;
@@ -10,33 +12,16 @@ const normalizeApiUrl = (rawUrl) => {
 };
 
 export const getApiBaseUrl = () => {
-  if (typeof window !== "undefined") {
-    const custom = localStorage.getItem("admin_custom_api_url");
-    if (custom && custom.trim()) {
-      return normalizeApiUrl(custom);
-    }
+  if (typeof window === "undefined") return PROD_API_URL;
 
-    const isLocalhost =
-      window.location.hostname === "localhost" ||
-      window.location.hostname === "127.0.0.1";
-
-    if (isLocalhost) {
-      return normalizeApiUrl(process.env.REACT_APP_LOCAL_API_URL || "http://localhost:5000/api");
-    }
-
-    if (process.env.REACT_APP_API_URL) {
-      return normalizeApiUrl(process.env.REACT_APP_API_URL);
-    }
-
-    // On hosted domains (e.g. Vercel / Firebase), default to same origin "/api"
-    return `${window.location.origin}/api`;
+  // Manual override from the admin login screen ("Change URL"), for testing another backend
+  const custom = localStorage.getItem("admin_custom_api_url");
+  if (custom && custom.trim()) {
+    return normalizeApiUrl(custom);
   }
 
-  if (process.env.REACT_APP_API_URL) {
-    return normalizeApiUrl(process.env.REACT_APP_API_URL);
-  }
-
-  return normalizeApiUrl(PROD_API_URL);
+  const isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+  return isLocalhost ? LOCAL_API_URL : PROD_API_URL;
 };
 
 export const getAssetUrl = (url) => {
@@ -75,7 +60,8 @@ async function request(endpoint, options = {}) {
   const url = `${baseUrl}${endpoint}`;
   const headers = {
     "Content-Type": "application/json",
-    ...getAuthHeader(),
+    // Only send the admin token to endpoints that need it
+    ...(endpoint.startsWith("/admin") || endpoint.startsWith("/auth") ? getAuthHeader() : {}),
     ...options.headers,
   };
 
@@ -125,11 +111,6 @@ export const api = {
     request("/auth/login", {
       method: "POST",
       body: JSON.stringify(credentials),
-    }),
-  register: (data) =>
-    request("/auth/register", {
-      method: "POST",
-      body: JSON.stringify(data),
     }),
   getMe: () => request("/auth/me"),
   changePassword: (passwords) =>

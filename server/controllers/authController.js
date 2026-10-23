@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { pool, getFallbackStore, saveFallbackStore, testConnection } = require("../config/db");
-const { JWT_SECRET } = require("../middleware/auth");
+const { JWT_SECRET, JWT_EXPIRES_IN } = require("../middleware/auth");
 
 exports.login = async (req, res) => {
   const { username, password } = req.body;
@@ -21,7 +21,7 @@ exports.login = async (req, res) => {
           const token = jwt.sign(
             { id: user.id, username: user.username, email: user.email },
             JWT_SECRET,
-            { expiresIn: "7d" }
+            { expiresIn: JWT_EXPIRES_IN }
           );
           return res.json({
             success: true,
@@ -33,64 +33,33 @@ exports.login = async (req, res) => {
       }
     }
 
-    // Fallback store check if PG offline or first run
-    const store = getFallbackStore();
-    const fallbackAdmin = store.admin || { username: "admin", password: "admin", email: "aranya.akd@gmail.com" };
-    if (
-      (username === fallbackAdmin.username || username === fallbackAdmin.email) &&
-      (password === fallbackAdmin.password || (fallbackAdmin.password_hash && (await bcrypt.compare(password, fallbackAdmin.password_hash))))
-    ) {
-      const token = jwt.sign(
-        { id: 1, username: fallbackAdmin.username, email: fallbackAdmin.email },
-        JWT_SECRET,
-        { expiresIn: "7d" }
-      );
-      return res.json({
-        success: true,
-        message: "Login successful",
-        token,
-        user: { id: 1, username: fallbackAdmin.username, email: fallbackAdmin.email },
-      });
+    // Fallback store is only consulted when Postgres is unreachable, and only against a bcrypt hash.
+    if (!isDbConnected) {
+      const fallbackAdmin = getFallbackStore().admin;
+      if (
+        fallbackAdmin &&
+        fallbackAdmin.password_hash &&
+        (username === fallbackAdmin.username || username === fallbackAdmin.email) &&
+        (await bcrypt.compare(password, fallbackAdmin.password_hash))
+      ) {
+        const token = jwt.sign(
+          { id: 1, username: fallbackAdmin.username, email: fallbackAdmin.email },
+          JWT_SECRET,
+          { expiresIn: JWT_EXPIRES_IN }
+        );
+        return res.json({
+          success: true,
+          message: "Login successful",
+          token,
+          user: { id: 1, username: fallbackAdmin.username, email: fallbackAdmin.email },
+        });
+      }
     }
 
     return res.status(401).json({ success: false, message: "Invalid credentials" });
   } catch (err) {
     console.error("Auth login error:", err);
     return res.status(500).json({ success: false, message: "Internal server error" });
-  }
-};
-
-exports.register = async (req, res) => {
-  const { username, email, password } = req.body;
-  if (!username || !email || !password) {
-    return res.status(400).json({ success: false, message: "Username, email and password are required" });
-  }
-
-  try {
-    const isDbConnected = await testConnection();
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    if (isDbConnected && pool) {
-      const result = await pool.query(
-        "INSERT INTO admin_users (username, email, password_hash) VALUES ($1, $2, $3) RETURNING id, username, email",
-        [username, email, hashedPassword]
-      );
-      const user = result.rows[0];
-      const token = jwt.sign({ id: user.id, username: user.username, email: user.email }, JWT_SECRET, {
-        expiresIn: "7d",
-      });
-      return res.json({ success: true, message: "Admin created", token, user });
-    }
-
-    const store = getFallbackStore();
-    store.admin = { username, email, password_hash: hashedPassword, password };
-    saveFallbackStore(store);
-
-    const token = jwt.sign({ id: 1, username, email }, JWT_SECRET, { expiresIn: "7d" });
-    return res.json({ success: true, message: "Admin created in local storage", token, user: { id: 1, username, email } });
-  } catch (err) {
-    console.error("Register error:", err);
-    return res.status(500).json({ success: false, message: err.message || "Failed to register" });
   }
 };
 
@@ -104,6 +73,9 @@ exports.me = async (req, res) => {
 exports.changePassword = async (req, res) => {
   const { currentPassword, newPassword } = req.body;
   const userId = req.user.id;
+  if (!currentPassword || !newPassword || newPassword.length < 12) {
+    return res.status(400).json({ success: false, message: "New password must be at least 12 characters" });
+  }
 
   try {
     const isDbConnected = await testConnection();
@@ -125,7 +97,10 @@ exports.changePassword = async (req, res) => {
     }
 
     const store = getFallbackStore();
-    store.admin.password = newPassword;
+    if (!store.admin || !store.admin.password_hash || !(await bcrypt.compare(currentPassword, store.admin.password_hash))) {
+      return res.status(400).json({ success: false, message: "Current password does not match" });
+    }
+    delete store.admin.password;
     store.admin.password_hash = await bcrypt.hash(newPassword, 10);
     saveFallbackStore(store);
     return res.json({ success: true, message: "Password updated successfully" });

@@ -11,11 +11,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install and Build
-        run: npm ci && npm run build
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            server/package-lock.json
+      - name: Install
+        run: npm ci && npm ci --prefix server
+      - name: Lint
+        run: npm run lint
+      - name: Check backend
+        run: npm run check --prefix server
         env:
-          CI: false
-          REACT_APP_API_URL: https://researchportfolio.onrender.com/api
+          DATABASE_URL: ""
+          PGHOST: 127.0.0.1
+          PGPORT: 1
+      - name: Build
+        run: npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}

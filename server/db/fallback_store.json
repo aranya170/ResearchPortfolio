@@ -1,9 +1,4 @@
 {
-  "admin": {
-    "username": "AKD",
-    "email": "aranya.akd@gmail.com",
-    "password": "20010816Akd"
-  },
   "siteProfile": {
     "greeting": "Hi there! I'm ",
     "name": "Aranya Kishor Das",
@@ -60,7 +55,7 @@
       "image": "/uploads/1787602775832_Screenshot_2026-08-25_021914.png",
       "github": "https://github.com/FahimHafiz/RoboNeT-Robotics-Network-IoT-Repository.git",
       "tags": [
-        "Autonomus",
+        "Autonomous",
         "Robotics",
         "IoT",
         "Data Communication"
@@ -303,7 +298,7 @@
     {
       "id": 12,
       "category": "Hardware",
-      "name": "IOT Based Smart Bus Tracking System",
+      "name": "IoT-Based Smart Bus Tracking System",
       "image": "/assets/Hardware1.png",
       "video": "",
       "github": "https://github.com/aranya170/Shuttle-Bus-Tracking-System",
@@ -732,38 +727,5 @@
       "enable3DHero": true
     }
   },
-  "messages": [
-    {
-      "id": 15,
-      "name": "Aranya",
-      "email": "aranya.akd@gmail.com",
-      "message": "KI?\n",
-      "is_read": false,
-      "created_at": "2026-08-24T23:12:59.438Z"
-    },
-    {
-      "id": 14,
-      "name": "John Doe",
-      "email": "akishor991@gmail.com",
-      "message": "hi",
-      "is_read": false,
-      "created_at": "2026-08-24T23:12:13.532Z"
-    },
-    {
-      "id": 2,
-      "name": "Aranya",
-      "email": "akishor991@gmail.com",
-      "message": "Hi from app",
-      "is_read": true,
-      "created_at": "2026-08-23T00:13:23.520Z"
-    },
-    {
-      "id": 1,
-      "name": "Jane Doe",
-      "email": "jane@example.com",
-      "message": "Hello Aranya! This is a test message.",
-      "is_read": true,
-      "created_at": "2026-08-23T00:10:29.933Z"
-    }
-  ]
+  "messages": []
 }

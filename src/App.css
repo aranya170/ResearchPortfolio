@@ -1,7 +1,7 @@
 /* ── Selection Styling ── */
 ::selection {
-  background: rgba(30, 67, 52, 0.15);
-  color: #1A1917;
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  color: var(--text-primary);
 }
 
 /* ── Section wrapper ── */

@@ -23,6 +23,7 @@ async function initDatabase(force = false) {
     const schemaSql = fs.readFileSync(schemaPath, "utf8");
 
     if (force) {
+      // Admin accounts and contact messages are preserved across reseeds.
       console.log("Resetting existing tables...");
       await pool.query(`
         DROP TABLE IF EXISTS project_files CASCADE;
@@ -32,9 +33,7 @@ async function initDatabase(force = false) {
         DROP TABLE IF EXISTS experiences CASCADE;
         DROP TABLE IF EXISTS timeline_events CASCADE;
         DROP TABLE IF EXISTS tech_stack CASCADE;
-        DROP TABLE IF EXISTS contact_messages CASCADE;
         DROP TABLE IF EXISTS site_settings CASCADE;
-        DROP TABLE IF EXISTS admin_users CASCADE;
       `);
     }
 
@@ -44,14 +43,17 @@ async function initDatabase(force = false) {
 
     // Check if admin exists
     const adminCheck = await pool.query("SELECT COUNT(*) FROM admin_users");
-    if (parseInt(adminCheck.rows[0].count, 10) === 0) {
+    const hasAdminEnv = seedData.admin.username && seedData.admin.email && seedData.admin.password;
+    if (parseInt(adminCheck.rows[0].count, 10) === 0 && !hasAdminEnv) {
+      console.warn("⚠️  No admin exists. Set ADMIN_USERNAME, ADMIN_EMAIL and ADMIN_PASSWORD in server/.env to create one.");
+    } else if (parseInt(adminCheck.rows[0].count, 10) === 0) {
       console.log("Seeding default admin user...");
       const hashedPassword = await bcrypt.hash(seedData.admin.password, 10);
       await pool.query(
         "INSERT INTO admin_users (username, email, password_hash) VALUES ($1, $2, $3)",
         [seedData.admin.username, seedData.admin.email, hashedPassword]
       );
-      console.log(`✅ Default admin created: username='${seedData.admin.username}', password='${seedData.admin.password}'`);
+      console.log(`✅ Default admin created: username='${seedData.admin.username}'`);
     }
 
     // Run column migrations if tables already exist

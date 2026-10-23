@@ -1,5 +1,6 @@
 /* ── Timeline Section ── */
 .timeline-grid {
+  grid-auto-rows: 1fr;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 20px;
@@ -8,8 +9,8 @@
 .milestone-box {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 22px;
+  border-radius: var(--radius-card);
+  padding: var(--card-pad);
   display: flex;
   flex-direction: column;
   box-shadow: var(--shadow-sm);

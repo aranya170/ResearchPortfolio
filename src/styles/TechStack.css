@@ -1,5 +1,6 @@
 /* ── Tech Stack Matrix ── */
 .tech-matrix-grid {
+  grid-auto-rows: 1fr;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 18px;
@@ -8,8 +9,8 @@
 .matrix-domain-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 22px;
+  border-radius: var(--radius-card);
+  padding: var(--card-pad);
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
@@ -43,27 +44,39 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: #FAF8F5;
+  background: var(--bg-card-hover);
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: var(--radius-xs);
   padding: 6px 12px;
   font-size: 12.5px;
   transition: background var(--trans-fast), border-color var(--trans-fast), transform var(--trans-fast);
 }
 .tool-chip:hover {
-  background: #FFFFFF;
+  background: var(--bg-card);
   border-color: var(--accent-border);
   transform: translateY(-1px);
 }
 
+.matrix-tools-wrap {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Brand colours sit on a light plate so dark logos stay visible in dark mode */
 .tool-icon {
   display: flex;
   align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-xs);
+  background: #FFFFFF;
   font-size: 14px;
 }
 .tool-icon svg {
-  width: 14px;
-  height: 14px;
+  width: 13px;
+  height: 13px;
 }
 
 .tool-name {

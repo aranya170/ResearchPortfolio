@@ -43,7 +43,7 @@
   height: 6px;
   background: var(--accent);
   border-radius: 50%;
-  box-shadow: 0 0 8px rgba(30, 67, 52, 0.4);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 40%, transparent);
   animation: pulse-dot 2s infinite;
 }
 
@@ -68,8 +68,17 @@
   font-size: clamp(1.05rem, 2vw, 1.18rem);
   font-weight: 600;
   color: var(--accent);
-  margin: 0 0 16px 0;
+  margin: 0 0 6px 0;
   letter-spacing: -0.01em;
+}
+
+.hero-location {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0 0 16px 0;
 }
 
 .hero-bio {
@@ -96,7 +105,7 @@
   background: var(--bg-card);
   border: 1px solid var(--border);
   padding: 4px 10px;
-  border-radius: 6px;
+  border-radius: var(--radius-xs);
   transition: transform var(--trans-fast), border-color var(--trans-fast), color var(--trans-fast);
 }
 .hero-domain-tag:hover {
@@ -117,19 +126,19 @@
   align-items: center;
   gap: 8px;
   background: var(--accent);
-  color: #FFFFFF !important;
+  color: var(--on-accent) !important;
   font-size: 13.5px;
   font-weight: 600;
   padding: 10px 20px;
-  border-radius: 7px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--accent);
-  box-shadow: 0 2px 8px rgba(30, 67, 52, 0.18);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--accent) 18%, transparent);
   transition: background var(--trans-fast), transform var(--trans-fast), box-shadow var(--trans-fast);
 }
 .hero-primary-btn:hover {
   background: var(--accent-hover);
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(30, 67, 52, 0.25);
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--accent) 25%, transparent);
 }
 .hero-primary-btn:active {
   transform: translateY(0);
@@ -139,19 +148,19 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: #FFFFFF;
+  background: var(--bg-card);
   color: var(--text-primary) !important;
   font-size: 13.5px;
   font-weight: 600;
   padding: 10px 18px;
-  border-radius: 7px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--border);
   transition: border-color var(--trans-fast), transform var(--trans-fast), background var(--trans-fast);
 }
 .hero-secondary-btn:hover {
   border-color: var(--text-primary);
   transform: translateY(-2px);
-  background: #FAFAFA;
+  background: var(--bg-card-hover);
 }
 .hero-secondary-btn:active {
   transform: translateY(0);
@@ -170,8 +179,8 @@
   justify-content: center;
   width: 38px;
   height: 38px;
-  border-radius: 7px;
-  background: #FFFFFF;
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
   border: 1px solid var(--border);
   color: var(--text-secondary) !important;
   font-size: 16px;
@@ -191,8 +200,8 @@
 .hero-index-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 24px;
+  border-radius: var(--radius-card);
+  padding: var(--card-pad);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -242,11 +251,11 @@
   background: var(--bg);
   border: 1px solid var(--border-subtle);
   padding: 12px 14px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   transition: background var(--trans-fast), border-color var(--trans-fast), transform var(--trans-fast);
 }
 .jump-item:hover {
-  background: #FFFFFF;
+  background: var(--bg-card);
   border-color: var(--accent-border);
   transform: translateX(3px);
 }
@@ -258,9 +267,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #FFFFFF;
+  background: var(--bg-card);
   border: 1px solid var(--border-subtle);
-  border-radius: 6px;
+  border-radius: var(--radius-xs);
   color: var(--accent);
   flex-shrink: 0;
   transition: background var(--trans-fast), color var(--trans-fast);
@@ -269,7 +278,7 @@
   background: var(--accent-soft);
 }
 
-.jump-details h4 {
+.jump-details .jump-title {
   font-family: var(--font-heading);
   font-size: 13.5px;
   font-weight: 700;
@@ -303,7 +312,7 @@
   padding: 14px 16px;
   background: var(--bg);
   border: 1px solid var(--border-subtle);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
 }
 
 .stat-unit {
@@ -332,7 +341,7 @@
   background: var(--border);
 }
 
-@media (max-width: 960px) {
+@media (max-width: 900px) {
   .executive-hero {
     padding-top: 84px;
   }
