@@ -10,7 +10,7 @@ export default {
   // ~155 characters: shown under the link in search results
   description:
     "Aranya Kishor Das is an AI and robotics researcher and software engineer in Dhaka, Bangladesh, President of UIU Robotics Club and creator of RoboNeT.",
-  shareImage: "/share-img.png",
+  shareImage: "/share-card.png",
   shareImageAlt: "Aranya Kishor Das, AI and robotics researcher and software engineer from Bangladesh",
 
   jobTitles: ["AI Researcher", "Robotics Researcher", "Software Engineer"],
